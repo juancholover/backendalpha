@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import upeu.edu.pe.academic.domain.entities.Persona;
 import upeu.edu.pe.security.domain.enums.UserRole;
 import upeu.edu.pe.security.domain.enums.UserStatus;
 import upeu.edu.pe.shared.entities.AuditableEntity;
@@ -59,4 +60,21 @@ public class User extends AuditableEntity {
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
+
+    // Relación opcional con Persona (para integración con sistema académico)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id", unique = true)
+    private Persona persona;
+
+    @Column(name = "intentos_fallidos")
+    private Integer intentosFallidos = 0;
+
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+
+    @Column(name = "token_recuperacion", length = 255)
+    private String tokenRecuperacion;
+
+    @Column(name = "fecha_expiracion_token")
+    private LocalDateTime fechaExpiracionToken;
 }
