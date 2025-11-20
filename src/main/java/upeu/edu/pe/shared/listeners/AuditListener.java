@@ -1,6 +1,8 @@
 // src/main/java/upeu/edu/pe/shared/listeners/AuditListener.java
 package upeu.edu.pe.shared.listeners;
 
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import upeu.edu.pe.shared.entities.AuditableEntity;
@@ -27,20 +29,18 @@ public class AuditListener {
     }
 
     private String getCurrentUser() {
-        // TODO: Implementar obtención del usuario actual
-        // Por ejemplo, desde el contexto de seguridad, JWT, etc.
-
-        // Implementación temporal
-        return "system";
-
-        // Ejemplo con contexto de seguridad (cuando implementes autenticación):
-        /*
         try {
-            // Si usas JWT o algún contexto de seguridad
-            return SecurityContext.getCurrentUser();
+            // Obtener el SecurityIdentity del contexto CDI
+            SecurityIdentity securityIdentity = CDI.current().select(SecurityIdentity.class).get();
+            
+            if (securityIdentity != null && !securityIdentity.isAnonymous()) {
+                // Retornar el email del usuario autenticado
+                return securityIdentity.getPrincipal().getName();
+            }
         } catch (Exception e) {
-            return "system";
+            // Si no hay contexto de seguridad o falla, usar "system"
         }
-        */
+        
+        return "system";
     }
 }

@@ -4,8 +4,6 @@ quarkus:
     unremovable-types:
       - "upeu.edu.pe.security.infrastructure.filters.JwtAuthenticationFilter"
     exclude-types: none
-  #resteasy-reactive:
-  #  path: /api
   datasource:
     db-kind: postgresql
     username: ${DB_USERNAME:postgres}
@@ -15,9 +13,12 @@ quarkus:
 
   hibernate-orm:
     database:
-      generation: update
+      generation: drop-and-create
     log:
       sql: true
+      format-sql: true
+    jdbc:
+      statement-batch-size: 20
 
   devservices:
     enabled: false
@@ -31,15 +32,11 @@ quarkus:
       methods: "*"
 
   log:
-
     level: INFO
     category:
       "upeu.edu.pe": DEBUG
-      "io.quarkus.arc": DEBUG
-      "io.quarkus.security": DEBUG
-      "io.quarkus.resteasy": DEBUG
-      "org.jboss.resteasy": DEBUG
-      "io.quarkus.vertx.http": DEBUG
+      "org.hibernate.SQL": DEBUG
+      "org.hibernate.type.descriptor.sql.BasicBinder": TRACE
 
   security:
     jaxrs:
@@ -50,8 +47,6 @@ quarkus:
 
   smallrye-openapi:
     path: /swagger-ui
-    ui:
-      always-include: true
 
   smallrye-health:
     root-path: "/health"
@@ -60,10 +55,6 @@ quarkus:
 
   jackson:
     write-dates-as-timestamps: false
-    serialization:
-      write-dates-as-timestamps: false
-    deserialization:
-      fail-on-unknown-properties: false
 
   hibernate-validator:
     method-validation:

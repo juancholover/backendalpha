@@ -19,8 +19,9 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "persona", source = "personaId")
-    @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId")
+    @Mapping(target = "universidad", ignore = true)
+    @Mapping(target = "persona", ignore = true)
+    @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Mapping(target = "personaId", source = "persona.id")
@@ -36,8 +37,9 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId")
+    @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);
 
     /**
@@ -55,6 +57,7 @@ public interface EmpleadoMapper {
     /**
      * Convierte ID de unidad organizativa a entidad UnidadOrganizativa
      */
+    @Named("mapUnidadOrganizativa")
     default UnidadOrganizativa mapUnidadOrganizativa(Long unidadOrganizativaId) {
         if (unidadOrganizativaId == null) {
             return null;

@@ -2,6 +2,7 @@ package upeu.edu.pe.security.domain.repositories.impl;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import upeu.edu.pe.security.domain.entities.RefreshToken;
 import upeu.edu.pe.security.domain.entities.User;
 import upeu.edu.pe.security.domain.repositories.RefreshTokenRepository;
@@ -24,27 +25,54 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository, Panac
 
     @Override
     public Optional<RefreshToken> findByToken(String token) {
-        return find("token", token).firstResultOptional();
+        return find("token = ?1 and isRevoked = false and active = true", token).firstResultOptional();
     }
 
     @Override
     public List<RefreshToken> findByUser(User user) {
-        return list("user", user);
+        return find("user.id = ?1 and isRevoked = false and active = true", user.getId()).list();
     }
 
     @Override
+    @Transactional
     public RefreshToken saveRefreshToken(RefreshToken refreshToken) {
         persist(refreshToken);
         return refreshToken;
     }
 
     @Override
+    @Transactional
     public void removeRefreshTokenById(Long id) {
-        delete("id", id);
+        deleteById(id);
     }
 
     @Override
+    @Transactional
     public void revokeAllByUser(User user) {
-        update("isRevoked = true WHERE user = ?1 AND isRevoked = false", user);
+        update("isRevoked = true where user.id = ?1 and isRevoked = false", user.getId());
+    }
+
+    /**
+     * Elimina un token específico por su valor
+     */
+    @Transactional
+    public void deleteByToken(String token) {
+        delete("token", token);
+    }
+
+    /**
+     * Revoca un token específico por su valor
+     */
+    @Transactional
+    public void revokeByToken(String token) {
+        update("isRevoked = true where token = ?1 and isRevoked = false", token);
+    }
+
+    /**
+     * Elimina todos los tokens de un usuario
+     */
+    @Transactional
+    public void deleteAllByUserId(Long userId) {
+        delete("user.id", userId);
     }
 }

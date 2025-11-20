@@ -10,7 +10,7 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "tipo_localizacion")
+@Table(name = "Tipo_de_localizacion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

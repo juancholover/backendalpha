@@ -10,11 +10,13 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "profesor")
+@Table(name = "profesor", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"empleado_id", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"empleado", "universidad"})
 @EntityListeners(AuditListener.class)
 public class Profesor extends AuditableEntity {
 
@@ -25,6 +27,10 @@ public class Profesor extends AuditableEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empleado_id", nullable = false, unique = true)
     private Empleado empleado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad; // Aislamiento multi-tenant
 
     @Column(name = "grado_academico", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

@@ -12,17 +12,24 @@ import upeu.edu.pe.shared.annotations.Normalize;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "persona")
+@Table(name = "persona", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"numero_documento", "universidad_id"}),
+    @UniqueConstraint(columnNames = {"email", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"universidad"})
 @EntityListeners(AuditListener.class)
 public class Persona extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad; // Aislamiento multi-tenant
 
     @Column(name = "nombres", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
