@@ -8,7 +8,6 @@ import upeu.edu.pe.academic.application.dto.CreateAutoridadDTO;
 import upeu.edu.pe.academic.application.dto.UpdateAutoridadDTO;
 import upeu.edu.pe.academic.application.mapper.AutoridadMapper;
 import upeu.edu.pe.academic.domain.entities.Autoridad;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.AutoridadRepository;
 import upeu.edu.pe.academic.domain.repositories.PersonaRepository;
 import upeu.edu.pe.academic.domain.repositories.TipoAutoridadRepository;

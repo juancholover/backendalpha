@@ -9,15 +9,13 @@ import upeu.edu.pe.academic.domain.entities.Universidad;
 public interface UniversidadMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "localizacionPrincipal.id", source = "localizacionPrincipalId")
     Universidad toEntity(UniversidadRequestDTO dto);
 
-    @Mapping(target = "localizacionPrincipalId", source = "localizacionPrincipal.id")
-    @Mapping(target = "localizacionPrincipalNombre", source = "localizacionPrincipal.nombre")
+    @Mapping(target = "localizacionPrincipalId", ignore = true)
+    @Mapping(target = "localizacionPrincipalNombre", ignore = true)
     UniversidadResponseDTO toResponseDTO(Universidad entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "localizacionPrincipal.id", source = "localizacionPrincipalId")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(UniversidadRequestDTO dto, @MappingTarget Universidad entity);
 }

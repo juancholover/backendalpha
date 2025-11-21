@@ -46,13 +46,6 @@ public class UniversidadService {
             throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
         }
 
-        // Validar que localizacionPrincipalId existe (si se proporciona)
-        if (dto.getLocalizacionPrincipalId() != null) {
-            localizacionRepository.findByIdOptional(dto.getLocalizacionPrincipalId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                    "Localización no encontrada con ID: " + dto.getLocalizacionPrincipalId()));
-        }
-
         Universidad universidad = universidadMapper.toEntity(dto);
         universidadRepository.persist(universidad);
         return universidadMapper.toResponseDTO(universidad);
@@ -136,13 +129,6 @@ public class UniversidadService {
         if (!universidad.getRuc().equals(dto.getRuc()) && 
             universidadRepository.existsByRuc(dto.getRuc())) {
             throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
-        }
-
-        // Validar que localizacionPrincipalId existe (si se proporciona)
-        if (dto.getLocalizacionPrincipalId() != null) {
-            localizacionRepository.findByIdOptional(dto.getLocalizacionPrincipalId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                    "Localización no encontrada con ID: " + dto.getLocalizacionPrincipalId()));
         }
 
         universidadMapper.updateEntityFromDto(dto, universidad);

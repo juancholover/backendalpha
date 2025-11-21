@@ -10,7 +10,6 @@ import upeu.edu.pe.finance.application.dto.CuentaCorrienteAlumnoResponseDTO;
 import upeu.edu.pe.finance.domain.services.CuentaCorrienteAlumnoService;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Path("/api/v1/cuentas-corrientes")

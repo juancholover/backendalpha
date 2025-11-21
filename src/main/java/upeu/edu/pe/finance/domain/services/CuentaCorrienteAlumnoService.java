@@ -12,7 +12,6 @@ import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @ApplicationScoped

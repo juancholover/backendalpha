@@ -25,10 +25,10 @@ public interface EmpleadoMapper {
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Mapping(target = "personaId", source = "persona.id")
-    @Mapping(target = "nombreCompleto", expression = "java(getNombreCompleto(entity))")
+    @Mapping(target = "nombreCompleto", ignore = true)
     @Mapping(target = "unidadOrganizativaId", source = "unidadOrganizativa.id")
     @Mapping(target = "unidadOrganizativaNombre", source = "unidadOrganizativa.nombre")
-    @Mapping(target = "aniosServicio", expression = "java(calculateAniosServicio(entity))")
+    @Mapping(target = "aniosServicio", ignore = true)
     EmpleadoResponseDTO toResponseDTO(Empleado entity);
 
     @Mapping(target = "id", ignore = true)
@@ -68,9 +68,9 @@ public interface EmpleadoMapper {
     }
 
     /**
-     * Obtiene el nombre completo de la persona
+     * Obtiene el nombre completo de la persona (método helper)
      */
-    default String getNombreCompleto(Empleado empleado) {
+    static String getNombreCompleto(Empleado empleado) {
         if (empleado == null || empleado.getPersona() == null) {
             return null;
         }
@@ -83,9 +83,9 @@ public interface EmpleadoMapper {
     }
 
     /**
-     * Calcula los años de servicio desde la fecha de ingreso
+     * Calcula los años de servicio desde la fecha de ingreso (método helper)
      */
-    default Integer calculateAniosServicio(Empleado empleado) {
+    static Integer calculateAniosServicio(Empleado empleado) {
         if (empleado == null || empleado.getFechaIngreso() == null) {
             return null;
         }

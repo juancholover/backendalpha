@@ -56,4 +56,7 @@ public class Localizacion extends AuditableEntity {
     @Column(name = "email", length = 100)
     @Normalize(Normalize.NormalizeType.LOWERCASE)
     private String email;
+
+    @Column(name = "es_principal", nullable = false)
+    private Boolean esPrincipal = false; // TRUE si es la sede principal de la universidad
 }

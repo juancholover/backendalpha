@@ -48,10 +48,6 @@ public class Universidad extends AuditableEntity {
     @Column(name = "logo_url", length = 500)
     private String logoUrl; // URL del logo institucional
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "localizacion_principal_id")
-    private Localizacion localizacionPrincipal; // Sede principal (dirección/teléfono/email)
-
     @Column(name = "zona_horaria", length = 50)
     private String zonaHoraria;
 

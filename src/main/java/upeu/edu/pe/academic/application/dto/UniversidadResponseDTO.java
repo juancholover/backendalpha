@@ -14,8 +14,11 @@ public class UniversidadResponseDTO {
     private String tipo; // PUBLICA, PRIVADA, CONSORCIO
     private String website;
     private String logoUrl;
-    private Long localizacionPrincipalId;
-    private String localizacionPrincipalNombre; // Denormalizado
+    
+    // NOTA: Para obtener la sede principal, consultar Localizacion donde esPrincipal=true y universidad_id=this.id
+    private Long localizacionPrincipalId; // Siempre será null - campo obsoleto (mantener por compatibilidad)
+    private String localizacionPrincipalNombre; // Siempre será null - campo obsoleto
+    
     private String zonaHoraria;
     private String locale;
     private String configuracion;

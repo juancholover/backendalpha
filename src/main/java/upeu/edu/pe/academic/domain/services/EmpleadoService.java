@@ -83,7 +83,7 @@ public class EmpleadoService {
         }
 
         empleadoRepository.persist(empleado);
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -91,7 +91,7 @@ public class EmpleadoService {
      */
     public List<EmpleadoResponseDTO> findAll() {
         return empleadoRepository.listAll().stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -100,7 +100,7 @@ public class EmpleadoService {
      */
     public List<EmpleadoResponseDTO> findAllActive() {
         return empleadoRepository.find("estadoLaboral", "ACTIVO").list().stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -110,7 +110,7 @@ public class EmpleadoService {
     public EmpleadoResponseDTO findById(Long id) {
         Empleado empleado = empleadoRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con ID: " + id));
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -119,7 +119,7 @@ public class EmpleadoService {
     public EmpleadoResponseDTO findByCodigoEmpleado(String codigo) {
         Empleado empleado = empleadoRepository.findByCodigoEmpleado(codigo)
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con código: " + codigo));
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -128,7 +128,7 @@ public class EmpleadoService {
     public EmpleadoResponseDTO findByPersona(Long personaId) {
         Empleado empleado = empleadoRepository.findByPersona(personaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado para persona ID: " + personaId));
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -136,7 +136,7 @@ public class EmpleadoService {
      */
     public List<EmpleadoResponseDTO> findByEstadoLaboral(String estado) {
         return empleadoRepository.find("estadoLaboral", estado).list().stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -145,7 +145,7 @@ public class EmpleadoService {
      */
     public List<EmpleadoResponseDTO> findByTipoContrato(String tipo) {
         return empleadoRepository.find("tipoContrato", tipo).list().stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -154,7 +154,7 @@ public class EmpleadoService {
      */
     public List<EmpleadoResponseDTO> findByUnidadOrganizativa(Long unidadId) {
         return empleadoRepository.findByUnidadOrganizativa(unidadId).stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -169,7 +169,7 @@ public class EmpleadoService {
             "LOWER(persona.apellidoMaterno) LIKE LOWER(?1)",
             "%" + query + "%"
         ).stream()
-                .map(empleadoMapper::toResponseDTO)
+                .map(this::enrichDTO)
                 .collect(Collectors.toList());
     }
 
@@ -200,7 +200,7 @@ public class EmpleadoService {
         }
 
         empleadoMapper.updateEntityFromDto(dto, empleado);
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -223,7 +223,7 @@ public class EmpleadoService {
             empleado.setFechaCese(LocalDate.now());
         }
 
-        return empleadoMapper.toResponseDTO(empleado);
+        return enrichDTO(empleado);
     }
 
     /**
@@ -239,5 +239,31 @@ public class EmpleadoService {
         if (empleado.getFechaCese() == null) {
             empleado.setFechaCese(LocalDate.now());
         }
+    }
+    
+    /**
+     * Enriquece el DTO con campos calculados (nombreCompleto y aniosServicio)
+     */
+    private EmpleadoResponseDTO enrichDTO(Empleado empleado) {
+        EmpleadoResponseDTO dto = empleadoMapper.toResponseDTO(empleado);
+        return new EmpleadoResponseDTO(
+            dto.id(),
+            dto.personaId(),
+            EmpleadoMapper.getNombreCompleto(empleado),
+            dto.unidadOrganizativaId(),
+            dto.unidadOrganizativaNombre(),
+            dto.codigoEmpleado(),
+            dto.fechaIngreso(),
+            dto.fechaCese(),
+            dto.cargo(),
+            dto.tipoContrato(),
+            dto.regimenLaboral(),
+            dto.salario(),
+            dto.estadoLaboral(),
+            EmpleadoMapper.calculateAniosServicio(empleado),
+            dto.active(),
+            dto.createdAt(),
+            dto.updatedAt()
+        );
     }
 }

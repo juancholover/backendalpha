@@ -35,8 +35,6 @@ public class UniversidadRequestDTO {
     @Size(max = 500, message = "La URL del logo no puede exceder 500 caracteres")
     private String logoUrl;
 
-    private Long localizacionPrincipalId; // FK a Localizacion (sede principal)
-
     @Size(max = 50, message = "La zona horaria no puede exceder 50 caracteres")
     private String zonaHoraria;
 
