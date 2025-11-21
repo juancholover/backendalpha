@@ -6,39 +6,42 @@ import lombok.Data;
 @Data
 public class UniversidadRequestDTO {
 
+    @NotBlank(message = "El código de la universidad es obligatorio")
+    @Size(max = 20, message = "El código no puede exceder 20 caracteres")
+    private String codigo;
+
     @NotBlank(message = "El nombre de la universidad es obligatorio")
-    @Size(max = 200, message = "El nombre no puede exceder 200 caracteres")
+    @Size(max = 255, message = "El nombre no puede exceder 255 caracteres")
     private String nombre;
 
-    @NotBlank(message = "La sigla es obligatoria")
-    @Size(max = 20, message = "La sigla no puede exceder 20 caracteres")
-    private String sigla;
+    @NotBlank(message = "El dominio es obligatorio")
+    @Size(max = 50, message = "El dominio no puede exceder 50 caracteres")
+    @Pattern(regexp = "^[a-z0-9.-]+$", message = "El dominio debe contener solo letras minúsculas, números, puntos y guiones")
+    private String dominio;
 
     @NotBlank(message = "El RUC es obligatorio")
-    @Pattern(regexp = "\\d{11}", message = "El RUC debe tener 11 dígitos")
+    @Size(min = 11, max = 11, message = "El RUC debe tener exactamente 11 dígitos")
+    @Pattern(regexp = "^[0-9]{11}$", message = "El RUC debe contener solo números")
     private String ruc;
 
     @NotBlank(message = "El tipo de universidad es obligatorio")
-    @Pattern(regexp = "PUBLICA|PRIVADA", message = "El tipo debe ser PUBLICA o PRIVADA")
+    @Pattern(regexp = "^(PUBLICA|PRIVADA|CONSORCIO)$", message = "El tipo debe ser PUBLICA, PRIVADA o CONSORCIO")
     private String tipo;
 
-    @NotBlank(message = "La dirección es obligatoria")
-    @Size(max = 255, message = "La dirección no puede exceder 255 caracteres")
-    private String direccion;
-
-    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
-    private String telefono;
-
-    @Email(message = "El email debe ser válido")
-    @Size(max = 100, message = "El email no puede exceder 100 caracteres")
-    private String email;
-
-    @Size(max = 255, message = "El sitio web no puede exceder 255 caracteres")
+    @Size(max = 255, message = "El website no puede exceder 255 caracteres")
+    @Pattern(regexp = "^(https?://)?[a-z0-9.-]+\\.[a-z]{2,}.*$", message = "El website debe ser una URL válida", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String website;
 
-    @Size(max = 255, message = "La URL del logo no puede exceder 255 caracteres")
+    @Size(max = 500, message = "La URL del logo no puede exceder 500 caracteres")
     private String logoUrl;
 
-    @Size(max = 100, message = "El nombre del rector no puede exceder 100 caracteres")
-    private String rector;
+    private Long localizacionPrincipalId; // FK a Localizacion (sede principal)
+
+    @Size(max = 50, message = "La zona horaria no puede exceder 50 caracteres")
+    private String zonaHoraria;
+
+    @Size(max = 20, message = "El locale no puede exceder 20 caracteres")
+    private String locale;
+
+    private String configuracion;
 }

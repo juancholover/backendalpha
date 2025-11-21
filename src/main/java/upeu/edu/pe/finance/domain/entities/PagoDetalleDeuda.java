@@ -16,12 +16,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"pago", "deuda"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class PagoDetalleDeuda extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

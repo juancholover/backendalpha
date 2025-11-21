@@ -23,8 +23,12 @@ public interface PagoDetalleDeudaMapper {
     @Mapping(target = "fechaReversion", ignore = true)
     @Mapping(target = "motivoReversion", ignore = true)
     @Mapping(target = "aplicadoPor", ignore = true)
+    @Mapping(target = "observaciones", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     PagoDetalleDeuda toEntity(PagoDetalleDeudaRequestDTO dto);
 
     @Mapping(target = "pagoId", source = "pago.id")
@@ -34,6 +38,7 @@ public interface PagoDetalleDeudaMapper {
     @Mapping(target = "deudaNumeroDocumento", source = "deuda.numeroCuota")
     @Mapping(target = "deudaConcepto", source = "deuda.concepto")
     @Mapping(target = "deudaMonto", source = "deuda.monto")
+    @Mapping(target = "revertidoPor", source = "updatedBy")
     PagoDetalleDeudaResponseDTO toResponseDTO(PagoDetalleDeuda entity);
 
     List<PagoDetalleDeudaResponseDTO> toResponseDTOList(List<PagoDetalleDeuda> entities);

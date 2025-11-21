@@ -17,32 +17,26 @@ public interface CursoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "planAcademico", ignore = true) // Se asigna manualmente en el service
-    @Mapping(target = "prerequisito", ignore = true) // Se asigna manualmente en el service
+    @Mapping(target = "universidad", ignore = true)
+    @Mapping(target = "planAcademico", ignore = true) 
     Curso toEntity(CursoRequestDTO dto);
 
-    /**
-     * Actualiza una entidad Curso existente desde CursoRequestDTO
-     */
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "planAcademico", ignore = true)
-    @Mapping(target = "prerequisito", ignore = true)
     void updateEntityFromDto(CursoRequestDTO dto, @MappingTarget Curso entity);
 
-    /**
-     * Convierte Curso a CursoResponseDTO
-     */
+    @Mapping(target = "universidadId", source = "universidad.id")
+    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "planAcademicoId", source = "planAcademico.id")
     @Mapping(target = "planAcademicoCodigo", source = "planAcademico.codigo")
     @Mapping(target = "planAcademicoNombre", source = "planAcademico.nombre")
     @Mapping(target = "programaAcademicoNombre", source = "planAcademico.programaAcademico.nombre")
-    @Mapping(target = "prerequisitoId", source = "prerequisito.id")
-    @Mapping(target = "prerequisitoNombre", source = "prerequisito.nombre")
-    @Mapping(target = "prerequisitoCodigo", source = "prerequisito.codigoCurso")
     CursoResponseDTO toResponseDTO(Curso entity);
 }

@@ -25,7 +25,6 @@ public interface CursoOfertadoMapper {
     @Mapping(target = "vacantesDisponibles", ignore = true)
     @Mapping(target = "matriculas", ignore = true)
     @Mapping(target = "evaluacionCriterios", ignore = true)
-    @Mapping(target = "horario", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -60,7 +59,6 @@ public interface CursoOfertadoMapper {
     @Mapping(target = "vacantesDisponibles", ignore = true)
     @Mapping(target = "matriculas", ignore = true)
     @Mapping(target = "evaluacionCriterios", ignore = true)
-    @Mapping(target = "horario", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -70,11 +68,10 @@ public interface CursoOfertadoMapper {
 
     default String getProfesorNombre(CursoOfertado cursoOfertado) {
         if (cursoOfertado == null || cursoOfertado.getProfesor() == null || 
-            cursoOfertado.getProfesor().getEmpleado() == null || 
-            cursoOfertado.getProfesor().getEmpleado().getPersona() == null) {
+            cursoOfertado.getProfesor().getPersona() == null) {
             return null;
         }
-        var p = cursoOfertado.getProfesor().getEmpleado().getPersona();
+        var p = cursoOfertado.getProfesor().getPersona();
         return String.format("%s %s %s", 
             p.getApellidoPaterno() != null ? p.getApellidoPaterno() : "",
             p.getApellidoMaterno() != null ? p.getApellidoMaterno() : "",

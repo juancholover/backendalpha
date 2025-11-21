@@ -1,39 +1,45 @@
 package upeu.edu.pe.security.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import upeu.edu.pe.academic.domain.entities.Persona;
 import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.shared.entities.AuditableEntity;
+import upeu.edu.pe.shared.listeners.AuditListener;
 
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Entity
 @Table(name = "auth_usuario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "username"),
+    @UniqueConstraint(columnNames = {"username", "universidad_id"}),
     @UniqueConstraint(columnNames = "email"),
     @UniqueConstraint(columnNames = "persona_id")
 })
+@EntityListeners(AuditListener.class)
 public class AuthUsuario extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "persona_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id", nullable = false, unique = true)
     private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rolEntity; // Relación con la tabla rol
+    private Rol rol;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; // Aislamiento multi-tenant
+    private Universidad universidad;
 
     @Column(nullable = false, length = 50)
     private String username;
@@ -44,11 +50,8 @@ public class AuthUsuario extends AuditableEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(length = 50)
-    private String rol; // ESTUDIANTE, PROFESOR, ADMIN, EMPLEADO
-
     @Column(length = 20)
-    private String estado; // ACTIVO, BLOQUEADO, SUSPENDIDO
+    private String estado = "ACTIVO";
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
@@ -70,17 +73,4 @@ public class AuthUsuario extends AuditableEntity {
 
     @Column(name = "fecha_ultimo_cambio_password")
     private LocalDateTime fechaUltimoCambioPassword;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.intentosFallidos == null) {
-            this.intentosFallidos = 0;
-        }
-        if (this.requiereCambioPassword == null) {
-            this.requiereCambioPassword = false;
-        }
-        if (this.estado == null) {
-            this.estado = "ACTIVO";
-        }
-    }
 }

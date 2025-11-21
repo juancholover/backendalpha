@@ -17,6 +17,7 @@ import java.util.List;
 public interface ProgramaAcademicoMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidadOrganizativa", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -33,6 +34,7 @@ public interface ProgramaAcademicoMapper {
     List<ProgramaAcademicoResponseDTO> toResponseDTOList(List<ProgramaAcademico> entities);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidadOrganizativa", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

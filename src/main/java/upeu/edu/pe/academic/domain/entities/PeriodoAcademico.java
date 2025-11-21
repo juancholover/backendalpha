@@ -20,12 +20,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"universidad", "cursosOfertados"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class PeriodoAcademico extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

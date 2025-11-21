@@ -18,12 +18,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"matricula", "criterio"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class EvaluacionNota extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,20 +54,16 @@ public class EvaluacionNota extends AuditableEntity {
     private LocalDateTime fechaCalificacion; // Cuándo se registró la nota
 
     @Column(name = "estado", length = 20)
-    private String estado; // PENDIENTE, CALIFICADO, AUSENTE, NSP (No Se Presentó)
+    private String estado = "PENDIENTE"; // PENDIENTE, CALIFICADO, AUSENTE, NSP (No Se Presentó)
 
-    /**
-     * Constructor de conveniencia
-     */
+   
     public EvaluacionNota(Matricula matricula, EvaluacionCriterio criterio) {
         this.matricula = matricula;
         this.criterio = criterio;
         this.estado = "PENDIENTE";
     }
 
-    /**
-     * Constructor con nota
-     */
+
     public EvaluacionNota(Matricula matricula, EvaluacionCriterio criterio, BigDecimal nota) {
         this.matricula = matricula;
         this.criterio = criterio;
@@ -74,23 +71,6 @@ public class EvaluacionNota extends AuditableEntity {
         this.notaFinal = nota;
         this.estado = "CALIFICADO";
         this.fechaCalificacion = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (this.estado == null) {
-            this.estado = "PENDIENTE";
-        }
-        calcularNotaFinal();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        calcularNotaFinal();
-        if (this.nota != null && "PENDIENTE".equals(this.estado)) {
-            this.estado = "CALIFICADO";
-            this.fechaCalificacion = LocalDateTime.now();
-        }
     }
 
     /**
@@ -107,11 +87,23 @@ public class EvaluacionNota extends AuditableEntity {
     }
 
     /**
-     * Registra una nota de recuperación
+     * Hook que se ejecuta automáticamente antes de INSERT y UPDATE
+     * para garantizar que notaFinal siempre esté sincronizada
      */
+    @PrePersist
+    @PreUpdate
+    public void calcularNotaFinalAutomatico() {
+        calcularNotaFinal();
+    }
+
+
     public void registrarNotaRecuperacion(BigDecimal notaRecuperacion) {
         this.notaRecuperacion = notaRecuperacion;
         calcularNotaFinal();
+        if (this.estado == null || "PENDIENTE".equals(this.estado)) {
+            this.estado = "CALIFICADO";
+            this.fechaCalificacion = LocalDateTime.now();
+        }
     }
 
     /**

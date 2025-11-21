@@ -17,12 +17,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"rolPermisos"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Permiso extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "nombre_clave", unique = true, nullable = false, length = 100)

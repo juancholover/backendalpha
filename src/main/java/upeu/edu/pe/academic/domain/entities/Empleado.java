@@ -9,17 +9,18 @@ import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "empleado", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"codigo_empleado", "universidad_id"}),
-    @UniqueConstraint(columnNames = {"persona_id", "universidad_id"})
+    @UniqueConstraint(columnNames = {"persona_id", "universidad_id"}) // Una persona solo puede ser empleado una vez por uni
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"persona", "universidad", "unidadOrganizativa"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Empleado extends AuditableEntity {
 
@@ -39,7 +40,7 @@ public class Empleado extends AuditableEntity {
     @JoinColumn(name = "unidad_organizativa_id")
     private UnidadOrganizativa unidadOrganizativa;
 
-    @Column(name = "codigo_empleado", unique = true, nullable = false, length = 20)
+    @Column(name = "codigo_empleado", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigoEmpleado;
 
@@ -61,8 +62,9 @@ public class Empleado extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String regimenLaboral;
 
-    @Column(name = "salario")
-    private Double salario;
+    // IMPORTANTE: BigDecimal para dinero (precisión decimal exacta)
+    @Column(name = "salario", precision = 10, scale = 2)
+    private BigDecimal salario;
 
     @Column(name = "estado_laboral", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

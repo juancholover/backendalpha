@@ -64,22 +64,23 @@ public class UniversidadController {
     }
 
     @GET
-    @Path("/ruc/{ruc}")
-    @Operation(summary = "Buscar universidad por RUC", description = "Obtiene una universidad por su RUC")
+    @Path("/codigo/{codigo}")
+    @Operation(summary = "Buscar universidad por código", description = "Obtiene una universidad por su código")
     @APIResponse(responseCode = "200", description = "Universidad encontrada")
     @APIResponse(responseCode = "404", description = "Universidad no encontrada")
-    public Response findByRuc(@PathParam("ruc") String ruc) {
-        UniversidadResponseDTO universidad = universidadService.findByRuc(ruc);
+    public Response findByCodigo(@PathParam("codigo") String codigo) {
+        UniversidadResponseDTO universidad = universidadService.findByCodigo(codigo);
         return Response.ok(ApiResponse.success("Universidad encontrada", universidad)).build();
     }
 
     @GET
-    @Path("/tipo/{tipo}")
-    @Operation(summary = "Buscar universidades por tipo", description = "Filtra universidades por tipo (PUBLICA/PRIVADA)")
-    @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
-    public Response findByTipo(@PathParam("tipo") String tipo) {
-        List<UniversidadResponseDTO> universidades = universidadService.findByTipo(tipo);
-        return Response.ok(ApiResponse.success("Universidades filtradas por tipo", universidades)).build();
+    @Path("/dominio/{dominio}")
+    @Operation(summary = "Buscar universidad por dominio", description = "Obtiene una universidad por su dominio")
+    @APIResponse(responseCode = "200", description = "Universidad encontrada")
+    @APIResponse(responseCode = "404", description = "Universidad no encontrada")
+    public Response findByDominio(@PathParam("dominio") String dominio) {
+        UniversidadResponseDTO universidad = universidadService.findByDominio(dominio);
+        return Response.ok(ApiResponse.success("Universidad encontrada", universidad)).build();
     }
 
     @GET

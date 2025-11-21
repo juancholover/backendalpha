@@ -14,7 +14,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Universidad extends AuditableEntity {
 
@@ -22,39 +22,42 @@ public class Universidad extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 200)
+    @Column(name = "codigo", unique = true, nullable = false, length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String codigo;
+
+    @Column(name = "nombre", nullable = false, length = 255)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre;
 
-    @Column(name = "sigla", length = 20)
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String sigla;
-
-    @Column(name = "ruc", unique = true, length = 11)
-    private String ruc;
-
-    @Column(name = "tipo", length = 50)
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String tipo; // PUBLICA, PRIVADA
-
-    @Column(name = "direccion", length = 255)
-    @Normalize(Normalize.NormalizeType.SPACES_ONLY)
-    private String direccion;
-
-    @Column(name = "telefono", length = 20)
-    private String telefono;
-
-    @Column(name = "email", length = 100)
+    @Column(name = "dominio", unique = true, length = 50)
     @Normalize(Normalize.NormalizeType.LOWERCASE)
-    private String email;
+    private String dominio;
+
+    @Column(name = "ruc", unique = true, nullable = false, length = 11)
+    private String ruc; // RUC para Perú (identificación tributaria)
+
+    @Column(name = "tipo", nullable = false, length = 50)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String tipo; // PUBLICA, PRIVADA, CONSORCIO
 
     @Column(name = "website", length = 255)
-    private String website;
+    @Normalize(Normalize.NormalizeType.LOWERCASE)
+    private String website; // URL oficial: https://upeu.edu.pe
 
-    @Column(name = "logo_url", length = 255)
-    private String logoUrl;
+    @Column(name = "logo_url", length = 500)
+    private String logoUrl; // URL del logo institucional
 
-    @Column(name = "rector", length = 100)
-    @Normalize(Normalize.NormalizeType.TITLE_CASE)
-    private String rector;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "localizacion_principal_id")
+    private Localizacion localizacionPrincipal; // Sede principal (dirección/teléfono/email)
+
+    @Column(name = "zona_horaria", length = 50)
+    private String zonaHoraria;
+
+    @Column(name = "locale", length = 20)
+    private String locale; 
+
+    @Column(name = "configuracion", columnDefinition = "jsonb") 
+    private String configuracion;
 }

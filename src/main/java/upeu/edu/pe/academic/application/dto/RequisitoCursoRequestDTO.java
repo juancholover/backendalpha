@@ -2,10 +2,12 @@ package upeu.edu.pe.academic.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.DecimalMin;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.Min;
 
 public class RequisitoCursoRequestDTO {
+
+    @NotNull(message = "El ID de la universidad es obligatorio")
+    private Long universidadId;
 
     @NotNull(message = "El ID del curso es obligatorio")
     private Long cursoId;
@@ -19,14 +21,17 @@ public class RequisitoCursoRequestDTO {
     @NotNull(message = "El campo esObligatorio es obligatorio")
     private Boolean esObligatorio;
 
-    @DecimalMin(value = "0.0", message = "La nota mínima debe ser mayor o igual a 0")
-    private BigDecimal notaMinimaRequerida;
+    @Min(value = 0, message = "La nota mínima debe ser mayor o igual a 0")
+    private Integer notaMinimaRequerida;
+
+    private String observacion;
 
     // Constructors
     public RequisitoCursoRequestDTO() {
     }
 
-    public RequisitoCursoRequestDTO(Long cursoId, Long cursoRequisitoId, String tipoRequisito, Boolean esObligatorio) {
+    public RequisitoCursoRequestDTO(Long universidadId, Long cursoId, Long cursoRequisitoId, String tipoRequisito, Boolean esObligatorio) {
+        this.universidadId = universidadId;
         this.cursoId = cursoId;
         this.cursoRequisitoId = cursoRequisitoId;
         this.tipoRequisito = tipoRequisito;
@@ -34,6 +39,14 @@ public class RequisitoCursoRequestDTO {
     }
 
     // Getters and Setters
+    public Long getUniversidadId() {
+        return universidadId;
+    }
+
+    public void setUniversidadId(Long universidadId) {
+        this.universidadId = universidadId;
+    }
+
     public Long getCursoId() {
         return cursoId;
     }
@@ -66,11 +79,19 @@ public class RequisitoCursoRequestDTO {
         this.esObligatorio = esObligatorio;
     }
 
-    public BigDecimal getNotaMinimaRequerida() {
+    public Integer getNotaMinimaRequerida() {
         return notaMinimaRequerida;
     }
 
-    public void setNotaMinimaRequerida(BigDecimal notaMinimaRequerida) {
+    public void setNotaMinimaRequerida(Integer notaMinimaRequerida) {
         this.notaMinimaRequerida = notaMinimaRequerida;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 }

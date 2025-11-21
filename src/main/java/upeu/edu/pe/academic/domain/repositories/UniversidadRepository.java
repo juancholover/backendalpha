@@ -11,17 +11,17 @@ import java.util.Optional;
 public class UniversidadRepository implements PanacheRepositoryBase<Universidad, Long> {
 
     /**
-     * Buscar universidad por RUC
+     * Buscar universidad por código
      */
-    public Optional<Universidad> findByRuc(String ruc) {
-        return find("ruc = ?1 and active = true", ruc).firstResultOptional();
+    public Optional<Universidad> findByCodigo(String codigo) {
+        return find("codigo = ?1 and active = true", codigo).firstResultOptional();
     }
 
     /**
-     * Buscar universidad por sigla
+     * Buscar universidad por dominio
      */
-    public Optional<Universidad> findBySigla(String sigla) {
-        return find("sigla = ?1 and active = true", sigla).firstResultOptional();
+    public Optional<Universidad> findByDominio(String dominio) {
+        return find("dominio = ?1 and active = true", dominio).firstResultOptional();
     }
 
     /**
@@ -32,10 +32,38 @@ public class UniversidadRepository implements PanacheRepositoryBase<Universidad,
     }
 
     /**
-     * Buscar universidades por tipo (PUBLICA/PRIVADA)
+     * Verificar si existe código (para validaciones)
      */
-    public List<Universidad> findByTipo(String tipo) {
-        return find("tipo = ?1 and active = true", tipo).list();
+    public boolean existsByCodigo(String codigo) {
+        return count("codigo = ?1 and active = true", codigo) > 0;
+    }
+
+    /**
+     * Verificar si existe código excluyendo un ID específico
+     */
+    public boolean existsByCodigoAndIdNot(String codigo, Long id) {
+        return count("codigo = ?1 and id != ?2 and active = true", codigo, id) > 0;
+    }
+
+    /**
+     * Verificar si existe dominio (para validaciones)
+     */
+    public boolean existsByDominio(String dominio) {
+        return count("dominio = ?1 and active = true", dominio) > 0;
+    }
+
+    /**
+     * Verificar si existe dominio excluyendo un ID específico
+     */
+    public boolean existsByDominioAndIdNot(String dominio, Long id) {
+        return count("dominio = ?1 and id != ?2 and active = true", dominio, id) > 0;
+    }
+
+    /**
+     * Buscar universidad por RUC
+     */
+    public Optional<Universidad> findByRuc(String ruc) {
+        return find("ruc = ?1 and active = true", ruc).firstResultOptional();
     }
 
     /**

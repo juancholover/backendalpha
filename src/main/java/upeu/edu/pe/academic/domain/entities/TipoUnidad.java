@@ -10,11 +10,13 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "tipo_unidad")
+@Table(name = "tipo_unidad", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"nombre", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class TipoUnidad extends AuditableEntity {
 
@@ -22,7 +24,11 @@ public class TipoUnidad extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, unique = true, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
+
+    @Column(name = "nombre", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String nombre; // FACULTAD, ESCUELA, DEPARTAMENTO, INSTITUTO, etc.
 

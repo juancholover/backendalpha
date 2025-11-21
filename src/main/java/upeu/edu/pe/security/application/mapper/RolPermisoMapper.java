@@ -18,8 +18,11 @@ public interface RolPermisoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "rol", ignore = true)
     @Mapping(target = "permiso", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     RolPermiso toEntity(RolPermisoRequestDTO dto);
 
     @Mapping(target = "rolId", source = "rol.id")

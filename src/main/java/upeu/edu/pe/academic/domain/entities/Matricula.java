@@ -10,6 +10,7 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,13 +22,18 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"estudiante", "cursoOfertado", "evaluacionNotas"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Matricula extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estudiante_id", nullable = false)
@@ -35,49 +41,28 @@ public class Matricula extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_ofertado_id", nullable = false)
-    private CursoOfertado cursoOfertado; // Curso ofertado en el que está matriculado
-
-    // Campos legacy mantenidos para compatibilidad
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curso_id")
-    @Deprecated // Usar seccion.planAcademico.curso en su lugar
-    private Curso curso;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profesor_id")
-    @Deprecated // Usar seccion.profesor en su lugar
-    private Profesor profesor;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "semestre_id")
-    @Deprecated // Usar seccion.periodoAcademico en su lugar
-    private Semestre semestre;
-
-    @Column(name = "codigo_seccion", length = 10)
-    @Deprecated // Usar seccion.codigoSeccion en su lugar
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String codigoSeccion; // A, B, C
+    private CursoOfertado cursoOfertado;
 
     @Column(name = "fecha_matricula", nullable = false)
-    private LocalDate fechaMatricula;
+    private LocalDate fechaMatricula = LocalDate.now();
 
     @Column(name = "tipo_matricula", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String tipoMatricula; // REGULAR, EXTRAORDINARIA
+    private String tipoMatricula = "REGULAR"; // REGULAR, EXTRAORDINARIA
 
     @Column(name = "estado_matricula", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String estadoMatricula; // MATRICULADO, RETIRADO, ANULADO
+    private String estadoMatricula = "MATRICULADO"; // MATRICULADO, RETIRADO, ANULADO
 
     @Column(name = "fecha_retiro")
     private LocalDate fechaRetiro;
 
     @Column(name = "nota_final", precision = 5, scale = 2)
-    private BigDecimal notaFinal; // Calculada automáticamente desde las evaluaciones
+    private BigDecimal notaFinal; 
 
     @Column(name = "estado_aprobacion", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String estadoAprobacion; // APROBADO, DESAPROBADO, RETIRADO, PENDIENTE
+    private String estadoAprobacion = "PENDIENTE"; // APROBADO, DESAPROBADO, RETIRADO, PENDIENTE
 
     @Column(name = "inasistencias")
     private Integer inasistencias = 0;
@@ -89,7 +74,8 @@ public class Matricula extends AuditableEntity {
     /**
      * Constructor de conveniencia
      */
-    public Matricula(Estudiante estudiante, CursoOfertado cursoOfertado) {
+    public Matricula(Universidad universidad, Estudiante estudiante, CursoOfertado cursoOfertado) {
+        this.universidad = universidad;
         this.estudiante = estudiante;
         this.cursoOfertado = cursoOfertado;
         this.fechaMatricula = LocalDate.now();
@@ -97,25 +83,6 @@ public class Matricula extends AuditableEntity {
         this.tipoMatricula = "REGULAR";
         this.inasistencias = 0;
         this.estadoAprobacion = "PENDIENTE";
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (this.fechaMatricula == null) {
-            this.fechaMatricula = LocalDate.now();
-        }
-        if (this.estadoMatricula == null) {
-            this.estadoMatricula = "MATRICULADO";
-        }
-        if (this.tipoMatricula == null) {
-            this.tipoMatricula = "REGULAR";
-        }
-        if (this.inasistencias == null) {
-            this.inasistencias = 0;
-        }
-        if (this.estadoAprobacion == null) {
-            this.estadoAprobacion = "PENDIENTE";
-        }
     }
 
     /**
@@ -140,19 +107,19 @@ public class Matricula extends AuditableEntity {
         }
 
         if (pesoTotal > 0) {
-            this.notaFinal = notaTotal.divide(new BigDecimal(pesoTotal), 2, BigDecimal.ROUND_HALF_UP);
+            // Nota Final = Suma(Nota*Peso) / Suma(Pesos)
+            // Se usa RoundingMode.HALF_UP para redondeo estándar (10.5 -> 11, 10.4 -> 10)
+            this.notaFinal = notaTotal.divide(new BigDecimal(pesoTotal), 2, RoundingMode.HALF_UP);
             actualizarEstadoAprobacion();
         }
     }
 
-    /**
-     * Actualiza el estado de aprobación basado en la nota final
-     */
     private void actualizarEstadoAprobacion() {
         if ("RETIRADO".equals(this.estadoMatricula)) {
             this.estadoAprobacion = "RETIRADO";
         } else if (this.notaFinal != null) {
-            // Nota mínima aprobatoria es 11 (puede parametrizarse)
+            // Nota mínima aprobatoria parametrizable (ej. 11 o 13)
+            // Aquí asumimos 11 como base, pero debería venir de una configuración
             if (this.notaFinal.compareTo(new BigDecimal("11")) >= 0) {
                 this.estadoAprobacion = "APROBADO";
             } else {
@@ -160,10 +127,7 @@ public class Matricula extends AuditableEntity {
             }
         }
     }
-
-    /**
-     * Retira al estudiante del curso
-     */
+    
     public void retirar() {
         if ("RETIRADO".equals(this.estadoMatricula)) {
             throw new IllegalStateException("El estudiante ya está retirado");

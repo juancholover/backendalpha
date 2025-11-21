@@ -70,16 +70,16 @@ public class ProfesorController {
     }
 
     @GET
-    @Path("/empleado/{empleadoId}")
-    @Operation(summary = "Buscar profesor por empleado", description = "Obtiene el profesor asociado a un empleado")
+    @Path("/persona/{personaId}")
+    @Operation(summary = "Buscar profesor por persona", description = "Obtiene el profesor asociado a una persona")
     @APIResponses({
         @APIResponse(responseCode = "200", description = "Profesor encontrado"),
-        @APIResponse(responseCode = "404", description = "No se encontró profesor para este empleado")
+        @APIResponse(responseCode = "404", description = "No se encontró profesor para esta persona")
     })
-    public Response buscarPorEmpleado(
-            @Parameter(description = "ID del empleado", required = true, example = "1")
-            @PathParam("empleadoId") Long empleadoId) {
-        ProfesorResponseDTO profesor = profesorService.buscarPorEmpleado(empleadoId);
+    public Response buscarPorPersona(
+            @Parameter(description = "ID de la persona", required = true, example = "1")
+            @PathParam("personaId") Long personaId) {
+        ProfesorResponseDTO profesor = profesorService.buscarPorPersona(personaId);
         ApiResponse<ProfesorResponseDTO> response = new ApiResponse<>(
             true,
             "Profesor encontrado",

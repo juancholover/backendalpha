@@ -11,10 +11,10 @@ import java.util.Optional;
 public class ProfesorRepository implements PanacheRepositoryBase<Profesor, Long> {
 
     /**
-     * Buscar profesor por empleado
+     * Buscar profesor por persona
      */
-    public Optional<Profesor> findByEmpleado(Long empleadoId) {
-        return find("empleado.id = ?1 and active = true", empleadoId).firstResultOptional();
+    public Optional<Profesor> findByPersona(Long personaId) {
+        return find("persona.id = ?1 and active = true", personaId).firstResultOptional();
     }
 
     /**
@@ -67,10 +67,10 @@ public class ProfesorRepository implements PanacheRepositoryBase<Profesor, Long>
     }
 
     /**
-     * Verificar si un empleado ya es profesor
+     * Verificar si una persona ya es profesor
      */
-    public boolean existsByEmpleado(Long empleadoId) {
-        return count("empleado.id = ?1 and active = true", empleadoId) > 0;
+    public boolean existsByPersona(Long personaId) {
+        return count("persona.id = ?1 and active = true", personaId) > 0;
     }
 
     /**

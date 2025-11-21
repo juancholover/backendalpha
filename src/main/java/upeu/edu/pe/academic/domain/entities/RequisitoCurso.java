@@ -11,18 +11,23 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "requisito_curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_id", "curso_requisito_id", "tipo_requisito"})
+    @UniqueConstraint(columnNames = {"curso_id", "curso_requisito_id", "tipo_requisito", "universidad_id"})
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"curso", "cursoRequisito"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class RequisitoCurso extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
@@ -49,7 +54,8 @@ public class RequisitoCurso extends AuditableEntity {
     /**
      * Constructor de conveniencia para prerrequisito simple
      */
-    public RequisitoCurso(Curso curso, Curso cursoRequisito, String tipoRequisito) {
+    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito) {
+        this.universidad = universidad;
         this.curso = curso;
         this.cursoRequisito = cursoRequisito;
         this.tipoRequisito = tipoRequisito;
@@ -59,8 +65,9 @@ public class RequisitoCurso extends AuditableEntity {
     /**
      * Constructor completo
      */
-    public RequisitoCurso(Curso curso, Curso cursoRequisito, String tipoRequisito, 
+    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito, 
                          Boolean esObligatorio, Integer notaMinimaRequerida) {
+        this.universidad = universidad;
         this.curso = curso;
         this.cursoRequisito = cursoRequisito;
         this.tipoRequisito = tipoRequisito;

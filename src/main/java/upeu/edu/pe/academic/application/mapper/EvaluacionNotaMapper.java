@@ -23,6 +23,7 @@ public interface EvaluacionNotaMapper {
     @Mapping(target = "fechaCalificacion", ignore = true)
     @Mapping(target = "fechaEvaluacion", ignore = true)
     @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "observacion", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -37,6 +38,8 @@ public interface EvaluacionNotaMapper {
     @Mapping(target = "criterioId", source = "criterio.id")
     @Mapping(target = "criterioNombre", source = "criterio.nombre")
     @Mapping(target = "criterioPeso", source = "criterio.peso")
+    @Mapping(target = "observaciones", source = "observacion")
+    @Mapping(target = "calificadoPor", source = "createdBy")
     @Mapping(target = "estaAprobado", ignore = true)
     EvaluacionNotaResponseDTO toResponseDTO(EvaluacionNota entity);
 
@@ -61,6 +64,7 @@ public interface EvaluacionNotaMapper {
     @Mapping(target = "fechaCalificacion", ignore = true)
     @Mapping(target = "fechaEvaluacion", ignore = true)
     @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "observacion", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

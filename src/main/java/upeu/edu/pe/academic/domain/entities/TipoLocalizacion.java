@@ -10,11 +10,11 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "Tipo_de_localizacion")
+@Table(name = "tipo_localizacion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class TipoLocalizacion extends AuditableEntity {
 
@@ -22,11 +22,7 @@ public class TipoLocalizacion extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, unique = true, length = 100)
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String nombre; // SEDE, FILIAL, ANEXO, CAMPUS
-
-    @Column(name = "descripcion", length = 255)
-    @Normalize(Normalize.NormalizeType.SPACES_ONLY)
-    private String descripcion;
+    @Column(name = "nombre", nullable = false, length = 100)
+    @Normalize(Normalize.NormalizeType.TITLE_CASE)
+    private String nombre; // Ej: Aula, Laboratorio, Edificio, Sede
 }

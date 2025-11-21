@@ -4,11 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
 
 public class EvaluacionCriterioRequestDTO {
+
+    @NotNull(message = "El ID de la universidad es obligatorio")
+    private Long universidadId;
 
     @NotNull(message = "El ID de la sección es obligatorio")
     private Long seccionId;
@@ -27,12 +28,12 @@ public class EvaluacionCriterioRequestDTO {
     private String tipoEvaluacion;
 
     @NotNull(message = "La nota máxima es obligatoria")
-    @DecimalMin(value = "0.0", message = "La nota máxima debe ser mayor o igual a 0")
-    private BigDecimal notaMaxima;
+    @Min(value = 0, message = "La nota máxima debe ser mayor o igual a 0")
+    private Integer notaMaxima;
 
     @NotNull(message = "La nota mínima aprobatoria es obligatoria")
-    @DecimalMin(value = "0.0", message = "La nota mínima debe ser mayor o igual a 0")
-    private BigDecimal notaMinimaAprobatoria;
+    @Min(value = 0, message = "La nota mínima debe ser mayor o igual a 0")
+    private Integer notaMinimaAprobatoria;
 
     private Boolean esRecuperable = false;
 
@@ -49,6 +50,14 @@ public class EvaluacionCriterioRequestDTO {
     }
 
     // Getters and Setters
+    public Long getUniversidadId() {
+        return universidadId;
+    }
+
+    public void setUniversidadId(Long universidadId) {
+        this.universidadId = universidadId;
+    }
+
     public Long getSeccionId() {
         return seccionId;
     }
@@ -81,19 +90,19 @@ public class EvaluacionCriterioRequestDTO {
         this.tipoEvaluacion = tipoEvaluacion;
     }
 
-    public BigDecimal getNotaMaxima() {
+    public Integer getNotaMaxima() {
         return notaMaxima;
     }
 
-    public void setNotaMaxima(BigDecimal notaMaxima) {
+    public void setNotaMaxima(Integer notaMaxima) {
         this.notaMaxima = notaMaxima;
     }
 
-    public BigDecimal getNotaMinimaAprobatoria() {
+    public Integer getNotaMinimaAprobatoria() {
         return notaMinimaAprobatoria;
     }
 
-    public void setNotaMinimaAprobatoria(BigDecimal notaMinimaAprobatoria) {
+    public void setNotaMinimaAprobatoria(Integer notaMinimaAprobatoria) {
         this.notaMinimaAprobatoria = notaMinimaAprobatoria;
     }
 

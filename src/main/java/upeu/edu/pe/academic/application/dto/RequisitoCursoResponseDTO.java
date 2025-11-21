@@ -1,11 +1,12 @@
 package upeu.edu.pe.academic.application.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class RequisitoCursoResponseDTO {
 
     private Long id;
+    private Long universidadId;
+    private String universidadNombre;
     private Long cursoId;
     private String cursoNombre;
     private String cursoCodigo;
@@ -14,7 +15,8 @@ public class RequisitoCursoResponseDTO {
     private String cursoRequisitoCodigo;
     private String tipoRequisito;
     private Boolean esObligatorio;
-    private BigDecimal notaMinimaRequerida;
+    private Integer notaMinimaRequerida;
+    private String observacion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean active;
@@ -30,6 +32,22 @@ public class RequisitoCursoResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUniversidadId() {
+        return universidadId;
+    }
+
+    public void setUniversidadId(Long universidadId) {
+        this.universidadId = universidadId;
+    }
+
+    public String getUniversidadNombre() {
+        return universidadNombre;
+    }
+
+    public void setUniversidadNombre(String universidadNombre) {
+        this.universidadNombre = universidadNombre;
     }
 
     public Long getCursoId() {
@@ -96,12 +114,20 @@ public class RequisitoCursoResponseDTO {
         this.esObligatorio = esObligatorio;
     }
 
-    public BigDecimal getNotaMinimaRequerida() {
+    public Integer getNotaMinimaRequerida() {
         return notaMinimaRequerida;
     }
 
-    public void setNotaMinimaRequerida(BigDecimal notaMinimaRequerida) {
+    public void setNotaMinimaRequerida(Integer notaMinimaRequerida) {
         this.notaMinimaRequerida = notaMinimaRequerida;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public LocalDateTime getCreatedAt() {

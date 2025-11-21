@@ -11,12 +11,12 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "profesor", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"empleado_id", "universidad_id"})
+    @UniqueConstraint(columnNames = {"persona_id", "universidad_id"})
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"empleado", "universidad"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Profesor extends AuditableEntity {
 
@@ -24,17 +24,23 @@ public class Profesor extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empleado_id", nullable = false, unique = true)
-    private Empleado empleado;
+    // CORRECCIÓN: Conectar a Persona, no a Empleado.
+    // Permite profesores invitados que no son empleados administrativos.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id", nullable = false)
+    private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
     private Universidad universidad; // Aislamiento multi-tenant
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unidad_id") // Departamento Académico
+    private UnidadOrganizativa unidadOrganizativa;
 
     @Column(name = "grado_academico", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String gradoAcademico; // BACHILLER, LICENCIADO, MAGISTER, DOCTOR
+    private String gradoAcademico; // BACHILLER, MAGISTER, DOCTOR
 
     @Column(name = "especialidad", length = 100)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)

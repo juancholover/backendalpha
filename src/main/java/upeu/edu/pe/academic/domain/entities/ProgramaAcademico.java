@@ -10,17 +10,23 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "programa_academico")
+@Table(name = "programa_academico", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"codigo", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class ProgramaAcademico extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_organizativa_id", nullable = false)
@@ -30,7 +36,7 @@ public class ProgramaAcademico extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre;
 
-    @Column(name = "codigo", unique = true, length = 20)
+    @Column(name = "codigo", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigo;
 

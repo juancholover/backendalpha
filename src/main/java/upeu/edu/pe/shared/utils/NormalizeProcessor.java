@@ -12,25 +12,32 @@ public class NormalizeProcessor {
         }
 
         Class<?> clazz = entity.getClass();
-        Field[] fields = clazz.getDeclaredFields();
+        
+        // Iterate through the class hierarchy to process parent class fields too
+        while (clazz != null && clazz != Object.class) {
+            Field[] fields = clazz.getDeclaredFields();
 
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(Normalize.class)) {
-                try {
-                    field.setAccessible(true);
-                    Object value = field.get(entity);
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Normalize.class)) {
+                    try {
+                        field.setAccessible(true);
+                        Object value = field.get(entity);
 
-                    if (value instanceof String) {
-                        String stringValue = (String) value;
-                        Normalize annotation = field.getAnnotation(Normalize.class);
-                        String normalizedValue = normalizeString(stringValue, annotation.value());
-                        field.set(entity, normalizedValue);
+                        if (value instanceof String) {
+                            String stringValue = (String) value;
+                            Normalize annotation = field.getAnnotation(Normalize.class);
+                            String normalizedValue = normalizeString(stringValue, annotation.value());
+                            field.set(entity, normalizedValue);
+                        }
+                    } catch (IllegalAccessException e) {
+                        System.err.println("Error processing @Normalize annotation on field: " + field.getName());
+                        e.printStackTrace();
                     }
-                } catch (IllegalAccessException e) {
-                    System.err.println("Error processing @Normalize annotation on field: " + field.getName());
-                    e.printStackTrace();
                 }
             }
+            
+            // Move up to parent class
+            clazz = clazz.getSuperclass();
         }
     }
 

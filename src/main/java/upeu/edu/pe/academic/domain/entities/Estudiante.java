@@ -9,6 +9,7 @@ import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -19,12 +20,13 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"persona", "universidad", "programaAcademico"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Estudiante extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +38,7 @@ public class Estudiante extends AuditableEntity {
     private Universidad universidad; // Aislamiento multi-tenant
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "programa_academico_id", nullable = false)
+    @JoinColumn(name = "programa_id", nullable = false)
     private ProgramaAcademico programaAcademico;
 
     @Column(name = "codigo_estudiante", unique = true, nullable = false, length = 20)
@@ -52,8 +54,8 @@ public class Estudiante extends AuditableEntity {
     @Column(name = "creditos_aprobados")
     private Integer creditosAprobados;
 
-    @Column(name = "promedio_ponderado")
-    private Double promedioPonderado;
+    @Column(name = "promedio_ponderado", precision = 5, scale = 2, columnDefinition = "DECIMAL(5,2) COMMENT 'Promedio ponderado acumulado (0.00-20.00)'")
+    private BigDecimal promedioPonderado;
 
     @Column(name = "modalidad_ingreso", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

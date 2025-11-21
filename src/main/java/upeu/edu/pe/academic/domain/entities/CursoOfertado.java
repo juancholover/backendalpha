@@ -19,12 +19,13 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"universidad", "planAcademico", "periodoAcademico", "profesor", "localizacion", "matriculas", "evaluacionCriterios"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class CursoOfertado extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,9 +61,6 @@ public class CursoOfertado extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localizacion_id")
     private Localizacion localizacion; // Aula asignada
-
-    @Column(name = "horario", length = 500)
-    private String horario; // JSON o texto con horarios (ej: "LUN 08:00-10:00, MIE 08:00-10:00")
 
     @Column(name = "estado", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

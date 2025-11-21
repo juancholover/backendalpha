@@ -13,17 +13,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "evaluacion_criterio")
+@Table(name = "evaluacion_criterio", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"curso_ofertado_id", "nombre", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"cursoOfertado", "evaluacionNotas"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class EvaluacionCriterio extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_ofertado_id", nullable = false)
@@ -67,7 +74,8 @@ public class EvaluacionCriterio extends AuditableEntity {
     /**
      * Constructor de conveniencia
      */
-    public EvaluacionCriterio(CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
+    public EvaluacionCriterio(Universidad universidad, CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
+        this.universidad = universidad;
         this.cursoOfertado = cursoOfertado;
         this.nombre = nombre;
         this.peso = peso;

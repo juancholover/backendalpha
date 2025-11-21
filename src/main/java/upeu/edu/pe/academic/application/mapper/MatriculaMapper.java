@@ -17,12 +17,9 @@ import java.util.List;
 public interface MatriculaMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
-    @Mapping(target = "curso", ignore = true)
-    @Mapping(target = "profesor", ignore = true)
-    @Mapping(target = "semestre", ignore = true)
-    @Mapping(target = "codigoSeccion", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -44,19 +41,16 @@ public interface MatriculaMapper {
     @Mapping(target = "periodoAcademicoNombre", source = "cursoOfertado.periodoAcademico.nombre")
     @Mapping(target = "periodoAcademicoCodigo", source = "cursoOfertado.periodoAcademico.nombre")
     @Mapping(target = "profesorId", source = "cursoOfertado.profesor.id")
-    @Mapping(target = "profesorNombre", source = "cursoOfertado.profesor.empleado.persona.nombres")
-    @Mapping(target = "profesorApellido", source = "cursoOfertado.profesor.empleado.persona.apellidoPaterno")
+    @Mapping(target = "profesorNombre", source = "cursoOfertado.profesor.persona.nombres")
+    @Mapping(target = "profesorApellido", source = "cursoOfertado.profesor.persona.apellidoPaterno")
     MatriculaResponseDTO toResponseDTO(Matricula entity);
 
     List<MatriculaResponseDTO> toResponseDTOList(List<Matricula> entities);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
-    @Mapping(target = "curso", ignore = true)
-    @Mapping(target = "profesor", ignore = true)
-    @Mapping(target = "semestre", ignore = true)
-    @Mapping(target = "codigoSeccion", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

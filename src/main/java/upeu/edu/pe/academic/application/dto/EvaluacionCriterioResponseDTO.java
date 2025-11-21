@@ -1,19 +1,20 @@
 package upeu.edu.pe.academic.application.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class EvaluacionCriterioResponseDTO {
 
     private Long id;
+    private Long universidadId;
+    private String universidadNombre;
     private Long seccionId;
     private String seccionCodigo;
     private String cursoNombre;
     private String nombre;
     private Integer peso;
     private String tipoEvaluacion;
-    private BigDecimal notaMaxima;
-    private BigDecimal notaMinimaAprobatoria;
+    private Integer notaMaxima;
+    private Integer notaMinimaAprobatoria;
     private Boolean esRecuperable;
     private Integer orden;
     private String estado;
@@ -35,6 +36,22 @@ public class EvaluacionCriterioResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUniversidadId() {
+        return universidadId;
+    }
+
+    public void setUniversidadId(Long universidadId) {
+        this.universidadId = universidadId;
+    }
+
+    public String getUniversidadNombre() {
+        return universidadNombre;
+    }
+
+    public void setUniversidadNombre(String universidadNombre) {
+        this.universidadNombre = universidadNombre;
     }
 
     public Long getSeccionId() {
@@ -85,19 +102,19 @@ public class EvaluacionCriterioResponseDTO {
         this.tipoEvaluacion = tipoEvaluacion;
     }
 
-    public BigDecimal getNotaMaxima() {
+    public Integer getNotaMaxima() {
         return notaMaxima;
     }
 
-    public void setNotaMaxima(BigDecimal notaMaxima) {
+    public void setNotaMaxima(Integer notaMaxima) {
         this.notaMaxima = notaMaxima;
     }
 
-    public BigDecimal getNotaMinimaAprobatoria() {
+    public Integer getNotaMinimaAprobatoria() {
         return notaMinimaAprobatoria;
     }
 
-    public void setNotaMinimaAprobatoria(BigDecimal notaMinimaAprobatoria) {
+    public void setNotaMinimaAprobatoria(Integer notaMinimaAprobatoria) {
         this.notaMinimaAprobatoria = notaMinimaAprobatoria;
     }
 

@@ -17,6 +17,11 @@ public interface UserMapper {
     List<UserResponseDto> toResponseDtoList(List<User> users);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "persona", ignore = true)
+    @Mapping(target = "intentosFallidos", ignore = true)
+    @Mapping(target = "fechaBloqueo", ignore = true)
+    @Mapping(target = "tokenRecuperacion", ignore = true)
+    @Mapping(target = "fechaExpiracionToken", ignore = true)
     @Mapping(target = "lastLogin", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -29,6 +34,11 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "username", ignore = true) // Username should not be updatable
     @Mapping(target = "password", ignore = true) // Password updated separately
+    @Mapping(target = "persona", ignore = true)
+    @Mapping(target = "intentosFallidos", ignore = true)
+    @Mapping(target = "fechaBloqueo", ignore = true)
+    @Mapping(target = "tokenRecuperacion", ignore = true)
+    @Mapping(target = "fechaExpiracionToken", ignore = true)
     @Mapping(target = "lastLogin", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

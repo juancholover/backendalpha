@@ -6,13 +6,14 @@ import lombok.Data;
 public class UnidadOrganizativaResponseDTO {
     private Long id;
     private Long tipoDeUnidadId;
-    private String tipoDeUnidadNombre; // Denormalizado
+    private String tipoDeUnidadNombre; 
     private Long unidadPadreId;
-    private String unidadPadreNombre; // Denormalizado
+    private String unidadPadreNombre; 
     private Long localizacionId;
-    private String localizacionNombre; // Denormalizado
+    private String localizacionNombre;
     private String nombre;
     private String codigo;
+    private String sigla;
     private String descripcion;
     private Boolean active;
 }

@@ -23,14 +23,34 @@ public class UniversidadService {
     @Inject
     UniversidadMapper universidadMapper;
 
+    @Inject
+    upeu.edu.pe.academic.domain.repositories.LocalizacionRepository localizacionRepository;
+
     /**
      * Crea una nueva universidad
      */
     @Transactional
     public UniversidadResponseDTO create(UniversidadRequestDTO dto) {
-        // Validar RUC único
+        // Validar unicidad del código
+        if (universidadRepository.existsByCodigo(dto.getCodigo())) {
+            throw new DuplicateResourceException("Universidad", "codigo", dto.getCodigo());
+        }
+
+        // Validar unicidad del dominio
+        if (universidadRepository.existsByDominio(dto.getDominio())) {
+            throw new DuplicateResourceException("Universidad", "dominio", dto.getDominio());
+        }
+
+        // Validar unicidad del RUC
         if (universidadRepository.existsByRuc(dto.getRuc())) {
             throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
+        }
+
+        // Validar que localizacionPrincipalId existe (si se proporciona)
+        if (dto.getLocalizacionPrincipalId() != null) {
+            localizacionRepository.findByIdOptional(dto.getLocalizacionPrincipalId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                    "Localización no encontrada con ID: " + dto.getLocalizacionPrincipalId()));
         }
 
         Universidad universidad = universidadMapper.toEntity(dto);
@@ -66,21 +86,21 @@ public class UniversidadService {
     }
 
     /**
-     * Busca universidad por RUC
+     * Busca universidad por código
      */
-    public UniversidadResponseDTO findByRuc(String ruc) {
-        Universidad universidad = universidadRepository.findByRuc(ruc)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con RUC: " + ruc));
+    public UniversidadResponseDTO findByCodigo(String codigo) {
+        Universidad universidad = universidadRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con código: " + codigo));
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Busca universidades por tipo
+     * Busca universidad por dominio
      */
-    public List<UniversidadResponseDTO> findByTipo(String tipo) {
-        return universidadRepository.findByTipo(tipo).stream()
-                .map(universidadMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public UniversidadResponseDTO findByDominio(String dominio) {
+        Universidad universidad = universidadRepository.findByDominio(dominio)
+                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con dominio: " + dominio));
+        return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
@@ -100,10 +120,29 @@ public class UniversidadService {
         Universidad universidad = universidadRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + id));
 
-        // Validar RUC único (excluyendo la universidad actual)
+        // Validar unicidad del código si cambió
+        if (!universidad.getCodigo().equals(dto.getCodigo()) && 
+            universidadRepository.existsByCodigo(dto.getCodigo())) {
+            throw new DuplicateResourceException("Universidad", "codigo", dto.getCodigo());
+        }
+
+        // Validar unicidad del dominio si cambió
+        if (!universidad.getDominio().equals(dto.getDominio()) && 
+            universidadRepository.existsByDominio(dto.getDominio())) {
+            throw new DuplicateResourceException("Universidad", "dominio", dto.getDominio());
+        }
+
+        // Validar unicidad del RUC si cambió
         if (!universidad.getRuc().equals(dto.getRuc()) && 
             universidadRepository.existsByRuc(dto.getRuc())) {
             throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
+        }
+
+        // Validar que localizacionPrincipalId existe (si se proporciona)
+        if (dto.getLocalizacionPrincipalId() != null) {
+            localizacionRepository.findByIdOptional(dto.getLocalizacionPrincipalId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                    "Localización no encontrada con ID: " + dto.getLocalizacionPrincipalId()));
         }
 
         universidadMapper.updateEntityFromDto(dto, universidad);

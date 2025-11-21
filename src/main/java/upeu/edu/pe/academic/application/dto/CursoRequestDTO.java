@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class CursoRequestDTO {
 
+    @NotNull(message = "El ID de la universidad es obligatorio")
+    private Long universidadId;
+
     @NotNull(message = "El ID del plan académico es obligatorio")
     private Long planAcademicoId;
 
@@ -20,11 +23,6 @@ public class CursoRequestDTO {
     @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
     private String descripcion;
 
-    @NotNull(message = "Los créditos son obligatorios")
-    @Min(value = 1, message = "Los créditos deben ser al menos 1")
-    @Max(value = 10, message = "Los créditos no pueden exceder 10")
-    private Integer creditos;
-
     @Min(value = 0, message = "Las horas teóricas no pueden ser negativas")
     @Max(value = 20, message = "Las horas teóricas no pueden exceder 20")
     private Integer horasTeoricas;
@@ -37,11 +35,6 @@ public class CursoRequestDTO {
     @Max(value = 40, message = "Las horas semanales no pueden exceder 40")
     private Integer horasSemanales;
 
-    @NotNull(message = "El ciclo es obligatorio")
-    @Min(value = 1, message = "El ciclo debe ser al menos 1")
-    @Max(value = 20, message = "El ciclo no puede exceder 20")
-    private Integer ciclo;
-
     @Size(max = 50, message = "El tipo de curso no puede exceder 50 caracteres")
     @Pattern(regexp = "OBLIGATORIO|ELECTIVO|LIBRE", message = "El tipo de curso debe ser OBLIGATORIO, ELECTIVO o LIBRE")
     private String tipoCurso;
@@ -52,5 +45,6 @@ public class CursoRequestDTO {
     @Size(max = 255, message = "La URL del sílabo no puede exceder 255 caracteres")
     private String silaboUrl;
 
-    private Long prerequisitoId; // Curso prerequisito (opcional)
+    // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
+    // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
 }

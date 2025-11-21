@@ -8,6 +8,10 @@ public class CursoResponseDTO {
 
     private Long id;
 
+    // Información de universidad
+    private Long universidadId;
+    private String universidadNombre;
+
     // Información del plan académico
     private Long planAcademicoId;
     private String planAcademicoCodigo;
@@ -18,19 +22,12 @@ public class CursoResponseDTO {
     private String codigoCurso;
     private String nombre;
     private String descripcion;
-    private Integer creditos;
     private Integer horasTeoricas;
     private Integer horasPracticas;
     private Integer horasSemanales;
-    private Integer ciclo;
     private String tipoCurso;
     private String areaCurricular;
     private String silaboUrl;
-
-    // Prerequisito
-    private Long prerequisitoId;
-    private String prerequisitoNombre;
-    private String prerequisitoCodigo;
 
     // Auditoría
     private Boolean active;
@@ -38,4 +35,7 @@ public class CursoResponseDTO {
     private LocalDateTime updatedAt;
     private String createdBy;
     private String updatedBy;
+
+    // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
+    // NOTA: prerequisitos en RequisitoCurso (consulta separada)
 }

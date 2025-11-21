@@ -9,8 +9,10 @@ import upeu.edu.pe.academic.application.dto.CursoResponseDTO;
 import upeu.edu.pe.academic.application.mapper.CursoMapper;
 import upeu.edu.pe.academic.domain.entities.Curso;
 import upeu.edu.pe.academic.domain.entities.PlanAcademico;
+import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.CursoRepository;
 import upeu.edu.pe.academic.domain.repositories.PlanAcademicoRepository;
+import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 import upeu.edu.pe.shared.exceptions.BusinessRuleException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
@@ -26,6 +28,9 @@ public class CursoService {
 
     @Inject
     PlanAcademicoRepository planAcademicoRepository;
+
+    @Inject
+    UniversidadRepository universidadRepository;
 
     @Inject
     CursoMapper cursoMapper;
@@ -106,6 +111,11 @@ public class CursoService {
      */
     @Transactional
     public CursoResponseDTO create(@Valid CursoRequestDTO dto) {
+        // Validar que exista la universidad
+        Universidad universidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
+                .filter(u -> u.getActive())
+                .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", dto.getUniversidadId()));
+
         // Validar que exista el plan académico
         PlanAcademico planAcademico = planAcademicoRepository.findByIdOptional(dto.getPlanAcademicoId())
                 .filter(p -> p.getActive())
@@ -121,39 +131,8 @@ public class CursoService {
             throw new DuplicateResourceException("Curso", "codigoCurso", dto.getCodigoCurso());
         }
 
-        // Validar que el ciclo no exceda la duración del programa
-        Integer duracionPrograma = planAcademico.getProgramaAcademico().getDuracionSemestres();
-        if (dto.getCiclo() > duracionPrograma) {
-            throw new BusinessRuleException(
-                "El ciclo (" + dto.getCiclo() + ") no puede ser mayor a la duración del programa (" + 
-                duracionPrograma + " semestres)"
-            );
-        }
-
-        // Validar prerequisito si existe
-        Curso prerequisito = null;
-        if (dto.getPrerequisitoId() != null) {
-            prerequisito = cursoRepository.findByIdOptional(dto.getPrerequisitoId())
-                    .filter(c -> c.getActive())
-                    .orElseThrow(() -> new ResourceNotFoundException("Curso prerequisito", "id", dto.getPrerequisitoId()));
-
-            // Validar que el prerequisito sea del mismo plan académico
-            if (!prerequisito.getPlanAcademico().getId().equals(dto.getPlanAcademicoId())) {
-                throw new BusinessRuleException("El prerequisito debe pertenecer al mismo plan académico");
-            }
-
-            // Validar que el prerequisito sea de un ciclo anterior
-            if (prerequisito.getCiclo() >= dto.getCiclo()) {
-                throw new BusinessRuleException(
-                    "El prerequisito debe ser de un ciclo anterior al curso actual"
-                );
-            }
-
-            // Validar que no haya dependencia circular
-            if (tienePrerequisito(prerequisito, dto.getCodigoCurso())) {
-                throw new BusinessRuleException("Se detectó una dependencia circular con el prerequisito");
-            }
-        }
+        // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
+        // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
 
         // Validar coherencia de horas
         if (dto.getHorasTeoricas() != null && dto.getHorasPracticas() != null && dto.getHorasSemanales() != null) {
@@ -168,8 +147,8 @@ public class CursoService {
 
         // Crear la entidad curso
         Curso curso = cursoMapper.toEntity(dto);
+        curso.setUniversidad(universidad);
         curso.setPlanAcademico(planAcademico);
-        curso.setPrerequisito(prerequisito);
 
         // Establecer valores por defecto
         if (curso.getTipoCurso() == null) {
@@ -200,6 +179,14 @@ public class CursoService {
                 .filter(c -> c.getActive())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso", "id", id));
 
+        // Validar universidad si cambió
+        if (!curso.getUniversidad().getId().equals(dto.getUniversidadId())) {
+            Universidad nuevaUniversidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
+                    .filter(u -> u.getActive())
+                    .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", dto.getUniversidadId()));
+            curso.setUniversidad(nuevaUniversidad);
+        }
+
         // Validar plan académico si cambió
         if (!curso.getPlanAcademico().getId().equals(dto.getPlanAcademicoId())) {
             PlanAcademico nuevoPlan = planAcademicoRepository.findByIdOptional(dto.getPlanAcademicoId())
@@ -219,37 +206,8 @@ public class CursoService {
             throw new DuplicateResourceException("Curso", "codigoCurso", dto.getCodigoCurso());
         }
 
-        // Validar ciclo
-        Integer duracionPrograma = curso.getPlanAcademico().getProgramaAcademico().getDuracionSemestres();
-        if (dto.getCiclo() > duracionPrograma) {
-            throw new BusinessRuleException(
-                "El ciclo (" + dto.getCiclo() + ") no puede ser mayor a la duración del programa (" + 
-                duracionPrograma + " semestres)"
-            );
-        }
-
-        // Validar prerequisito si cambió
-        if (dto.getPrerequisitoId() != null) {
-            if (!dto.getPrerequisitoId().equals(id)) { // No puede ser prerequisito de sí mismo
-                Curso prerequisito = cursoRepository.findByIdOptional(dto.getPrerequisitoId())
-                        .filter(c -> c.getActive())
-                        .orElseThrow(() -> new ResourceNotFoundException("Curso prerequisito", "id", dto.getPrerequisitoId()));
-
-                if (!prerequisito.getPlanAcademico().getId().equals(dto.getPlanAcademicoId())) {
-                    throw new BusinessRuleException("El prerequisito debe pertenecer al mismo plan académico");
-                }
-
-                if (prerequisito.getCiclo() >= dto.getCiclo()) {
-                    throw new BusinessRuleException("El prerequisito debe ser de un ciclo anterior");
-                }
-
-                curso.setPrerequisito(prerequisito);
-            } else {
-                throw new BusinessRuleException("Un curso no puede ser prerequisito de sí mismo");
-            }
-        } else {
-            curso.setPrerequisito(null);
-        }
+        // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
+        // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
 
         // Validar coherencia de horas
         if (dto.getHorasTeoricas() != null && dto.getHorasPracticas() != null && dto.getHorasSemanales() != null) {
@@ -277,39 +235,10 @@ public class CursoService {
                 .filter(c -> c.getActive())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso", "id", id));
 
-        // Validar que no haya otros cursos que dependan de este como prerequisito
-        List<Curso> cursosConPrerequisito = cursoRepository.findAllActive()
-                .stream()
-                .filter(c -> c.getPrerequisito() != null && c.getPrerequisito().getId().equals(id))
-                .collect(Collectors.toList());
-
-        if (!cursosConPrerequisito.isEmpty()) {
-            String cursosDependientes = cursosConPrerequisito.stream()
-                    .map(Curso::getNombre)
-                    .collect(Collectors.joining(", "));
-            throw new BusinessRuleException(
-                "No se puede eliminar el curso porque es prerequisito de: " + cursosDependientes
-            );
-        }
+        // NOTA: prerequisitos están en RequisitoCurso (consultar ahí antes de eliminar)
 
         curso.setActive(false);
         cursoRepository.persist(curso);
-    }
-
-    /**
-     * Verifica si un curso tiene como prerequisito (directo o indirecto) a otro curso
-     * Usado para detectar dependencias circulares
-     */
-    private boolean tienePrerequisito(Curso curso, String codigoBuscado) {
-        if (curso == null || curso.getPrerequisito() == null) {
-            return false;
-        }
-        
-        if (curso.getPrerequisito().getCodigoCurso().equals(codigoBuscado)) {
-            return true;
-        }
-        
-        return tienePrerequisito(curso.getPrerequisito(), codigoBuscado);
     }
 
     /**

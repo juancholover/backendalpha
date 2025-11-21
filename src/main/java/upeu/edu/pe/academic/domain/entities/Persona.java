@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"universidad"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class Persona extends AuditableEntity {
 
@@ -47,15 +47,15 @@ public class Persona extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoDocumento; // DNI, CE, PASAPORTE
 
-    @Column(name = "numero_documento", unique = true, length = 20)
+    @Column(name = "numero_documento", length = 20)
     private String numeroDocumento;
 
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "genero", length = 1)
+    @Column(name = "genero", length = 20) // Aumentado para flexibilidad (ISO/IEC 5218)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String genero; // M, F
+    private String genero; // M, F, X, NO_ESPECIFICADO, etc.
 
     @Column(name = "estado_civil", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

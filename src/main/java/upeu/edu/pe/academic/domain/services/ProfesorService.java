@@ -6,9 +6,9 @@ import jakarta.transaction.Transactional;
 import upeu.edu.pe.academic.application.dto.ProfesorRequestDTO;
 import upeu.edu.pe.academic.application.dto.ProfesorResponseDTO;
 import upeu.edu.pe.academic.application.mapper.ProfesorMapper;
-import upeu.edu.pe.academic.domain.entities.Empleado;
+import upeu.edu.pe.academic.domain.entities.Persona;
 import upeu.edu.pe.academic.domain.entities.Profesor;
-import upeu.edu.pe.academic.domain.repositories.EmpleadoRepository;
+import upeu.edu.pe.academic.domain.repositories.PersonaRepository;
 import upeu.edu.pe.academic.domain.repositories.ProfesorRepository;
 import upeu.edu.pe.shared.exceptions.BusinessRuleException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 /**
  * Service para gestión de profesores
  * Reglas de negocio:
- * - Empleado debe existir y estar activo
- * - Un empleado solo puede ser profesor una vez
+ * - Persona debe existir y estar activa
+ * - Una persona solo puede ser profesor una vez
  * - Validación de grado académico según categoría
  * - Validación de dedicación según normativa
  */
@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
 public class ProfesorService {
 
     @Inject
-    ProfesorRepository profesorRepository;
-
+    PersonaRepository personaRepository;
+    
     @Inject
-    EmpleadoRepository empleadoRepository;
+    ProfesorRepository profesorRepository;
 
     @Inject
     ProfesorMapper profesorMapper;
@@ -62,12 +62,12 @@ public class ProfesorService {
     }
 
     /**
-     * Busca profesor por empleado
+     * Busca profesor por persona
      */
-    public ProfesorResponseDTO buscarPorEmpleado(Long empleadoId) {
-        Profesor profesor = profesorRepository.findByEmpleado(empleadoId)
+    public ProfesorResponseDTO buscarPorPersona(Long personaId) {
+        Profesor profesor = profesorRepository.findByPersona(personaId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                    "No se encontró profesor para el empleado ID: " + empleadoId));
+                    "No se encontró profesor para la persona ID: " + personaId));
         
         return profesorMapper.toResponseDTO(profesor);
     }
@@ -116,25 +116,25 @@ public class ProfesorService {
     /**
      * Crea nuevo profesor
      * Validaciones:
-     * - Empleado existe y está activo
-     * - Empleado no es profesor aún
+     * - Persona existe y está activa
+     * - Persona no es profesor aún
      * - Grado académico según categoría
      */
     @Transactional
     public ProfesorResponseDTO crear(ProfesorRequestDTO dto) {
-        // Validar que empleado existe y está activo
-        Empleado empleado = empleadoRepository.findByIdOptional(dto.getEmpleadoId())
+        // Validar que persona existe y está activa
+        Persona persona = personaRepository.findByIdOptional(dto.getEmpleadoId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                    "Empleado no encontrado con ID: " + dto.getEmpleadoId()));
+                    "Persona no encontrada con ID: " + dto.getEmpleadoId()));
         
-        if (!empleado.getActive()) {
-            throw new BusinessRuleException("El empleado no está activo");
+        if (!persona.getActive()) {
+            throw new BusinessRuleException("La persona no está activa");
         }
 
-        // Validar que empleado no es profesor ya
-        if (profesorRepository.existsByEmpleado(dto.getEmpleadoId())) {
+        // Validar que persona no es profesor ya
+        if (profesorRepository.existsByPersona(dto.getEmpleadoId())) {
             throw new DuplicateResourceException(
-                "El empleado con ID " + dto.getEmpleadoId() + " ya es profesor");
+                "La persona con ID " + dto.getEmpleadoId() + " ya es profesor");
         }
 
         // Validar grado académico según categoría
@@ -142,7 +142,7 @@ public class ProfesorService {
 
         // Crear profesor
         Profesor profesor = profesorMapper.toEntity(dto);
-        profesor.setEmpleado(empleado);
+        profesor.setPersona(persona);
 
         profesorRepository.persist(profesor);
         return profesorMapper.toResponseDTO(profesor);

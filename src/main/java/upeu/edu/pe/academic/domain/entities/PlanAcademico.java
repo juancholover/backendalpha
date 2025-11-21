@@ -12,23 +12,30 @@ import upeu.edu.pe.shared.annotations.Normalize;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "plan_academico")
+@Table(name = "plan_academico", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"codigo", "universidad_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class PlanAcademico extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "universidad_id", nullable = false)
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "programa_academico_id", nullable = false)
     private ProgramaAcademico programaAcademico;
 
-    @Column(name = "codigo", unique = true, length = 20)
+    @Column(name = "codigo", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigo;
 

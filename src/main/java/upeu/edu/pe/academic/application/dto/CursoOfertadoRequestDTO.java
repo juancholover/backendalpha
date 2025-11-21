@@ -36,9 +36,6 @@ public class CursoOfertadoRequestDTO {
 
     private Long localizacionId; // Opcional, puede ser virtual
 
-    @Size(max = 500, message = "El horario no puede exceder 500 caracteres")
-    private String horario; // LUN 08:00-10:00, MIE 08:00-10:00
-
     @NotBlank(message = "El estado es requerido")
     @Size(max = 20, message = "El estado no puede exceder 20 caracteres")
     private String estado; // ABIERTA, CERRADA, CANCELADA, EN_CURSO, FINALIZADA
