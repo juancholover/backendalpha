@@ -68,13 +68,13 @@ public class ProfesorRequestDTO {
     @Size(max = 500, message = "Las observaciones no pueden exceder 500 caracteres")
     private String observaciones;
 
-    // Constructors
+    
     public ProfesorRequestDTO() {
         this.numeroPublicaciones = 0;
         this.numeroProyectos = 0;
     }
 
-    // Getters and Setters
+    
     public Long getEmpleadoId() {
         return empleadoId;
     }

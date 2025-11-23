@@ -39,7 +39,29 @@ public class PlanAcademicoRequestDTO {
     @Min(value = 0, message = "Los créditos totales no pueden ser negativos")
     private Integer creditosTotales;
 
+    // ==================== DISTRIBUCIÓN DE CRÉDITOS ====================
+
+    @Min(value = 0, message = "Los créditos obligatorios no pueden ser negativos")
+    private Integer creditosObligatorios;
+
+    @Min(value = 0, message = "Los créditos electivos no pueden ser negativos")
+    private Integer creditosElectivos;
+
+    @Min(value = 1, message = "La duración en semestres debe ser mayor a 0")
+    private Integer duracionSemestres;
+
     @NotBlank(message = "El estado es requerido")
     @Size(max = 20, message = "El estado no puede exceder 20 caracteres")
     private String estado; // VIGENTE, OBSOLETO, EN_PROCESO
+
+    // ==================== REGLAS ACADÉMICAS POR CARRERA ====================
+
+    @Min(value = 1, message = "Los créditos máximos por ciclo deben ser mayor a 0")
+    private Integer creditosMaximosPorCiclo; // Máximo que puede matricular por ciclo (ej: 22)
+
+    @Min(value = 1, message = "Los créditos mínimos para tiempo completo deben ser mayor a 0")
+    private Integer creditosMinimosTiempoCompleto; // Mínimo para ser tiempo completo (ej: 12)
+
+    @Min(value = 1, message = "La duración del ciclo debe ser mayor a 0")
+    private Integer duracionCicloMeses; // Duración del ciclo en meses (4=cuatrimestral, 6=semestral)
 }

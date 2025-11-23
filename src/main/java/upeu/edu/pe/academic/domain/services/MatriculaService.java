@@ -100,10 +100,52 @@ public class MatriculaService {
             throw new BusinessException("El curso ofertado no tiene cupo disponible");
         }
 
+        // ==================== VALIDACIONES DE CRÉDITOS SaaS ====================
+        
+        // 1. Obtener créditos del curso desde PlanCurso
+        Integer creditosCurso = cursoOfertado.getPlanCurso().getCreditos();
+        
+        // 2. Validar límite de créditos por ciclo (desde PlanAcademico de la carrera)
+        Universidad universidad = estudiante.getUniversidad();
+        PlanAcademico planAcademico = cursoOfertado.getPlanCurso().getPlanAcademico();
+        Integer creditosActuales = estudiante.getCreditosCursando() != null ? estudiante.getCreditosCursando() : 0;
+        Integer nuevoTotalCreditos = creditosActuales + creditosCurso;
+        
+        if (planAcademico.getCreditosMaximosPorCiclo() != null && 
+            nuevoTotalCreditos > planAcademico.getCreditosMaximosPorCiclo()) {
+            throw new BusinessException(
+                "El estudiante excedería el límite de créditos por ciclo de su carrera. " +
+                "Actual: " + creditosActuales + ", Curso: " + creditosCurso + 
+                ", Máximo permitido: " + planAcademico.getCreditosMaximosPorCiclo()
+            );
+        }
+        
+        // 3. Validar límite de estudiantes de la universidad (Plan SaaS)
+        if (universidad.haExcedidoLimiteEstudiantes()) {
+            throw new BusinessException(
+                "La universidad ha excedido su límite de estudiantes activos según su plan SaaS (" + 
+                universidad.getPlan() + ")"
+            );
+        }
+        
+        // 4. Validar que la universidad esté activa
+        if (!universidad.estaActiva()) {
+            throw new BusinessException(
+                "La universidad no está activa. Estado: " + universidad.getEstado() + 
+                (universidad.getFechaVencimiento() != null ? 
+                    ", Fecha vencimiento: " + universidad.getFechaVencimiento() : "")
+            );
+        }
+
         // Crear matrícula
         Matricula matricula = matriculaMapper.toEntity(requestDTO);
         matricula.setEstudiante(estudiante);
         matricula.setCursoOfertado(cursoOfertado);
+        matricula.setCreditosMatriculados(creditosCurso);
+
+        // Actualizar créditos del estudiante
+        estudiante.setCreditosCursando(nuevoTotalCreditos);
+        estudianteRepository.persist(estudiante);
 
         // Reducir vacantes del curso ofertado
         cursoOfertado.reducirVacantes();
@@ -164,6 +206,13 @@ public class MatriculaService {
 
         // Retirar estudiante
         matricula.retirar();
+
+        // Actualizar créditos del estudiante (reducir créditos cursando)
+        Estudiante estudiante = matricula.getEstudiante();
+        Integer creditosActuales = estudiante.getCreditosCursando() != null ? estudiante.getCreditosCursando() : 0;
+        Integer creditosCurso = matricula.getCreditosMatriculados() != null ? matricula.getCreditosMatriculados() : 0;
+        estudiante.setCreditosCursando(Math.max(0, creditosActuales - creditosCurso));
+        estudianteRepository.persist(estudiante);
 
         // Liberar cupo en el curso ofertado
         CursoOfertado cursoOfertado = matricula.getCursoOfertado();

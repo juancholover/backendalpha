@@ -86,10 +86,7 @@ public class EvaluacionNota extends AuditableEntity {
         }
     }
 
-    /**
-     * Hook que se ejecuta automáticamente antes de INSERT y UPDATE
-     * para garantizar que notaFinal siempre esté sincronizada
-     */
+    
     @PrePersist
     @PreUpdate
     public void calcularNotaFinalAutomatico() {

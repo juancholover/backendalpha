@@ -38,6 +38,10 @@ public class MatriculaResponseDTO {
     // Datos de la matrícula
     private LocalDate fechaMatricula;
     private String tipoMatricula;
+
+    // ==================== CONTROL DE CRÉDITOS ====================
+    private Integer creditosMatriculados;
+
     private String estadoMatricula;
     private LocalDate fechaRetiro;
     private BigDecimal notaFinal;

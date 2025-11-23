@@ -27,7 +27,18 @@ public class PlanAcademicoResponseDTO {
     private LocalDate fechaVigenciaInicio;
     private LocalDate fechaVigenciaFin;
     private Integer creditosTotales;
+
+    // ==================== DISTRIBUCIÓN DE CRÉDITOS ====================
+    private Integer creditosObligatorios;
+    private Integer creditosElectivos;
+    private Integer duracionSemestres;
+
     private String estado;
+
+    // ==================== REGLAS ACADÉMICAS POR CARRERA ====================
+    private Integer creditosMaximosPorCiclo; // Máximo que puede matricular por ciclo
+    private Integer creditosMinimosTiempoCompleto; // Mínimo para ser tiempo completo
+    private Integer duracionCicloMeses; // Duración del ciclo en meses
 
     // Auditoría
     private Boolean active;

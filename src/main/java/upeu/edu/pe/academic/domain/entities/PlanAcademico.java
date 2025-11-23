@@ -63,7 +63,37 @@ public class PlanAcademico extends AuditableEntity {
     @Column(name = "creditos_totales")
     private Integer creditosTotales;
 
+
+    @Column(name = "creditos_obligatorios")
+    private Integer creditosObligatorios; // Créditos de cursos obligatorios
+
+    @Column(name = "creditos_electivos")
+    private Integer creditosElectivos; // Créditos de cursos electivos
+
+    @Column(name = "duracion_semestres")
+    private Integer duracionSemestres; // Duración del plan en semestres
+
     @Column(name = "estado", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String estado; // VIGENTE, OBSOLETO, EN_PROCESO
+
+
+    @Column(name = "creditos_maximos_por_ciclo")
+    private Integer creditosMaximosPorCiclo; // Máximo de créditos que puede matricular por ciclo (ej: 22)
+
+    @Column(name = "creditos_minimos_tiempo_completo")
+    private Integer creditosMinimosTiempoCompleto; // Mínimo para ser considerado tiempo completo (ej: 12)
+
+    @Column(name = "duracion_ciclo_meses")
+    private Integer duracionCicloMeses; // Duración del ciclo en meses (4=cuatrimestral, 6=semestral)
+
+    /**
+     * Valida que la distribución de créditos sea correcta
+     */
+    public boolean validarCreditos() {
+        if (creditosTotales == null || creditosObligatorios == null || creditosElectivos == null) {
+            return false;
+        }
+        return (creditosObligatorios + creditosElectivos) == creditosTotales;
+    }
 }

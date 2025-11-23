@@ -24,8 +24,7 @@ public class Profesor extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // CORRECCIÓN: Conectar a Persona, no a Empleado.
-    // Permite profesores invitados que no son empleados administrativos.
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;

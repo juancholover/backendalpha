@@ -15,13 +15,18 @@ public class UniversidadResponseDTO {
     private String website;
     private String logoUrl;
     
-    // NOTA: Para obtener la sede principal, consultar Localizacion donde esPrincipal=true y universidad_id=this.id
-    private Long localizacionPrincipalId; // Siempre será null - campo obsoleto (mantener por compatibilidad)
-    private String localizacionPrincipalNombre; // Siempre será null - campo obsoleto
-    
     private String zonaHoraria;
     private String locale;
     private String configuracion;
+
+    private String plan; // FREE, BASIC, PREMIUM, ENTERPRISE
+    private String estado; // ACTIVA, SUSPENDIDA, TRIAL, VENCIDA
+    private java.time.LocalDate fechaVencimiento;
+    private Integer maxEstudiantes;
+    private Integer maxDocentes;
+    private Integer totalEstudiantes;
+    private Integer totalDocentes;
+
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

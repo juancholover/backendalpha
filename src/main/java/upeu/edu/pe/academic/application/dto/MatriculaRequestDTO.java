@@ -21,6 +21,11 @@ public class MatriculaRequestDTO {
     @Size(max = 50, message = "El tipo de matrícula no puede exceder 50 caracteres")
     private String tipoMatricula; // REGULAR, EXTRAORDINARIA
 
+    // ==================== CONTROL DE CRÉDITOS ====================
+
+    @Min(value = 1, message = "Los créditos matriculados deben ser mayor a 0")
+    private Integer creditosMatriculados;
+
     @NotBlank(message = "El estado de matrícula es requerido")
     @Size(max = 20, message = "El estado de matrícula no puede exceder 20 caracteres")
     private String estadoMatricula; // MATRICULADO, RETIRADO, ANULADO

@@ -42,4 +42,29 @@ public class UniversidadRequestDTO {
     private String locale;
 
     private String configuracion;
+
+    // ==================== CAMPOS SAAS ====================
+
+    @Pattern(regexp = "^(FREE|BASIC|PREMIUM|ENTERPRISE)$", message = "El plan debe ser FREE, BASIC, PREMIUM o ENTERPRISE")
+    private String plan;
+
+    @Pattern(regexp = "^(ACTIVA|SUSPENDIDA|TRIAL|VENCIDA)$", message = "El estado debe ser ACTIVA, SUSPENDIDA, TRIAL o VENCIDA")
+    private String estado;
+
+    private java.time.LocalDate fechaVencimiento;
+
+    @Min(value = 1, message = "El máximo de estudiantes debe ser mayor a 0")
+    private Integer maxEstudiantes;
+
+    @Min(value = 1, message = "El máximo de docentes debe ser mayor a 0")
+    private Integer maxDocentes;
+
+    @Min(value = 1, message = "Los créditos máximos por ciclo deben ser mayor a 0")
+    private Integer creditosMaximosPorCiclo;
+
+    @Min(value = 1, message = "Los créditos mínimos de tiempo completo deben ser mayor a 0")
+    private Integer creditosMinimosTiempoCompleto;
+
+    @Min(value = 1, message = "La duración del ciclo en meses debe ser mayor a 0")
+    private Integer duracionCicloMeses;
 }

@@ -48,6 +48,20 @@ public class CursoOfertadoController {
     }
 
     @GET
+    @Path("/plan-curso/{planCursoId}")
+    public Response findByPlanCurso(@PathParam("planCursoId") Long planCursoId) {
+        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findByPlanCurso(planCursoId);
+        return Response.ok(cursosOfertados).build();
+    }
+
+    @GET
+    @Path("/curso/{cursoId}")
+    public Response findByCurso(@PathParam("cursoId") Long cursoId) {
+        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findByCurso(cursoId);
+        return Response.ok(cursosOfertados).build();
+    }
+
+    @GET
     @Path("/profesor/{profesorId}")
     public Response findByProfesor(@PathParam("profesorId") Long profesorId) {
         List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findByProfesor(profesorId);

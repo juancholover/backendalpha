@@ -54,11 +54,11 @@ public class ProfesorResponseDTO {
     private String createdBy;
     private String updatedBy;
 
-    // Constructors
+
     public ProfesorResponseDTO() {
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

@@ -53,9 +53,9 @@ public class Persona extends AuditableEntity {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "genero", length = 20) // Aumentado para flexibilidad (ISO/IEC 5218)
+    @Column(name = "genero", length = 20) 
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String genero; // M, F, X, NO_ESPECIFICADO, etc.
+    private String genero; 
 
     @Column(name = "estado_civil", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)

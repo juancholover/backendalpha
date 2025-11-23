@@ -168,7 +168,7 @@ public class PagoDetalleDeudaService {
 
     @Transactional
     public void delete(Long id) {
-        PagoDetalleDeuda detalle = detalleRepository.findByIdOptional(id)
+        detalleRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Detalle de pago no encontrado con ID: " + id));
 
         // No se permite eliminación física, solo reversión

@@ -29,6 +29,16 @@ public class EstudianteRequestDTO {
     @Min(value = 0, message = "Los créditos aprobados no pueden ser negativos")
     private Integer creditosAprobados;
 
+
+    @Min(value = 0, message = "Los créditos cursando no pueden ser negativos")
+    private Integer creditosCursando;
+
+    @Min(value = 0, message = "Los créditos obligatorios aprobados no pueden ser negativos")
+    private Integer creditosObligatoriosAprobados;
+
+    @Min(value = 0, message = "Los créditos electivos aprobados no pueden ser negativos")
+    private Integer creditosElectivosAprobados;
+
     @DecimalMin(value = "0.00", message = "El promedio no puede ser negativo")
     @DecimalMax(value = "20.00", message = "El promedio no puede exceder 20")
     @Digits(integer = 2, fraction = 2, message = "El promedio debe tener máximo 2 enteros y 2 decimales")

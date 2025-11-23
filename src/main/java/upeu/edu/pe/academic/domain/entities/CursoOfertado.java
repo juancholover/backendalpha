@@ -33,8 +33,8 @@ public class CursoOfertado extends AuditableEntity {
     private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_academico_id", nullable = false)
-    private PlanAcademico planAcademico; // El curso del plan que se está ofertando
+    @JoinColumn(name = "plan_curso_id", nullable = false)
+    private PlanCurso planCurso; // La relación curso-plan que se está ofertando (incluye créditos, ciclo, tipo)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "periodo_academico_id", nullable = false)
@@ -70,21 +70,18 @@ public class CursoOfertado extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.SPACES_ONLY)
     private String observaciones;
 
-    // Relaciones inversas
     @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Matricula> matriculas = new HashSet<>();
 
     @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionCriterio> evaluacionCriterios = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia
-     */
-    public CursoOfertado(Universidad universidad, PlanAcademico planAcademico, 
+
+    public CursoOfertado(Universidad universidad, PlanCurso planCurso, 
                   PeriodoAcademico periodoAcademico, String codigoSeccion, 
                   Integer capacidadMaxima) {
         this.universidad = universidad;
-        this.planAcademico = planAcademico;
+        this.planCurso = planCurso;
         this.periodoAcademico = periodoAcademico;
         this.codigoSeccion = codigoSeccion;
         this.capacidadMaxima = capacidadMaxima;

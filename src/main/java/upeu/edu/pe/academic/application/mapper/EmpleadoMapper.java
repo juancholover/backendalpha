@@ -25,10 +25,10 @@ public interface EmpleadoMapper {
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Mapping(target = "personaId", source = "persona.id")
-    @Mapping(target = "nombreCompleto", ignore = true)
+    @Mapping(target = "nombreCompleto", expression = "java(getNombreCompleto(entity))")
     @Mapping(target = "unidadOrganizativaId", source = "unidadOrganizativa.id")
     @Mapping(target = "unidadOrganizativaNombre", source = "unidadOrganizativa.nombre")
-    @Mapping(target = "aniosServicio", ignore = true)
+    @Mapping(target = "aniosServicio", expression = "java(calculateAniosServicio(entity))")
     EmpleadoResponseDTO toResponseDTO(Empleado entity);
 
     @Mapping(target = "id", ignore = true)
@@ -41,18 +41,6 @@ public interface EmpleadoMapper {
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);
-
-    /**
-     * Convierte ID de persona a entidad Persona
-     */
-    default Persona map(Long personaId) {
-        if (personaId == null) {
-            return null;
-        }
-        Persona persona = new Persona();
-        persona.setId(personaId);
-        return persona;
-    }
 
     /**
      * Convierte ID de unidad organizativa a entidad UnidadOrganizativa
@@ -68,24 +56,24 @@ public interface EmpleadoMapper {
     }
 
     /**
-     * Obtiene el nombre completo de la persona (método helper)
+     * Obtiene el nombre completo de la persona
      */
-    static String getNombreCompleto(Empleado empleado) {
+    default String getNombreCompleto(Empleado empleado) {
         if (empleado == null || empleado.getPersona() == null) {
             return null;
         }
         Persona p = empleado.getPersona();
         return String.format("%s %s %s", 
-            p.getApellidoPaterno(), 
-            p.getApellidoMaterno(), 
-            p.getNombres()
+            p.getApellidoPaterno() != null ? p.getApellidoPaterno() : "", 
+            p.getApellidoMaterno() != null ? p.getApellidoMaterno() : "", 
+            p.getNombres() != null ? p.getNombres() : ""
         ).trim();
     }
 
     /**
-     * Calcula los años de servicio desde la fecha de ingreso (método helper)
+     * Calcula los años de servicio desde la fecha de ingreso
      */
-    static Integer calculateAniosServicio(Empleado empleado) {
+    default Integer calculateAniosServicio(Empleado empleado) {
         if (empleado == null || empleado.getFechaIngreso() == null) {
             return null;
         }

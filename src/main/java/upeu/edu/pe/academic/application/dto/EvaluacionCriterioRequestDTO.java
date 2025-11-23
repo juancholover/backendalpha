@@ -45,11 +45,9 @@ public class EvaluacionCriterioRequestDTO {
     @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
     private String descripcion;
 
-    // Constructors
     public EvaluacionCriterioRequestDTO() {
     }
 
-    // Getters and Setters
     public Long getUniversidadId() {
         return universidadId;
     }

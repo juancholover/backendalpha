@@ -9,8 +9,8 @@ public class CursoOfertadoRequestDTO {
     @NotNull(message = "La universidad es requerida")
     private Long universidadId;
 
-    @NotNull(message = "El plan académico es requerido")
-    private Long planAcademicoId;
+    @NotNull(message = "La relación plan-curso (PlanCurso) es requerida")
+    private Long planCursoId; // Referencia a PlanCurso (define curso, créditos, ciclo, tipo)
 
     @NotNull(message = "El período académico es requerido")
     private Long periodoAcademicoId;

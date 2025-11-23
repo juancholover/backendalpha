@@ -12,11 +12,6 @@ public class CursoResponseDTO {
     private Long universidadId;
     private String universidadNombre;
 
-    // Información del plan académico
-    private Long planAcademicoId;
-    private String planAcademicoCodigo;
-    private String planAcademicoNombre;
-    private String programaAcademicoNombre;
 
     // Información del curso
     private String codigoCurso;
@@ -36,6 +31,5 @@ public class CursoResponseDTO {
     private String createdBy;
     private String updatedBy;
 
-    // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
-    // NOTA: prerequisitos en RequisitoCurso (consulta separada)
+    
 }

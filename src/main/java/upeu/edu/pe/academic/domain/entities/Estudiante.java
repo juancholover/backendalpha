@@ -9,7 +9,6 @@ import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -35,7 +34,7 @@ public class Estudiante extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; // Aislamiento multi-tenant
+    private Universidad universidad; 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "programa_id", nullable = false)
@@ -54,8 +53,17 @@ public class Estudiante extends AuditableEntity {
     @Column(name = "creditos_aprobados")
     private Integer creditosAprobados;
 
-    @Column(name = "promedio_ponderado", precision = 5, scale = 2, columnDefinition = "DECIMAL(5,2) COMMENT 'Promedio ponderado acumulado (0.00-20.00)'")
-    private BigDecimal promedioPonderado;
+    @Column(name = "creditos_cursando")
+    private Integer creditosCursando = 0; // Créditos matriculados en el ciclo actual
+
+    @Column(name = "creditos_obligatorios_aprobados")
+    private Integer creditosObligatoriosAprobados = 0;
+
+    @Column(name = "creditos_electivos_aprobados")
+    private Integer creditosElectivosAprobados = 0;
+
+    @Column(name = "promedio_ponderado", precision = 5, scale = 2)
+    private java.math.BigDecimal promedioPonderado;
 
     @Column(name = "modalidad_ingreso", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
@@ -68,4 +76,33 @@ public class Estudiante extends AuditableEntity {
     @Column(name = "tipo_estudiante", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoEstudiante; // REGULAR, IRREGULAR
+
+
+    /**
+     * Verifica si el estudiante puede graduarse según el plan académico
+     */
+    public boolean puedeGraduarse(PlanAcademico plan) {
+        if (plan == null || creditosObligatoriosAprobados == null || creditosElectivosAprobados == null) {
+            return false;
+        }
+        boolean cumpleObligatorios = creditosObligatoriosAprobados >= (plan.getCreditosObligatorios() != null ? plan.getCreditosObligatorios() : 0);
+        boolean cumpleElectivos = creditosElectivosAprobados >= (plan.getCreditosElectivos() != null ? plan.getCreditosElectivos() : 0);
+        return cumpleObligatorios && cumpleElectivos;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.creditosCursando == null) {
+            this.creditosCursando = 0;
+        }
+        if (this.creditosObligatoriosAprobados == null) {
+            this.creditosObligatoriosAprobados = 0;
+        }
+        if (this.creditosElectivosAprobados == null) {
+            this.creditosElectivosAprobados = 0;
+        }
+        if (this.estadoAcademico == null) {
+            this.estadoAcademico = "ACTIVO";
+        }
+    }
 }

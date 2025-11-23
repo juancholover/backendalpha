@@ -26,11 +26,11 @@ public class EvaluacionNotaRequestDTO {
 
     private String observaciones;
 
-    // Constructors
+
     public EvaluacionNotaRequestDTO() {
     }
 
-    // Getters and Setters
+    
     public Long getMatriculaId() {
         return matriculaId;
     }

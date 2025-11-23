@@ -83,9 +83,7 @@ public class PeriodoAcademico extends AuditableEntity {
     @OneToMany(mappedBy = "periodoAcademico", fetch = FetchType.LAZY)
     private List<CursoOfertado> cursosOfertados = new ArrayList<>();
 
-    /**
-     * Constructor de conveniencia
-     */
+
     public PeriodoAcademico(Universidad universidad, String codigoPeriodo, String nombre, 
                            LocalDate fechaInicio, LocalDate fechaFin) {
         this.universidad = universidad;

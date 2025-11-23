@@ -25,11 +25,11 @@ public class EvaluacionCriterioResponseDTO {
     private LocalDateTime updatedAt;
     private Boolean active;
 
-    // Constructors
+    
     public EvaluacionCriterioResponseDTO() {
     }
 
-    // Getters and Setters
+
     public Long getId() {
         return id;
     }

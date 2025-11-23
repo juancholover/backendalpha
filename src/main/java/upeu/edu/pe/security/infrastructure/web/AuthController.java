@@ -130,10 +130,8 @@ public class AuthController {
                     .build();
         }
 
-        String token = authHeader.substring(7);
+        // Token format validated - in a complete implementation, validate signature here
 
-        // You can add token validation logic here using JwtTokenValidator
-        // For now, just return success if header format is correct
         return Response.ok(ApiResponse.success("Token format is valid")).build();
     }
 

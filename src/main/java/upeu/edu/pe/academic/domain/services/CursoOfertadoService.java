@@ -23,7 +23,7 @@ public class CursoOfertadoService {
     UniversidadRepository universidadRepository;
 
     @Inject
-    PlanAcademicoRepository planAcademicoRepository;
+    PlanCursoRepository planCursoRepository;
 
     @Inject
     PeriodoAcademicoRepository periodoAcademicoRepository;
@@ -49,6 +49,16 @@ public class CursoOfertadoService {
 
     public List<CursoOfertadoResponseDTO> findByPlanAcademico(Long planId) {
         List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findByPlanAcademico(planId);
+        return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
+    }
+
+    public List<CursoOfertadoResponseDTO> findByPlanCurso(Long planCursoId) {
+        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findByPlanCurso(planCursoId);
+        return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
+    }
+
+    public List<CursoOfertadoResponseDTO> findByCurso(Long cursoId) {
+        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findByCurso(cursoId);
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
 
@@ -87,21 +97,21 @@ public class CursoOfertadoService {
     @Transactional
     public CursoOfertadoResponseDTO create(CursoOfertadoRequestDTO requestDTO) {
         // Validar que no exista el curso ofertado
-        if (cursoOfertadoRepository.existsByCodigoAndPeriodoAndPlan(
+        if (cursoOfertadoRepository.existsByCodigoAndPeriodoAndPlanCurso(
                 requestDTO.getCodigoSeccion(), 
                 requestDTO.getPeriodoAcademicoId(), 
-                requestDTO.getPlanAcademicoId())) {
+                requestDTO.getPlanCursoId())) {
             throw new BusinessException("Ya existe un curso ofertado con el código: " + requestDTO.getCodigoSeccion() 
-                    + " para este plan y período");
+                    + " para este plan-curso y período");
         }
 
         // Validar universidad
         Universidad universidad = universidadRepository.findByIdOptional(requestDTO.getUniversidadId())
                 .orElseThrow(() -> new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId()));
 
-        // Validar plan académico
-        PlanAcademico planAcademico = planAcademicoRepository.findByIdOptional(requestDTO.getPlanAcademicoId())
-                .orElseThrow(() -> new NotFoundException("Plan académico no encontrado con ID: " + requestDTO.getPlanAcademicoId()));
+        // Validar plan-curso (esto valida curso + plan + créditos + ciclo)
+        PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
+                .orElseThrow(() -> new NotFoundException("Plan-Curso no encontrado con ID: " + requestDTO.getPlanCursoId()));
 
         // Validar período académico
         PeriodoAcademico periodoAcademico = periodoAcademicoRepository.findByIdOptional(requestDTO.getPeriodoAcademicoId())
@@ -118,7 +128,7 @@ public class CursoOfertadoService {
         // Crear curso ofertado
         CursoOfertado cursoOfertado = cursoOfertadoMapper.toEntity(requestDTO);
         cursoOfertado.setUniversidad(universidad);
-        cursoOfertado.setPlanAcademico(planAcademico);
+        cursoOfertado.setPlanCurso(planCurso);
         cursoOfertado.setPeriodoAcademico(periodoAcademico);
         cursoOfertado.setVacantesDisponibles(vacantesDisponibles);
 
@@ -152,10 +162,10 @@ public class CursoOfertadoService {
             cursoOfertado.setUniversidad(universidad);
         }
 
-        if (!cursoOfertado.getPlanAcademico().getId().equals(requestDTO.getPlanAcademicoId())) {
-            PlanAcademico planAcademico = planAcademicoRepository.findByIdOptional(requestDTO.getPlanAcademicoId())
-                    .orElseThrow(() -> new NotFoundException("Plan académico no encontrado con ID: " + requestDTO.getPlanAcademicoId()));
-            cursoOfertado.setPlanAcademico(planAcademico);
+        if (!cursoOfertado.getPlanCurso().getId().equals(requestDTO.getPlanCursoId())) {
+            PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
+                    .orElseThrow(() -> new NotFoundException("Plan-Curso no encontrado con ID: " + requestDTO.getPlanCursoId()));
+            cursoOfertado.setPlanCurso(planCurso);
         }
 
         if (!cursoOfertado.getPeriodoAcademico().getId().equals(requestDTO.getPeriodoAcademicoId())) {

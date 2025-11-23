@@ -56,4 +56,66 @@ public class Universidad extends AuditableEntity {
 
     @Column(name = "configuracion", columnDefinition = "jsonb") 
     private String configuracion;
+
+    
+    @Column(name = "plan", length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String plan; // FREE, BASIC, PREMIUM, ENTERPRISE
+
+    @Column(name = "estado", length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String estado; // ACTIVA, SUSPENDIDA, TRIAL, VENCIDA
+
+    @Column(name = "fecha_vencimiento")
+    private java.time.LocalDate fechaVencimiento;
+
+    @Column(name = "max_estudiantes")
+    private Integer maxEstudiantes; // Límite según el plan
+
+    @Column(name = "max_docentes")
+    private Integer maxDocentes; // Límite según el plan
+
+    @Column(name = "total_estudiantes")
+    private Integer totalEstudiantes = 0; // Contador actual
+
+    @Column(name = "total_docentes")
+    private Integer totalDocentes = 0; // Contador actual
+
+
+    public boolean estaActiva() {
+        if (!"ACTIVA".equals(this.estado)) {
+            return false;
+        }
+        if (fechaVencimiento != null && java.time.LocalDate.now().isAfter(fechaVencimiento)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Verifica si la universidad ha excedido el límite de estudiantes
+     */
+    public boolean haExcedidoLimiteEstudiantes() {
+        return maxEstudiantes != null && totalEstudiantes != null && totalEstudiantes >= maxEstudiantes;
+    }
+
+    /**
+     * Verifica si la universidad ha excedido el límite de docentes
+     */
+    public boolean haExcedidoLimiteDocentes() {
+        return maxDocentes != null && totalDocentes != null && totalDocentes >= maxDocentes;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.estado == null) {
+            this.estado = "ACTIVA";
+        }
+        if (this.totalEstudiantes == null) {
+            this.totalEstudiantes = 0;
+        }
+        if (this.totalDocentes == null) {
+            this.totalDocentes = 0;
+        }
+    }
 }

@@ -50,6 +50,11 @@ public class Matricula extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoMatricula = "REGULAR"; // REGULAR, EXTRAORDINARIA
 
+    // ==================== CONTROL DE CRÉDITOS ====================
+
+    @Column(name = "creditos_matriculados")
+    private Integer creditosMatriculados; // Créditos del curso matriculado
+
     @Column(name = "estado_matricula", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String estadoMatricula = "MATRICULADO"; // MATRICULADO, RETIRADO, ANULADO

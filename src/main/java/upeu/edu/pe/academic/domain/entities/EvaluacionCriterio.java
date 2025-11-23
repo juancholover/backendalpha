@@ -67,13 +67,11 @@ public class EvaluacionCriterio extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String estado; // ACTIVO, ELIMINADO
 
-    // Relación inversa
+    
     @OneToMany(mappedBy = "criterio", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionNota> evaluacionNotas = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia
-     */
+
     public EvaluacionCriterio(Universidad universidad, CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
         this.universidad = universidad;
         this.cursoOfertado = cursoOfertado;

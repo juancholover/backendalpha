@@ -29,10 +29,6 @@ public class Curso extends AuditableEntity {
     @JoinColumn(name = "universidad_id", nullable = false)
     private Universidad universidad;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_academico_id", nullable = false)
-    private PlanAcademico planAcademico;
-
     @Column(name = "codigo_curso", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigoCurso;
@@ -65,15 +61,8 @@ public class Curso extends AuditableEntity {
     @Column(name = "silabo_url", length = 255)
     private String silaboUrl;
 
-    // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
-    // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
-
-    /**
-     * Constructor de conveniencia
-     */
-    public Curso(Universidad universidad, PlanAcademico planAcademico, String codigoCurso, String nombre) {
+    public Curso(Universidad universidad, String codigoCurso, String nombre) {
         this.universidad = universidad;
-        this.planAcademico = planAcademico;
         this.codigoCurso = codigoCurso;
         this.nombre = nombre;
     }

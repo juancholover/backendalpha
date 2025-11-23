@@ -46,7 +46,7 @@ public class TipoAutoridadService {
     @Transactional
     public TipoAutoridadDTO create(CreateTipoAutoridadDTO dto) {
         // Validar que la universidad existe
-        var universidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
+        universidadRepository.findByIdOptional(dto.getUniversidadId())
                 .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + dto.getUniversidadId()));
 
         // Validar que no exista otro tipo de autoridad con el mismo nombre

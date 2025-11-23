@@ -6,7 +6,7 @@ import lombok.Data;
 public class LocalizacionResponseDTO {
     private Long id;
     private Long tipoLocalizacionId;
-    private String tipoLocalizacionNombre; // Denormalizado
+    private String tipoLocalizacionNombre; 
     private String nombre;
     private String codigo;
     private String edificio;

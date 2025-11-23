@@ -7,9 +7,15 @@ public class CursoOfertadoResponseDTO {
     private Long id;
     private Long universidadId;
     private String universidadNombre;
-    private Long planAcademicoId;
-    private String cursoNombre;
-    private String cursoCodigo;
+    private Long planCursoId; // ID de PlanCurso
+    private Long planAcademicoId; // Denormalizado desde PlanCurso
+    private String planAcademicoCodigo; // Denormalizado
+    private Long cursoId; // Denormalizado desde PlanCurso
+    private String cursoNombre; // Denormalizado
+    private String cursoCodigo; // Denormalizado
+    private Integer creditos; // Créditos desde PlanCurso
+    private Integer ciclo; // Ciclo desde PlanCurso
+    private String tipoCurso; // OBLIGATORIO/ELECTIVO desde PlanCurso
     private Long periodoAcademicoId;
     private String periodoNombre;
     private String periodoCodigo;
@@ -29,11 +35,9 @@ public class CursoOfertadoResponseDTO {
     private LocalDateTime updatedAt;
     private Boolean active;
 
-    // Constructors
     public CursoOfertadoResponseDTO() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -64,6 +68,54 @@ public class CursoOfertadoResponseDTO {
 
     public void setPlanAcademicoId(Long planAcademicoId) {
         this.planAcademicoId = planAcademicoId;
+    }
+
+    public Long getPlanCursoId() {
+        return planCursoId;
+    }
+
+    public void setPlanCursoId(Long planCursoId) {
+        this.planCursoId = planCursoId;
+    }
+
+    public String getPlanAcademicoCodigo() {
+        return planAcademicoCodigo;
+    }
+
+    public void setPlanAcademicoCodigo(String planAcademicoCodigo) {
+        this.planAcademicoCodigo = planAcademicoCodigo;
+    }
+
+    public Long getCursoId() {
+        return cursoId;
+    }
+
+    public void setCursoId(Long cursoId) {
+        this.cursoId = cursoId;
+    }
+
+    public Integer getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(Integer creditos) {
+        this.creditos = creditos;
+    }
+
+    public Integer getCiclo() {
+        return ciclo;
+    }
+
+    public void setCiclo(Integer ciclo) {
+        this.ciclo = ciclo;
+    }
+
+    public String getTipoCurso() {
+        return tipoCurso;
+    }
+
+    public void setTipoCurso(String tipoCurso) {
+        this.tipoCurso = tipoCurso;
     }
 
     public String getCursoNombre() {

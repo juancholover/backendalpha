@@ -18,38 +18,10 @@ public class CursoRepository implements PanacheRepositoryBase<Curso, Long> {
     }
 
     /**
-     * Listar cursos por plan académico
+     * Listar cursos por universidad
      */
-    public List<Curso> findByPlanAcademico(Long planAcademicoId) {
-        return find("planAcademico.id = ?1 and active = true", planAcademicoId).list();
-    }
-
-    /**
-     * Listar cursos por ciclo
-     */
-    public List<Curso> findByCiclo(Long planAcademicoId, Integer ciclo) {
-        return find("planAcademico.id = ?1 and ciclo = ?2 and active = true", planAcademicoId, ciclo).list();
-    }
-
-    /**
-     * Listar cursos por tipo (OBLIGATORIO, ELECTIVO, LIBRE)
-     */
-    public List<Curso> findByTipoCurso(String tipoCurso) {
-        return find("tipoCurso = ?1 and active = true", tipoCurso).list();
-    }
-
-    /**
-     * Listar cursos por área curricular
-     */
-    public List<Curso> findByAreaCurricular(String areaCurricular) {
-        return find("areaCurricular = ?1 and active = true", areaCurricular).list();
-    }
-
-    /**
-     * Listar cursos sin prerequisitos (primer ciclo)
-     */
-    public List<Curso> findCursosSinPrerequisitos(Long planAcademicoId) {
-        return find("planAcademico.id = ?1 and prerequisito is null and active = true", planAcademicoId).list();
+    public List<Curso> findByUniversidad(Long universidadId) {
+        return find("universidad.id = ?1 and active = true", universidadId).list();
     }
 
     /**

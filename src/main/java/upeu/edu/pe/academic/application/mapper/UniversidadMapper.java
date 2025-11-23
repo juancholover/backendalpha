@@ -11,8 +11,6 @@ public interface UniversidadMapper {
     @Mapping(target = "id", ignore = true)
     Universidad toEntity(UniversidadRequestDTO dto);
 
-    @Mapping(target = "localizacionPrincipalId", ignore = true)
-    @Mapping(target = "localizacionPrincipalNombre", ignore = true)
     UniversidadResponseDTO toResponseDTO(Universidad entity);
 
     @Mapping(target = "id", ignore = true)

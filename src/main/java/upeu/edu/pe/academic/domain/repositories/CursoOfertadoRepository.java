@@ -27,11 +27,27 @@ public class CursoOfertadoRepository implements PanacheRepository<CursoOfertado>
     }
 
     /**
-     * Busca cursos ofertados por plan académico (curso)
+     * Busca cursos ofertados por plan académico (a través de PlanCurso)
      */
     public List<CursoOfertado> findByPlanAcademico(Long planId) {
-        return find("planAcademico.id = ?1 and active = true ORDER BY codigoSeccion", 
+        return find("planCurso.planAcademico.id = ?1 and active = true ORDER BY codigoSeccion", 
                    planId).list();
+    }
+
+    /**
+     * Busca cursos ofertados por PlanCurso específico
+     */
+    public List<CursoOfertado> findByPlanCurso(Long planCursoId) {
+        return find("planCurso.id = ?1 and active = true ORDER BY codigoSeccion", 
+                   planCursoId).list();
+    }
+
+    /**
+     * Busca cursos ofertados por curso (a través de PlanCurso)
+     */
+    public List<CursoOfertado> findByCurso(Long cursoId) {
+        return find("planCurso.curso.id = ?1 and active = true ORDER BY periodoAcademico.fechaInicio DESC", 
+                   cursoId).list();
     }
 
     /**
@@ -77,9 +93,9 @@ public class CursoOfertadoRepository implements PanacheRepository<CursoOfertado>
     /**
      * Verifica si existe un curso ofertado
      */
-    public boolean existsByCodigoAndPeriodoAndPlan(String codigoSeccion, Long periodoId, Long planId) {
-        return count("UPPER(codigoSeccion) = UPPER(?1) and periodoAcademico.id = ?2 and planAcademico.id = ?3", 
-                    codigoSeccion, periodoId, planId) > 0;
+    public boolean existsByCodigoAndPeriodoAndPlanCurso(String codigoSeccion, Long periodoId, Long planCursoId) {
+        return count("UPPER(codigoSeccion) = UPPER(?1) and periodoAcademico.id = ?2 and planCurso.id = ?3", 
+                    codigoSeccion, periodoId, planCursoId) > 0;
     }
 
     /**

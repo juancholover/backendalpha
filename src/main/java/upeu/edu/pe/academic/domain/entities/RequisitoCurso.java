@@ -51,9 +51,6 @@ public class RequisitoCurso extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.SPACES_ONLY)
     private String observacion; // Ej: "Se puede llevar en paralelo con autorización"
 
-    /**
-     * Constructor de conveniencia para prerrequisito simple
-     */
     public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito) {
         this.universidad = universidad;
         this.curso = curso;
@@ -62,9 +59,7 @@ public class RequisitoCurso extends AuditableEntity {
         this.esObligatorio = true;
     }
 
-    /**
-     * Constructor completo
-     */
+    
     public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito, 
                          Boolean esObligatorio, Integer notaMinimaRequerida) {
         this.universidad = universidad;

@@ -34,7 +34,7 @@ public class Empleado extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; // Aislamiento multi-tenant
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_organizativa_id")

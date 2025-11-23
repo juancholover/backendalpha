@@ -21,11 +21,10 @@ public class RequisitoCursoResponseDTO {
     private LocalDateTime updatedAt;
     private Boolean active;
 
-    // Constructors
+    
     public RequisitoCursoResponseDTO() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

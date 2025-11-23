@@ -26,6 +26,11 @@ public class EstudianteResponseDTO {
     private LocalDate fechaIngreso;
     private Integer cicloActual;
     private Integer creditosAprobados;
+
+    private Integer creditosCursando;
+    private Integer creditosObligatoriosAprobados;
+    private Integer creditosElectivosAprobados;
+
     private BigDecimal promedioPonderado;
     private String modalidadIngreso;
     private String estadoAcademico;

@@ -9,8 +9,6 @@ public class CursoRequestDTO {
     @NotNull(message = "El ID de la universidad es obligatorio")
     private Long universidadId;
 
-    @NotNull(message = "El ID del plan académico es obligatorio")
-    private Long planAcademicoId;
 
     @NotBlank(message = "El código del curso es obligatorio")
     @Size(max = 20, message = "El código del curso no puede exceder 20 caracteres")
@@ -45,6 +43,4 @@ public class CursoRequestDTO {
     @Size(max = 255, message = "La URL del sílabo no puede exceder 255 caracteres")
     private String silaboUrl;
 
-    // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
-    // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
 }

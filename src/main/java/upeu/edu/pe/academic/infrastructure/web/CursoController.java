@@ -68,65 +68,24 @@ public class CursoController {
     }
 
     @GET
-    @Path("/plan/{planId}")
-    @Operation(summary = "Listar cursos por plan académico", description = "Obtiene todos los cursos de un plan académico específico")
+    @Path("/universidad/{universidadId}")
+    @Operation(summary = "Listar cursos por universidad", description = "Obtiene todos los cursos de una universidad. Para cursos por plan académico usar PlanCurso API")
     @APIResponses(value = {
         @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
     })
-    public Response findByPlanAcademico(
-            @Parameter(description = "ID del plan académico", required = true)
-            @PathParam("planId") Long planId) {
-        List<CursoResponseDTO> cursos = cursoService.findByPlanAcademico(planId);
-        return Response.ok(ApiResponse.success("Cursos del plan listados", cursos)).build();
-    }
-
-    @GET
-    @Path("/plan/{planId}/ciclo/{ciclo}")
-    @Operation(summary = "Listar cursos por plan y ciclo", description = "Obtiene todos los cursos de un ciclo específico de un plan académico")
-    @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
-    })
-    public Response findByCiclo(
-            @Parameter(description = "ID del plan académico", required = true)
-            @PathParam("planId") Long planId,
-            @Parameter(description = "Número de ciclo", required = true, example = "1")
-            @PathParam("ciclo") Integer ciclo) {
-        List<CursoResponseDTO> cursos = cursoService.findByCiclo(planId, ciclo);
-        return Response.ok(ApiResponse.success("Cursos del ciclo " + ciclo + " listados", cursos)).build();
-    }
-
-    @GET
-    @Path("/tipo/{tipo}")
-    @Operation(summary = "Listar cursos por tipo", description = "Filtra cursos por su tipo (OBLIGATORIO, ELECTIVO, LIBRE)")
-    @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
-    })
-    public Response findByTipoCurso(
-            @Parameter(description = "Tipo de curso (OBLIGATORIO, ELECTIVO, LIBRE)", required = true)
-            @PathParam("tipo") String tipo) {
-        List<CursoResponseDTO> cursos = cursoService.findByTipoCurso(tipo);
-        return Response.ok(ApiResponse.success("Cursos filtrados por tipo", cursos)).build();
-    }
-
-    @GET
-    @Path("/plan/{planId}/sin-prerequisitos")
-    @Operation(summary = "Listar cursos sin prerequisitos", description = "Obtiene los cursos que no requieren otros cursos previos (usualmente del primer ciclo)")
-    @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
-    })
-    public Response findCursosSinPrerequisitos(
-            @Parameter(description = "ID del plan académico", required = true)
-            @PathParam("planId") Long planId) {
-        List<CursoResponseDTO> cursos = cursoService.findCursosSinPrerequisitos(planId);
-        return Response.ok(ApiResponse.success("Cursos sin prerequisitos listados", cursos)).build();
+    public Response findByUniversidad(
+            @Parameter(description = "ID de la universidad", required = true)
+            @PathParam("universidadId") Long universidadId) {
+        List<CursoResponseDTO> cursos = cursoService.findByUniversidad(universidadId);
+        return Response.ok(ApiResponse.success("Cursos de la universidad listados", cursos)).build();
     }
 
     @POST
-    @Operation(summary = "Crear nuevo curso", description = "Registra un nuevo curso en el sistema asociándolo a un plan académico")
+    @Operation(summary = "Crear nuevo curso", description = "Registra un nuevo curso en el catálogo de la universidad (sin plan académico específico)")
     @APIResponses(value = {
         @APIResponse(responseCode = "201", description = "Curso creado exitosamente"),
         @APIResponse(responseCode = "400", description = "Datos de entrada inválidos o regla de negocio violada"),
-        @APIResponse(responseCode = "404", description = "Plan académico o prerequisito no encontrado"),
+        @APIResponse(responseCode = "404", description = "Universidad no encontrada"),
         @APIResponse(responseCode = "409", description = "El curso ya existe")
     })
     public Response create(

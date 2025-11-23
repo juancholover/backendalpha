@@ -8,10 +8,8 @@ import upeu.edu.pe.academic.application.dto.CursoRequestDTO;
 import upeu.edu.pe.academic.application.dto.CursoResponseDTO;
 import upeu.edu.pe.academic.application.mapper.CursoMapper;
 import upeu.edu.pe.academic.domain.entities.Curso;
-import upeu.edu.pe.academic.domain.entities.PlanAcademico;
 import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.CursoRepository;
-import upeu.edu.pe.academic.domain.repositories.PlanAcademicoRepository;
 import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 import upeu.edu.pe.shared.exceptions.BusinessRuleException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
@@ -25,9 +23,6 @@ public class CursoService {
 
     @Inject
     CursoRepository cursoRepository;
-
-    @Inject
-    PlanAcademicoRepository planAcademicoRepository;
 
     @Inject
     UniversidadRepository universidadRepository;
@@ -67,47 +62,18 @@ public class CursoService {
     }
 
     /**
-     * Listar cursos por plan académico
+     * Listar cursos por universidad
+     * NOTA: Para buscar cursos por plan académico, usar PlanCursoService.findByPlanAcademico()
      */
-    public List<CursoResponseDTO> findByPlanAcademico(Long planAcademicoId) {
-        return cursoRepository.findByPlanAcademico(planAcademicoId)
+    public List<CursoResponseDTO> findByUniversidad(Long universidadId) {
+        return cursoRepository.findByUniversidad(universidadId)
                 .stream()
                 .map(cursoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Listar cursos por ciclo
-     */
-    public List<CursoResponseDTO> findByCiclo(Long planAcademicoId, Integer ciclo) {
-        return cursoRepository.findByCiclo(planAcademicoId, ciclo)
-                .stream()
-                .map(cursoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Listar cursos por tipo (OBLIGATORIO, ELECTIVO, LIBRE)
-     */
-    public List<CursoResponseDTO> findByTipoCurso(String tipoCurso) {
-        return cursoRepository.findByTipoCurso(tipoCurso)
-                .stream()
-                .map(cursoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Listar cursos sin prerequisitos
-     */
-    public List<CursoResponseDTO> findCursosSinPrerequisitos(Long planAcademicoId) {
-        return cursoRepository.findCursosSinPrerequisitos(planAcademicoId)
-                .stream()
-                .map(cursoMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Crear nuevo curso
+     * Crear nuevo curso (ahora SIN plan académico)
      */
     @Transactional
     public CursoResponseDTO create(@Valid CursoRequestDTO dto) {
@@ -116,23 +82,13 @@ public class CursoService {
                 .filter(u -> u.getActive())
                 .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", dto.getUniversidadId()));
 
-        // Validar que exista el plan académico
-        PlanAcademico planAcademico = planAcademicoRepository.findByIdOptional(dto.getPlanAcademicoId())
-                .filter(p -> p.getActive())
-                .orElseThrow(() -> new ResourceNotFoundException("PlanAcademico", "id", dto.getPlanAcademicoId()));
-
-        // Validar que el plan académico esté vigente
-        if (!"VIGENTE".equals(planAcademico.getEstado())) {
-            throw new BusinessRuleException("El plan académico debe estar en estado VIGENTE para crear cursos");
-        }
-
         // Validar que no exista el código del curso
         if (cursoRepository.existsByCodigoCurso(dto.getCodigoCurso())) {
             throw new DuplicateResourceException("Curso", "codigoCurso", dto.getCodigoCurso());
         }
 
-        // NOTA: creditos y ciclo están en PlanAcademico (varían por programa)
-        // NOTA: prerequisitos están en RequisitoCurso (con universidad_id)
+        // NOTA: Los créditos, ciclo y tipo del curso se definen en PlanCurso (tabla M:N)
+        // NOTA: Los prerequisitos están en RequisitoCurso (con universidad_id)
 
         // Validar coherencia de horas
         if (dto.getHorasTeoricas() != null && dto.getHorasPracticas() != null && dto.getHorasSemanales() != null) {
@@ -148,7 +104,6 @@ public class CursoService {
         // Crear la entidad curso
         Curso curso = cursoMapper.toEntity(dto);
         curso.setUniversidad(universidad);
-        curso.setPlanAcademico(planAcademico);
 
         // Establecer valores por defecto
         if (curso.getTipoCurso() == null) {
@@ -187,18 +142,7 @@ public class CursoService {
             curso.setUniversidad(nuevaUniversidad);
         }
 
-        // Validar plan académico si cambió
-        if (!curso.getPlanAcademico().getId().equals(dto.getPlanAcademicoId())) {
-            PlanAcademico nuevoPlan = planAcademicoRepository.findByIdOptional(dto.getPlanAcademicoId())
-                    .filter(p -> p.getActive())
-                    .orElseThrow(() -> new ResourceNotFoundException("PlanAcademico", "id", dto.getPlanAcademicoId()));
-
-            if (!"VIGENTE".equals(nuevoPlan.getEstado())) {
-                throw new BusinessRuleException("El plan académico debe estar en estado VIGENTE");
-            }
-
-            curso.setPlanAcademico(nuevoPlan);
-        }
+        // NOTA: Los créditos, ciclo y tipo del curso se definen en PlanCurso (no aquí)
 
         // Validar código de curso si cambió
         if (!curso.getCodigoCurso().equals(dto.getCodigoCurso()) &&

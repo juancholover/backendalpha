@@ -26,7 +26,7 @@ public class RequisitoCursoRequestDTO {
 
     private String observacion;
 
-    // Constructors
+    
     public RequisitoCursoRequestDTO() {
     }
 
@@ -38,7 +38,7 @@ public class RequisitoCursoRequestDTO {
         this.esObligatorio = esObligatorio;
     }
 
-    // Getters and Setters
+    
     public Long getUniversidadId() {
         return universidadId;
     }
