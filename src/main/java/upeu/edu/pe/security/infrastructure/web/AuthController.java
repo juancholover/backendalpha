@@ -40,6 +40,10 @@ public class AuthController {
         }
     }
 
+    // NOTA: El registro ahora requiere crear primero Persona y Universidad
+    // Este endpoint fue deshabilitado porque AuthUsuario necesita referencias completas
+    // Ver docs/MIGRACION-AUTHUSUARIO.md para implementar el nuevo flujo de registro
+    /*
     @POST
     @Path("/register")
     @Operation(summary = "User registration", description = "Create new user account and return JWT tokens")
@@ -59,6 +63,7 @@ public class AuthController {
                     .build();
         }
     }
+    */
 
     @POST
     @Path("/refresh")

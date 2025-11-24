@@ -4,7 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import upeu.edu.pe.security.domain.entities.RefreshToken;
-import upeu.edu.pe.security.domain.entities.User;
+import upeu.edu.pe.security.domain.entities.AuthUsuario;
 import upeu.edu.pe.security.domain.repositories.RefreshTokenRepository;
 
 import java.util.List;
@@ -29,8 +29,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository, Panac
     }
 
     @Override
-    public List<RefreshToken> findByUser(User user) {
-        return find("user.id = ?1 and isRevoked = false and active = true", user.getId()).list();
+    public List<RefreshToken> findByAuthUsuario(AuthUsuario authUsuario) {
+        return find("authUsuario.id = ?1 and isRevoked = false and active = true", authUsuario.getId()).list();
     }
 
     @Override
@@ -48,8 +48,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository, Panac
 
     @Override
     @Transactional
-    public void revokeAllByUser(User user) {
-        update("isRevoked = true where user.id = ?1 and isRevoked = false", user.getId());
+    public void revokeAllByAuthUsuario(AuthUsuario authUsuario) {
+        update("isRevoked = true where authUsuario.id = ?1 and isRevoked = false", authUsuario.getId());
     }
 
     /**
@@ -72,7 +72,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository, Panac
      * Elimina todos los tokens de un usuario
      */
     @Transactional
-    public void deleteAllByUserId(Long userId) {
-        delete("user.id", userId);
+    public void deleteAllByAuthUsuarioId(Long authUsuarioId) {
+        delete("authUsuario.id", authUsuarioId);
     }
 }

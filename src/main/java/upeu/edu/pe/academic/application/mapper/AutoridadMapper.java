@@ -16,7 +16,6 @@ public interface AutoridadMapper {
     @Mapping(target = "tipoAutoridadId", source = "tipoAutoridad.id")
     @Mapping(target = "tipoAutoridadNombre", source = "tipoAutoridad.nombre")
     @Mapping(target = "nivelJerarquia", source = "tipoAutoridad.nivelJerarquia")
-    @Mapping(target = "observaciones", ignore = true)
     AutoridadDTO toDTO(Autoridad entity);
 
     @Mapping(target = "id", ignore = true)

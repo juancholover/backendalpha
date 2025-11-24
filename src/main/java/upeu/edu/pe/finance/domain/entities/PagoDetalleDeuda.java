@@ -12,7 +12,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "pago_detalle_deuda")
+@Table(name = "pago_detalle_deuda",
+    indexes = {
+        @Index(name = "idx_pago_detalle_pago", columnList = "pago_id"),
+        @Index(name = "idx_pago_detalle_deuda", columnList = "deuda_id"),
+        @Index(name = "idx_pago_detalle_estado", columnList = "estado, fecha_aplicacion")
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -93,6 +99,34 @@ public class PagoDetalleDeuda extends AuditableEntity {
      * Validaciones de negocio antes de persistir
      */
     private void validarAplicacion() {
+        // ✅ SEGURIDAD MULTITENANCY: Validar que pago y deuda sean de la misma universidad
+        if (pago != null && deuda != null) {
+            Long universidadPago = pago.getUniversidad().getId();
+            Long universidadDeuda = deuda.getUniversidad().getId();
+            
+            if (!universidadPago.equals(universidadDeuda)) {
+                throw new IllegalStateException(
+                    String.format(
+                        "Violación de seguridad multitenancy: No se puede aplicar un pago de universidad %d a una deuda de universidad %d",
+                        universidadPago, universidadDeuda
+                    )
+                );
+            }
+            
+            // Validar que el estudiante del pago y la deuda sean el mismo
+            Long estudiantePago = pago.getEstudiante().getId();
+            Long estudianteDeuda = deuda.getEstudiante().getId();
+            
+            if (!estudiantePago.equals(estudianteDeuda)) {
+                throw new IllegalStateException(
+                    String.format(
+                        "No se puede aplicar un pago del estudiante %d a una deuda del estudiante %d",
+                        estudiantePago, estudianteDeuda
+                    )
+                );
+            }
+        }
+        
         // Validar que el monto sea positivo
         if (montoAplicado.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto aplicado debe ser mayor a cero");

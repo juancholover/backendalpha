@@ -108,6 +108,10 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
             if (username != null) {
                 auditContext.setCurrentUser(username);
                 System.out.println("SUCCESS: User authenticated: " + username);
+                
+                // Extraer universidad_id del token
+                Long universidadId = jwtTokenValidator.getUniversidadIdFromToken(token);
+                System.out.println("Universidad ID from token: " + universidadId);
             } else {
                 System.out.println("WARNING: Could not extract username from token");
             }

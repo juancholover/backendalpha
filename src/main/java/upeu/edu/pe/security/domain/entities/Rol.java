@@ -44,13 +44,10 @@ public class Rol extends AuditableEntity {
     @Column(name = "es_sistema", nullable = false)
     private Boolean esSistema = false; // true para roles predefinidos que no se pueden eliminar
 
-    // Relación con RolPermiso
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolPermiso> rolPermisos = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia para crear un rol con universidad y nombre
-     */
+   
     public Rol(Universidad universidad, String nombre, String descripcion) {
         this.universidad = universidad;
         this.nombre = nombre;
@@ -58,9 +55,7 @@ public class Rol extends AuditableEntity {
         this.esSistema = false;
     }
 
-    /**
-     * Constructor para roles del sistema
-     */
+
     public Rol(Universidad universidad, String nombre, String descripcion, Boolean esSistema) {
         this.universidad = universidad;
         this.nombre = nombre;

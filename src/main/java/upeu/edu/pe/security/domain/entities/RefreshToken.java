@@ -25,14 +25,14 @@ public class RefreshToken extends AuditableEntity {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 1000)
-    private String token; // No normalizar - es un JWT
+    private String token;
 
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "auth_usuario_id", nullable = false)
+    private AuthUsuario authUsuario;
 
     @Column(name = "is_revoked", nullable = false)
     private Boolean isRevoked = false;

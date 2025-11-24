@@ -11,24 +11,33 @@ import java.util.Optional;
 public class UnidadOrganizativaRepository implements PanacheRepositoryBase<UnidadOrganizativa, Long> {
 
     /**
-     * Buscar unidad organizativa por código
+     * Buscar unidad organizativa por código en una universidad específica
      */
-    public Optional<UnidadOrganizativa> findByCodigo(String codigo) {
-        return find("codigo = ?1 and active = true", codigo).firstResultOptional();
+    public Optional<UnidadOrganizativa> findByCodigoAndUniversidad(String codigo, Long universidadId) {
+        return find("codigo = ?1 and universidad.id = ?2 and active = true", codigo, universidadId)
+                .firstResultOptional();
     }
 
     /**
-     * Buscar unidad organizativa por sigla
+     * Buscar unidad organizativa por sigla en una universidad específica
      */
-    public Optional<UnidadOrganizativa> findBySigla(String sigla) {
-        return find("sigla = ?1 and active = true", sigla).firstResultOptional();
+    public Optional<UnidadOrganizativa> findBySiglaAndUniversidad(String sigla, Long universidadId) {
+        return find("sigla = ?1 and universidad.id = ?2 and active = true", sigla, universidadId)
+                .firstResultOptional();
     }
 
     /**
-     * Listar unidades raíz (sin padre) - Primer nivel
+     * Listar unidades organizativas por universidad
      */
-    public List<UnidadOrganizativa> findUnidadesRaiz() {
-        return find("unidadPadre is null and active = true").list();
+    public List<UnidadOrganizativa> findByUniversidad(Long universidadId) {
+        return find("universidad.id = ?1 and active = true", universidadId).list();
+    }
+
+    /**
+     * Listar unidades raíz (sin padre) por universidad
+     */
+    public List<UnidadOrganizativa> findRootUnidades(Long universidadId) {
+        return find("universidad.id = ?1 and unidadPadre is null and active = true", universidadId).list();
     }
 
     /**
@@ -48,8 +57,29 @@ public class UnidadOrganizativaRepository implements PanacheRepositoryBase<Unida
     /**
      * Listar unidades por tipo
      */
-    public List<UnidadOrganizativa> findByTipo(Long tipoUnidadId) {
+    public List<UnidadOrganizativa> findByTipoUnidad(Long tipoUnidadId) {
         return find("tipoUnidad.id = ?1 and active = true", tipoUnidadId).list();
+    }
+
+    /**
+     * Listar unidades por tipo y universidad
+     */
+    public List<UnidadOrganizativa> findByTipoUnidadAndUniversidad(Long tipoUnidadId, Long universidadId) {
+        return find("tipoUnidad.id = ?1 and universidad.id = ?2 and active = true", tipoUnidadId, universidadId)
+                .list();
+    }
+
+    /**
+     * Buscar con todas las relaciones cargadas
+     */
+    public Optional<UnidadOrganizativa> findByIdWithRelations(Long id) {
+        return find("SELECT u FROM UnidadOrganizativa u " +
+                "LEFT JOIN FETCH u.universidad " +
+                "LEFT JOIN FETCH u.tipoUnidad " +
+                "LEFT JOIN FETCH u.localizacion " +
+                "LEFT JOIN FETCH u.unidadPadre " +
+                "WHERE u.id = ?1 and u.active = true", id)
+                .firstResultOptional();
     }
 
     /**
@@ -60,17 +90,33 @@ public class UnidadOrganizativaRepository implements PanacheRepositoryBase<Unida
     }
 
     /**
-     * Verificar si existe código
+     * Verificar si existe código en una universidad
      */
-    public boolean existsByCodigo(String codigo) {
-        return count("codigo = ?1 and active = true", codigo) > 0;
+    public boolean existsByCodigoAndUniversidad(String codigo, Long universidadId) {
+        return count("codigo = ?1 and universidad.id = ?2 and active = true", codigo, universidadId) > 0;
     }
 
     /**
-     * Verificar si existe código excluyendo un ID
+     * Verificar si existe código en una universidad excluyendo un ID
      */
-    public boolean existsByCodigoAndIdNot(String codigo, Long id) {
-        return count("codigo = ?1 and id != ?2 and active = true", codigo, id) > 0;
+    public boolean existsByCodigoAndUniversidadAndIdNot(String codigo, Long universidadId, Long id) {
+        return count("codigo = ?1 and universidad.id = ?2 and id != ?3 and active = true", 
+                codigo, universidadId, id) > 0;
+    }
+
+    /**
+     * Verificar si existe nombre en una universidad
+     */
+    public boolean existsByNombreAndUniversidad(String nombre, Long universidadId) {
+        return count("nombre = ?1 and universidad.id = ?2 and active = true", nombre, universidadId) > 0;
+    }
+
+    /**
+     * Verificar si existe nombre en una universidad excluyendo un ID
+     */
+    public boolean existsByNombreAndUniversidadAndIdNot(String nombre, Long universidadId, Long id) {
+        return count("nombre = ?1 and universidad.id = ?2 and id != ?3 and active = true", 
+                nombre, universidadId, id) > 0;
     }
 
     /**
@@ -78,5 +124,12 @@ public class UnidadOrganizativaRepository implements PanacheRepositoryBase<Unida
      */
     public boolean hasUnidadesHijas(Long unidadId) {
         return count("unidadPadre.id = ?1 and active = true", unidadId) > 0;
+    }
+
+    /**
+     * Contar unidades por universidad
+     */
+    public long countByUniversidad(Long universidadId) {
+        return count("universidad.id = ?1 and active = true", universidadId);
     }
 }

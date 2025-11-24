@@ -38,18 +38,13 @@ public class RolPermiso extends AuditableEntity {
     @Column(name = "restriccion", length = 500)
     private String restriccion; // JSON con restricciones adicionales (ej: solo su propia data)
 
-    /**
-     * Constructor de conveniencia
-     */
     public RolPermiso(Rol rol, Permiso permiso) {
         this.rol = rol;
         this.permiso = permiso;
         this.puedeDeleagar = false;
     }
 
-    /**
-     * Constructor completo
-     */
+
     public RolPermiso(Rol rol, Permiso permiso, Boolean puedeDeleagar, String restriccion) {
         this.rol = rol;
         this.permiso = permiso;

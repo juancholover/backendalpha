@@ -11,17 +11,17 @@ import java.util.Optional;
 public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario, Long> {
 
     /**
-     * Buscar usuario por username
+     * Buscar usuario por username (email de persona)
      */
     public Optional<AuthUsuario> findByUsername(String username) {
-        return find("username = ?1 and active = true", username).firstResultOptional();
+        return find("persona.email = ?1 and active = true", username).firstResultOptional();
     }
 
     /**
-     * Buscar usuario por email
+     * Buscar usuario por email (delegado a persona)
      */
     public Optional<AuthUsuario> findByEmail(String email) {
-        return find("email = ?1 and active = true", email).firstResultOptional();
+        return find("persona.email = ?1 and active = true", email).firstResultOptional();
     }
 
     /**
@@ -32,31 +32,24 @@ public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario,
     }
 
     /**
-     * Listar usuarios por rol
+     * Listar usuarios por universidad
      */
-    public List<AuthUsuario> findByRol(String rol) {
-        return find("rol = ?1 and active = true", rol).list();
+    public List<AuthUsuario> findByUniversidad(Long universidadId) {
+        return find("universidad.id = ?1 and active = true", universidadId).list();
     }
 
     /**
-     * Listar usuarios por estado
-     */
-    public List<AuthUsuario> findByEstado(String estado) {
-        return find("estado = ?1 and active = true", estado).list();
-    }
-
-    /**
-     * Listar usuarios activos
+     * Listar usuarios activos (no bloqueados)
      */
     public List<AuthUsuario> findUsuariosActivos() {
-        return find("estado = 'ACTIVO' and active = true").list();
+        return find("active = true and fechaBloqueo is null").list();
     }
 
     /**
      * Listar usuarios bloqueados
      */
     public List<AuthUsuario> findUsuariosBloqueados() {
-        return find("estado = 'BLOQUEADO' and active = true").list();
+        return find("active = true and fechaBloqueo is not null").list();
     }
 
     /**
@@ -74,31 +67,31 @@ public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario,
     }
 
     /**
-     * Verificar si existe username
+     * Verificar si existe username (email de persona)
      */
     public boolean existsByUsername(String username) {
-        return count("username = ?1 and active = true", username) > 0;
+        return count("persona.email = ?1 and active = true", username) > 0;
     }
 
     /**
      * Verificar si existe username excluyendo un ID
      */
     public boolean existsByUsernameAndIdNot(String username, Long id) {
-        return count("username = ?1 and id != ?2 and active = true", username, id) > 0;
+        return count("persona.email = ?1 and id != ?2 and active = true", username, id) > 0;
     }
 
     /**
-     * Verificar si existe email
+     * Verificar si existe email (delegado a persona)
      */
     public boolean existsByEmail(String email) {
-        return count("email = ?1 and active = true", email) > 0;
+        return count("persona.email = ?1 and active = true", email) > 0;
     }
 
     /**
      * Verificar si existe email excluyendo un ID
      */
     public boolean existsByEmailAndIdNot(String email, Long id) {
-        return count("email = ?1 and id != ?2 and active = true", email, id) > 0;
+        return count("persona.email = ?1 and id != ?2 and active = true", email, id) > 0;
     }
 
     /**

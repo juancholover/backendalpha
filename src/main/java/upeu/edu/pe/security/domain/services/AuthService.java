@@ -6,12 +6,10 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import upeu.edu.pe.security.application.dto.*;
-import upeu.edu.pe.security.application.mapper.UserMapper;
 import upeu.edu.pe.security.domain.entities.RefreshToken;
-import upeu.edu.pe.security.domain.entities.User;
-import upeu.edu.pe.security.domain.enums.UserStatus;
+import upeu.edu.pe.security.domain.entities.AuthUsuario;
 import upeu.edu.pe.security.domain.repositories.RefreshTokenRepository;
-import upeu.edu.pe.security.domain.repositories.UserRepository;
+import upeu.edu.pe.security.domain.repositories.AuthUsuarioRepository;
 import upeu.edu.pe.security.infrastructure.utils.JwtTokenGenerator;
 import upeu.edu.pe.security.infrastructure.utils.JwtTokenValidator;
 import upeu.edu.pe.security.infrastructure.utils.PasswordEncoder;
@@ -22,10 +20,7 @@ import java.time.LocalDateTime;
 public class AuthService {
 
     @Inject
-    UserRepository userRepository;
-
-    @Inject
-    UserMapper userMapper;
+    AuthUsuarioRepository authUsuarioRepository;
 
     @Inject
     JwtTokenGenerator jwtTokenGenerator;
@@ -39,108 +34,48 @@ public class AuthService {
     @Inject
     RefreshTokenRepository refreshTokenRepository;
 
-    @Inject
-    UserService userService;
-
     @Transactional
     public AuthResponseDto login(LoginRequestDto loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername())
+        AuthUsuario authUsuario = authUsuarioRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new NotAuthorizedException("Credenciales inválidas"));
 
         // Validar contraseña con PasswordEncoder
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), authUsuario.getPasswordHash())) {
+            authUsuario.registrarAccesoFallido();
+            authUsuarioRepository.persist(authUsuario);
             throw new NotAuthorizedException("Credenciales inválidas");
         }
 
-        if (!user.getActive() || user.getStatus() != UserStatus.ACTIVE) {
+        if (!authUsuario.estaActivo()) {
             throw new NotAuthorizedException("Usuario inactivo o bloqueado");
         }
 
         // Generar tokens JWT
-        String accessToken = jwtTokenGenerator.generateAccessToken(user);
-        String refreshTokenStr = jwtTokenGenerator.generateRefreshToken(user);
+        String accessToken = jwtTokenGenerator.generateAccessToken(authUsuario);
+        String refreshTokenStr = jwtTokenGenerator.generateRefreshToken(authUsuario);
 
         // Guardar refresh token en base de datos
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(refreshTokenStr);
-        refreshToken.setUser(user);
+        refreshToken.setAuthUsuario(authUsuario);
         refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(jwtTokenGenerator.getRefreshDuration()));
         refreshToken.setIsRevoked(false);
         refreshTokenRepository.saveRefreshToken(refreshToken);
 
-        // Actualizar último login
-        userService.updateLastLogin(user.getId());
+        // Registrar acceso exitoso
+        authUsuario.registrarAccesoExitoso();
+        authUsuarioRepository.persist(authUsuario);
 
         // Construir respuesta
         AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getRole(),
-            user.getStatus(),
-            user.getLastLogin()
-        );
-
-        AuthResponseDto response = new AuthResponseDto();
-        response.setAccessToken(accessToken);
-        response.setRefreshToken(refreshTokenStr);
-        response.setTokenType("Bearer");
-        response.setExpiresIn(jwtTokenGenerator.getDuration());
-        response.setUser(userInfo);
-
-        return response;
-    }
-
-    @Transactional
-    public AuthResponseDto register(RegisterRequestDto registerRequest) {
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new IllegalArgumentException("El username ya está en uso");
-        }
-
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new IllegalArgumentException("El email ya está registrado");
-        }
-
-        // Hashear contraseña con PasswordEncoder
-        String hashedPassword = passwordEncoder.encode(registerRequest.getPassword());
-
-        User user = new User();
-        user.setUsername(registerRequest.getUsername());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(hashedPassword);
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
-        user.setPhone(registerRequest.getPhone());
-        user.setRole(registerRequest.getRole());
-        user.setStatus(UserStatus.ACTIVE);
-        user.setActive(true);
-
-        userRepository.persist(user);
-
-        // Generar tokens JWT
-        String accessToken = jwtTokenGenerator.generateAccessToken(user);
-        String refreshTokenStr = jwtTokenGenerator.generateRefreshToken(user);
-
-        // Guardar refresh token en base de datos
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(refreshTokenStr);
-        refreshToken.setUser(user);
-        refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(jwtTokenGenerator.getRefreshDuration()));
-        refreshToken.setIsRevoked(false);
-        refreshTokenRepository.saveRefreshToken(refreshToken);
-
-        // Construir respuesta
-        AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getRole(),
-            user.getStatus(),
-            user.getLastLogin()
+            authUsuario.getId(),
+            authUsuario.getUsername(),
+            authUsuario.getEmail(),
+            authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
+            authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
+            null, // rol enum - AuthUsuario usa Rol entity
+            null, // status enum - AuthUsuario usa String estado
+            authUsuario.getUltimoAcceso()
         );
 
         AuthResponseDto response = new AuthResponseDto();
@@ -172,17 +107,17 @@ public class AuthService {
         }
 
         // Obtener usuario del token
-        User user = refreshToken.getUser();
+        AuthUsuario authUsuario = refreshToken.getAuthUsuario();
 
-        if (!user.getActive() || user.getStatus() != UserStatus.ACTIVE) {
+        if (!authUsuario.estaActivo()) {
             throw new NotAuthorizedException("Usuario inactivo o bloqueado");
         }
 
         // Generar nuevo access token
-        String newAccessToken = jwtTokenGenerator.generateAccessToken(user);
+        String newAccessToken = jwtTokenGenerator.generateAccessToken(authUsuario);
 
         // Opcionalmente generar nuevo refresh token (rotation)
-        String newRefreshTokenStr = jwtTokenGenerator.generateRefreshToken(user);
+        String newRefreshTokenStr = jwtTokenGenerator.generateRefreshToken(authUsuario);
 
         // Revocar el refresh token anterior
         refreshToken.setIsRevoked(true);
@@ -191,7 +126,7 @@ public class AuthService {
         // Guardar nuevo refresh token
         RefreshToken newRefreshToken = new RefreshToken();
         newRefreshToken.setToken(newRefreshTokenStr);
-        newRefreshToken.setUser(user);
+        newRefreshToken.setAuthUsuario(authUsuario);
         newRefreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(jwtTokenGenerator.getRefreshDuration()));
         newRefreshToken.setIsRevoked(false);
         refreshTokenRepository.saveRefreshToken(newRefreshToken);
@@ -220,10 +155,10 @@ public class AuthService {
 
     @Transactional
     public void logoutAllDevices(String username) {
-        User user = userRepository.findByUsername(username)
+        AuthUsuario authUsuario = authUsuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         // Invalidar todos los refresh tokens del usuario
-        refreshTokenRepository.revokeAllByUser(user);
+        refreshTokenRepository.revokeAllByAuthUsuario(authUsuario);
     }
 }

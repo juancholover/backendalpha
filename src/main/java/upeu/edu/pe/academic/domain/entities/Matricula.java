@@ -50,7 +50,6 @@ public class Matricula extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoMatricula = "REGULAR"; // REGULAR, EXTRAORDINARIA
 
-    // ==================== CONTROL DE CRÉDITOS ====================
 
     @Column(name = "creditos_matriculados")
     private Integer creditosMatriculados; // Créditos del curso matriculado
@@ -72,13 +71,11 @@ public class Matricula extends AuditableEntity {
     @Column(name = "inasistencias")
     private Integer inasistencias = 0;
 
-    // Relación inversa con las notas de evaluación
+
     @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionNota> evaluacionNotas = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia
-     */
+
     public Matricula(Universidad universidad, Estudiante estudiante, CursoOfertado cursoOfertado) {
         this.universidad = universidad;
         this.estudiante = estudiante;

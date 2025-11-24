@@ -20,6 +20,4 @@ public class AutoridadDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private Boolean activo;
-    private String resolucionDesignacion;
-    private String observaciones;
 }

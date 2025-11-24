@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Entity
 @Table(name = "auth_usuario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"username", "universidad_id"}),
-    @UniqueConstraint(columnNames = "email"),
+    @UniqueConstraint(columnNames = {"universidad_id", "persona_id"}),
     @UniqueConstraint(columnNames = "persona_id")
 })
 @EntityListeners(AuditListener.class)
@@ -41,17 +40,8 @@ public class AuthUsuario extends AuditableEntity {
     @JoinColumn(name = "universidad_id", nullable = false)
     private Universidad universidad;
 
-    @Column(nullable = false, length = 50)
-    private String username;
-
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
-
-    @Column(nullable = false, length = 100)
-    private String email;
-
-    @Column(length = 20)
-    private String estado = "ACTIVO";
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
@@ -62,15 +52,50 @@ public class AuthUsuario extends AuditableEntity {
     @Column(name = "fecha_bloqueo")
     private LocalDateTime fechaBloqueo;
 
+    @Column(name = "requiere_cambio_password")
+    private Boolean requiereCambioPassword = false;
+
+    @Column(name = "fecha_ultimo_cambio_password")
+    private LocalDateTime fechaUltimoCambioPassword;
+
     @Column(name = "token_recuperacion", length = 255)
     private String tokenRecuperacion;
 
     @Column(name = "fecha_expiracion_token")
     private LocalDateTime fechaExpiracionToken;
 
-    @Column(name = "requiere_cambio_password")
-    private Boolean requiereCambioPassword = false;
+    // Métodos de conveniencia para obtener datos de Persona
+    public String getEmail() {
+        return persona != null ? persona.getEmail() : null;
+    }
 
-    @Column(name = "fecha_ultimo_cambio_password")
-    private LocalDateTime fechaUltimoCambioPassword;
+    public String getUsername() {
+        // Usa email de persona como username
+        return getEmail();
+    }
+
+    public boolean estaActivo() {
+        return Boolean.TRUE.equals(this.getActive()) && fechaBloqueo == null;
+    }
+
+    public boolean estaBloqueado() {
+        return fechaBloqueo != null && LocalDateTime.now().isBefore(fechaBloqueo.plusHours(24));
+    }
+
+    public void registrarAccesoExitoso() {
+        this.ultimoAcceso = LocalDateTime.now();
+        this.intentosFallidos = 0;
+    }
+
+    public void registrarAccesoFallido() {
+        this.intentosFallidos = (this.intentosFallidos == null ? 0 : this.intentosFallidos) + 1;
+        if (this.intentosFallidos >= 5) {
+            this.fechaBloqueo = LocalDateTime.now();
+        }
+    }
+
+    public void desbloquear() {
+        this.fechaBloqueo = null;
+        this.intentosFallidos = 0;
+    }
 }

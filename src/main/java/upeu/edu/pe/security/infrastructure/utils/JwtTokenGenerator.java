@@ -2,7 +2,7 @@ package upeu.edu.pe.security.infrastructure.utils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import upeu.edu.pe.security.domain.entities.User;
+import upeu.edu.pe.security.domain.entities.AuthUsuario;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -21,7 +21,7 @@ public class JwtTokenGenerator {
 
     private static final String SECRET_KEY = "mySecretKey1234567890abcdefghij"; // 32 caracteres
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(AuthUsuario authUsuario) {
         try {
             long expirationTime = Instant.now().plusSeconds(jwtDuration).getEpochSecond();
 
@@ -31,18 +31,18 @@ public class JwtTokenGenerator {
                             "\"aud\":\"upeu-sis\"," +
                             "\"sub\":\"%s\"," +
                             "\"userId\":%d," +
+                            "\"universidadId\":%d," +
                             "\"email\":\"%s\"," +
-                            "\"firstName\":\"%s\"," +
-                            "\"lastName\":\"%s\"," +
-                            "\"role\":\"%s\"," +
+                            "\"personaNombre\":\"%s\"," +
+                            "\"rolNombre\":\"%s\"," +
                             "\"exp\":%d," +
                             "\"iat\":%d}",
-                    user.getUsername(),
-                    user.getId(),
-                    user.getEmail(),
-                    user.getFirstName() != null ? user.getFirstName() : "",
-                    user.getLastName() != null ? user.getLastName() : "",
-                    user.getRole().name(),
+                    authUsuario.getUsername(),
+                    authUsuario.getId(),
+                    authUsuario.getUniversidad().getId(),
+                    authUsuario.getEmail(),
+                    authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() + " " + authUsuario.getPersona().getApellidoPaterno() : "",
+                    authUsuario.getRol() != null ? authUsuario.getRol().getNombre() : "",
                     expirationTime,
                     Instant.now().getEpochSecond()
             );
@@ -63,7 +63,7 @@ public class JwtTokenGenerator {
         }
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(AuthUsuario authUsuario) {
         try {
             long expirationTime = Instant.now().plusSeconds(refreshDuration).getEpochSecond();
 
@@ -73,11 +73,13 @@ public class JwtTokenGenerator {
                             "\"aud\":\"upeu-sis\"," +
                             "\"sub\":\"%s\"," +
                             "\"userId\":%d," +
+                            "\"universidadId\":%d," +
                             "\"type\":\"refresh\"," +
                             "\"exp\":%d," +
                             "\"iat\":%d}",
-                    user.getUsername(),
-                    user.getId(),
+                    authUsuario.getUsername(),
+                    authUsuario.getId(),
+                    authUsuario.getUniversidad().getId(),
                     expirationTime,
                     Instant.now().getEpochSecond()
             );

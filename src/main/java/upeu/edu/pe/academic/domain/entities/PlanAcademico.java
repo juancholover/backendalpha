@@ -47,9 +47,6 @@ public class PlanAcademico extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre;
 
-    @Column(name = "resolucion_aprobacion", length = 100)
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String resolucionAprobacion;
 
     @Column(name = "fecha_aprobacion")
     private LocalDate fechaAprobacion;

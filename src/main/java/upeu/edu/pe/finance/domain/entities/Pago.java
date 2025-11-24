@@ -17,7 +17,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "pago")
+@Table(name = "pago",
+    indexes = {
+        @Index(name = "idx_pago_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
+        @Index(name = "idx_pago_fecha_estado", columnList = "fecha_pago, estado"),
+        @Index(name = "idx_pago_numero_recibo", columnList = "numero_recibo")
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,9 +44,9 @@ public class Pago extends AuditableEntity {
     @JoinColumn(name = "estudiante_id", nullable = false)
     private Estudiante estudiante;
 
-    @Column(name = "numero_recibo", unique = true, nullable = false, length = 50)
+    @Column(name = "numero_recibo", nullable = false, length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String numeroRecibo; // Número de comprobante único
+    private String numeroRecibo; // Número de comprobante
 
     @Column(name = "monto_pagado", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPagado; // Monto total recibido

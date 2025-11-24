@@ -10,16 +10,7 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 import java.time.LocalTime;
 
-/**
- * Entidad que representa los bloques horarios de un curso ofertado.
- * Permite definir múltiples sesiones por semana (teoría, práctica, laboratorio).
- * 
- * Ejemplo:
- * - Programación I - Sección A
- *   - Lunes 08:00-10:00 (Teoría, Aula A-101)
- *   - Miércoles 08:00-10:00 (Teoría, Aula A-101)
- *   - Viernes 14:00-18:00 (Laboratorio, Lab B-201)
- */
+
 @Entity
 @Table(name = "horario", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"curso_ofertado_id", "dia_semana", "hora_inicio"})

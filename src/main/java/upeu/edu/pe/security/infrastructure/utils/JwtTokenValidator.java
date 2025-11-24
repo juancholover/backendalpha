@@ -107,6 +107,23 @@ public class JwtTokenValidator {
         }
     }
 
+    public Long getUniversidadIdFromToken(String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            String[] parts = token.split("\\.");
+            String payload = parts[1];
+            String decodedPayload = new String(Base64.getUrlDecoder().decode(payload), StandardCharsets.UTF_8);
+            JsonNode payloadNode = objectMapper.readTree(decodedPayload);
+
+            return payloadNode.get("universidadId").asLong();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private String hmacSha256(String data, String secret) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");

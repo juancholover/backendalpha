@@ -17,7 +17,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "cuenta_corriente_alumno")
+@Table(name = "cuenta_corriente_alumno",
+    indexes = {
+        @Index(name = "idx_cta_cte_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
+        @Index(name = "idx_cta_cte_estado_vencimiento", columnList = "estado, fecha_vencimiento"),
+        @Index(name = "idx_cta_cte_periodo_tipo", columnList = "periodo_academico, tipo_cargo")
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

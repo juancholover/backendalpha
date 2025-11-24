@@ -1,6 +1,7 @@
 package upeu.edu.pe.academic.infrastructure.web;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import upeu.edu.pe.academic.application.dto.UnidadOrganizativaRequestDTO;
@@ -16,46 +17,63 @@ import java.util.List;
 public class UnidadOrganizativaController {
 
     @Inject
-    UnidadOrganizativaService unidadOrganizativaService;
+    UnidadOrganizativaService unidadService;
 
     @GET
     public ApiResponse<List<UnidadOrganizativaResponseDTO>> getAll() {
-        return ApiResponse.success("Unidades organizativas obtenidas exitosamente", unidadOrganizativaService.findAll());
+        return ApiResponse.success("Unidades organizativas obtenidas exitosamente", unidadService.findAll());
     }
 
     @GET
     @Path("/{id}")
     public ApiResponse<UnidadOrganizativaResponseDTO> getById(@PathParam("id") Long id) {
-        return ApiResponse.success("Unidad organizativa obtenida exitosamente", unidadOrganizativaService.findById(id));
+        return ApiResponse.success("Unidad organizativa obtenida exitosamente", unidadService.findById(id));
     }
 
     @GET
-    @Path("/tipo/{tipoId}")
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByTipo(@PathParam("tipoId") Long tipoId) {
-        return ApiResponse.success("Unidades organizativas por tipo obtenidas exitosamente", unidadOrganizativaService.findByTipoDeUnidad(tipoId));
+    @Path("/universidad/{universidadId}")
+    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByUniversidad(@PathParam("universidadId") Long universidadId) {
+        return ApiResponse.success("Unidades organizativas por universidad obtenidas exitosamente", 
+                unidadService.findByUniversidad(universidadId));
     }
 
     @GET
-    @Path("/padre/{unidadPadreId}")
+    @Path("/tipo-unidad/{tipoUnidadId}")
+    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByTipoUnidad(@PathParam("tipoUnidadId") Long tipoUnidadId) {
+        return ApiResponse.success("Unidades organizativas por tipo obtenidas exitosamente", 
+                unidadService.findByTipoUnidad(tipoUnidadId));
+    }
+
+    @GET
+    @Path("/raiz/universidad/{universidadId}")
+    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getRootUnidades(@PathParam("universidadId") Long universidadId) {
+        return ApiResponse.success("Unidades raíz obtenidas exitosamente", 
+                unidadService.findRootUnidades(universidadId));
+    }
+
+    @GET
+    @Path("/hijas/{unidadPadreId}")
     public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByUnidadPadre(@PathParam("unidadPadreId") Long unidadPadreId) {
-        return ApiResponse.success("Unidades organizativas hijas obtenidas exitosamente", unidadOrganizativaService.findByUnidadPadre(unidadPadreId));
+        return ApiResponse.success("Unidades hijas obtenidas exitosamente", 
+                unidadService.findByUnidadPadre(unidadPadreId));
     }
 
     @POST
-    public ApiResponse<UnidadOrganizativaResponseDTO> create(UnidadOrganizativaRequestDTO requestDTO) {
-        return ApiResponse.success("Unidad organizativa creada exitosamente", unidadOrganizativaService.create(requestDTO));
+    public ApiResponse<UnidadOrganizativaResponseDTO> create(@Valid UnidadOrganizativaRequestDTO requestDTO) {
+        return ApiResponse.success("Unidad organizativa creada exitosamente", unidadService.create(requestDTO));
     }
 
     @PUT
     @Path("/{id}")
-    public ApiResponse<UnidadOrganizativaResponseDTO> update(@PathParam("id") Long id, UnidadOrganizativaRequestDTO requestDTO) {
-        return ApiResponse.success("Unidad organizativa actualizada exitosamente", unidadOrganizativaService.update(id, requestDTO));
+    public ApiResponse<UnidadOrganizativaResponseDTO> update(@PathParam("id") Long id, @Valid UnidadOrganizativaRequestDTO requestDTO) {
+        return ApiResponse.success("Unidad organizativa actualizada exitosamente", 
+                unidadService.update(id, requestDTO));
     }
 
     @DELETE
     @Path("/{id}")
     public ApiResponse<Void> delete(@PathParam("id") Long id) {
-        unidadOrganizativaService.delete(id);
-        return ApiResponse.success("Unidad organizativa eliminada exitosamente");
+        unidadService.delete(id);
+        return ApiResponse.success("Unidad organizativa eliminada exitosamente", null);
     }
 }

@@ -48,8 +48,6 @@ public class Autoridad extends AuditableEntity {
     @Column(name = "activo")
     private Boolean activo; // TRUE si es la autoridad vigente para visualización rápida
     
-    @Column(name = "resolucion_designacion", length = 100)
-    private String resolucionDesignacion; // Opcional: Documento legal
 
     public Autoridad(Universidad universidad, Persona persona, TipoAutoridad tipoAutoridad, 
                      LocalDate fechaInicio, Boolean activo) {

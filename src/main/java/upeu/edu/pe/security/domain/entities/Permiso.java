@@ -46,13 +46,10 @@ public class Permiso extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String accion; // CREAR, LEER, ACTUALIZAR, ELIMINAR, APROBAR
 
-    // Relación con RolPermiso
     @OneToMany(mappedBy = "permiso", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolPermiso> rolPermisos = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia
-     */
+
     public Permiso(String nombreClave, String descripcion, String modulo, String recurso, String accion) {
         this.nombreClave = nombreClave;
         this.descripcion = descripcion;
@@ -61,10 +58,6 @@ public class Permiso extends AuditableEntity {
         this.accion = accion;
     }
 
-    /**
-     * Genera el nombre clave automáticamente si no está definido
-     * Formato: MODULO_ACCION_RECURSO (ej: ACADEMICO_EDITAR_NOTAS)
-     */
     @PrePersist
     @PreUpdate
     public void generarNombreClave() {
