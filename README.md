@@ -6,7 +6,21 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
-## 🏗️ Arquitectura
+## 🎯 Migración Clean Architecture
+
+Este proyecto está en proceso de migración hacia **Clean Architecture Pragmática** para mejorar la mantenibilidad y testabilidad del código.
+
+**Ver plan detallado**: [`ARQUITECTURA.md`](./ARQUITECTURA.md)
+
+**Cambios clave**:
+- ✅ Use Cases separados (lógica de negocio sin DTOs)
+- ✅ Repositorios como interfaces en `domain/`
+- ✅ Application Services para orquestar DTOs
+- ✅ Entidades con lógica de negocio (no anémicas)
+
+---
+
+## 🏗️ Arquitectura Actual
 
 ```
 src/main/java/upeu/edu/pe/
