@@ -22,7 +22,6 @@ public class PlanAcademicoResponseDTO {
     private String codigo;
     private String version;
     private String nombre;
-    private String resolucionAprobacion;
     private LocalDate fechaAprobacion;
     private LocalDate fechaVigenciaInicio;
     private LocalDate fechaVigenciaFin;

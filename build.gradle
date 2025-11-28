@@ -35,12 +35,14 @@ dependencies {
 
     // MapStruct
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-
+    
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    
+    // IMPORTANTE: Orden de annotation processors (Lombok PRIMERO, luego MapStruct)
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     // Validation
     implementation 'io.quarkus:quarkus-hibernate-validator'
