@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.academic.application.dto.CursoOfertadoRequestDTO;
 import upeu.edu.pe.academic.application.dto.CursoOfertadoResponseDTO;
-import upeu.edu.pe.academic.domain.services.CursoOfertadoService;
+import upeu.edu.pe.academic.application.services.CursoOfertadoApplicationService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class CursoOfertadoController {
 
     @Inject
-    CursoOfertadoService cursoOfertadoService;
+    CursoOfertadoApplicationService cursoOfertadoService;
 
     @GET
     @Path("/universidad/{universidadId}")
@@ -73,7 +73,8 @@ public class CursoOfertadoController {
     public Response findAbiertasByPeriodoAndUniversidad(
             @PathParam("periodoId") Long periodoId,
             @PathParam("universidadId") Long universidadId) {
-        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findAbiertasByPeriodoAndUniversidad(periodoId, universidadId);
+        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService
+                .findAbiertasByPeriodoAndUniversidad(periodoId, universidadId);
         return Response.ok(cursosOfertados).build();
     }
 
@@ -89,7 +90,8 @@ public class CursoOfertadoController {
     public Response findByModalidadAndPeriodo(
             @PathParam("modalidad") String modalidad,
             @PathParam("periodoId") Long periodoId) {
-        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findByModalidadAndPeriodo(modalidad, periodoId);
+        List<CursoOfertadoResponseDTO> cursosOfertados = cursoOfertadoService.findByModalidadAndPeriodo(modalidad,
+                periodoId);
         return Response.ok(cursosOfertados).build();
     }
 

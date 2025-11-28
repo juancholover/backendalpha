@@ -10,10 +10,9 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 import java.time.LocalTime;
 
-
 @Entity
 @Table(name = "horario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_ofertado_id", "dia_semana", "hora_inicio"})
+        @UniqueConstraint(columnNames = { "curso_ofertado_id", "dia_semana", "hora_inicio" })
 })
 @Data
 @NoArgsConstructor
@@ -56,21 +55,19 @@ public class Horario extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.SPACES_ONLY)
     private String observaciones;
 
-    /**
-     * Valida que la hora de inicio sea anterior a la hora de fin
-     */
-    @PrePersist
-    @PreUpdate
-    private void validarHorarios() {
-        if (horaInicio != null && horaFin != null) {
-            if (!horaInicio.isBefore(horaFin)) {
-                throw new IllegalArgumentException("La hora de inicio debe ser anterior a la hora de fin");
-            }
-        }
-        
-        if (diaSemana != null && (diaSemana < 1 || diaSemana > 7)) {
-            throw new IllegalArgumentException("El día de la semana debe estar entre 1 (Lunes) y 7 (Domingo)");
-        }
+    public static Horario crear(Universidad universidad, CursoOfertado cursoOfertado, Integer diaSemana,
+            LocalTime horaInicio, LocalTime horaFin, Localizacion localizacion,
+            String tipoSesion, String observaciones) {
+        Horario horario = new Horario();
+        horario.setUniversidad(universidad);
+        horario.setCursoOfertado(cursoOfertado);
+        horario.setDiaSemana(diaSemana);
+        horario.setHoraInicio(horaInicio);
+        horario.setHoraFin(horaFin);
+        horario.setLocalizacion(localizacion);
+        horario.setTipoSesion(tipoSesion);
+        horario.setObservaciones(observaciones);
+        return horario;
     }
 
     /**
@@ -81,7 +78,7 @@ public class Horario extends AuditableEntity {
         if (!this.diaSemana.equals(otro.diaSemana)) {
             return false;
         }
-        
+
         // Verificar cruce de horas
         return !(this.horaFin.isBefore(otro.horaInicio) || this.horaInicio.isAfter(otro.horaFin));
     }
@@ -100,7 +97,8 @@ public class Horario extends AuditableEntity {
      * Obtiene el nombre del día de la semana
      */
     public String getNombreDia() {
-        if (diaSemana == null) return "";
+        if (diaSemana == null)
+            return "";
         return switch (diaSemana) {
             case 1 -> "Lunes";
             case 2 -> "Martes";

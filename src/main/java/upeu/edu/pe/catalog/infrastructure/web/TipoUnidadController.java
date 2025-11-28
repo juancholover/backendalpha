@@ -5,7 +5,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import upeu.edu.pe.catalog.application.dto.TipoUnidadRequestDTO;
 import upeu.edu.pe.catalog.application.dto.TipoUnidadResponseDTO;
-import upeu.edu.pe.catalog.domain.services.TipoUnidadService;
+import upeu.edu.pe.catalog.application.services.TipoUnidadApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class TipoUnidadController {
 
     @Inject
-    TipoUnidadService tipoUnidadService;
+    TipoUnidadApplicationService tipoUnidadService;
 
     @GET
     public ApiResponse<List<TipoUnidadResponseDTO>> getAll() {

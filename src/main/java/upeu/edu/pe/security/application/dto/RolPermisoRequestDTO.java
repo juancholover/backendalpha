@@ -11,7 +11,7 @@ public class RolPermisoRequestDTO {
     @NotNull(message = "El ID del permiso es obligatorio")
     private Long permisoId;
 
-    private Boolean puedeDeleagar = false;
+    private Boolean puedeDelegar = false;
 
     @Size(max = 1000, message = "La restricción no puede exceder 1000 caracteres")
     private String restriccion;
@@ -20,10 +20,10 @@ public class RolPermisoRequestDTO {
     public RolPermisoRequestDTO() {
     }
 
-    public RolPermisoRequestDTO(Long rolId, Long permisoId, Boolean puedeDeleagar, String restriccion) {
+    public RolPermisoRequestDTO(Long rolId, Long permisoId, Boolean puedeDelegar, String restriccion) {
         this.rolId = rolId;
         this.permisoId = permisoId;
-        this.puedeDeleagar = puedeDeleagar;
+        this.puedeDelegar = puedeDelegar;
         this.restriccion = restriccion;
     }
 
@@ -44,12 +44,12 @@ public class RolPermisoRequestDTO {
         this.permisoId = permisoId;
     }
 
-    public Boolean getPuedeDeleagar() {
-        return puedeDeleagar;
+    public Boolean getPuedeDelegar() {
+        return puedeDelegar;
     }
 
-    public void setPuedeDeleagar(Boolean puedeDeleagar) {
-        this.puedeDeleagar = puedeDeleagar;
+    public void setPuedeDelegar(Boolean puedeDelegar) {
+        this.puedeDelegar = puedeDelegar;
     }
 
     public String getRestriccion() {

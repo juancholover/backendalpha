@@ -14,7 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.academic.application.dto.CursoRequestDTO;
 import upeu.edu.pe.academic.application.dto.CursoResponseDTO;
-import upeu.edu.pe.academic.domain.services.CursoService;
+import upeu.edu.pe.academic.application.services.CursoApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -26,13 +26,12 @@ import java.util.List;
 public class CursoController {
 
     @Inject
-    CursoService cursoService;
+    CursoApplicationService cursoService;
 
     @GET
     @Operation(summary = "Listar todos los cursos", description = "Obtiene una lista de todos los cursos activos en el sistema")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Lista de cursos obtenida exitosamente",
-                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @APIResponse(responseCode = "200", description = "Lista de cursos obtenida exitosamente", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     public Response findAll() {
         List<CursoResponseDTO> cursos = cursoService.findAll();
@@ -43,12 +42,11 @@ public class CursoController {
     @Path("/{id}")
     @Operation(summary = "Obtener curso por ID", description = "Obtiene los detalles de un curso específico por su ID")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Curso encontrado"),
-        @APIResponse(responseCode = "404", description = "Curso no encontrado")
+            @APIResponse(responseCode = "200", description = "Curso encontrado"),
+            @APIResponse(responseCode = "404", description = "Curso no encontrado")
     })
     public Response findById(
-            @Parameter(description = "ID del curso", required = true)
-            @PathParam("id") Long id) {
+            @Parameter(description = "ID del curso", required = true) @PathParam("id") Long id) {
         CursoResponseDTO curso = cursoService.findById(id);
         return Response.ok(ApiResponse.success("Curso encontrado", curso)).build();
     }
@@ -57,12 +55,11 @@ public class CursoController {
     @Path("/codigo/{codigoCurso}")
     @Operation(summary = "Buscar curso por código", description = "Busca un curso por su código único")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Curso encontrado"),
-        @APIResponse(responseCode = "404", description = "Curso no encontrado")
+            @APIResponse(responseCode = "200", description = "Curso encontrado"),
+            @APIResponse(responseCode = "404", description = "Curso no encontrado")
     })
     public Response findByCodigoCurso(
-            @Parameter(description = "Código del curso", required = true, example = "SIS-101")
-            @PathParam("codigoCurso") String codigoCurso) {
+            @Parameter(description = "Código del curso", required = true, example = "SIS-101") @PathParam("codigoCurso") String codigoCurso) {
         CursoResponseDTO curso = cursoService.findByCodigoCurso(codigoCurso);
         return Response.ok(ApiResponse.success("Curso encontrado", curso)).build();
     }
@@ -71,11 +68,10 @@ public class CursoController {
     @Path("/universidad/{universidadId}")
     @Operation(summary = "Listar cursos por universidad", description = "Obtiene todos los cursos de una universidad. Para cursos por plan académico usar PlanCurso API")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
+            @APIResponse(responseCode = "200", description = "Lista de cursos obtenida")
     })
     public Response findByUniversidad(
-            @Parameter(description = "ID de la universidad", required = true)
-            @PathParam("universidadId") Long universidadId) {
+            @Parameter(description = "ID de la universidad", required = true) @PathParam("universidadId") Long universidadId) {
         List<CursoResponseDTO> cursos = cursoService.findByUniversidad(universidadId);
         return Response.ok(ApiResponse.success("Cursos de la universidad listados", cursos)).build();
     }
@@ -83,14 +79,13 @@ public class CursoController {
     @POST
     @Operation(summary = "Crear nuevo curso", description = "Registra un nuevo curso en el catálogo de la universidad (sin plan académico específico)")
     @APIResponses(value = {
-        @APIResponse(responseCode = "201", description = "Curso creado exitosamente"),
-        @APIResponse(responseCode = "400", description = "Datos de entrada inválidos o regla de negocio violada"),
-        @APIResponse(responseCode = "404", description = "Universidad no encontrada"),
-        @APIResponse(responseCode = "409", description = "El curso ya existe")
+            @APIResponse(responseCode = "201", description = "Curso creado exitosamente"),
+            @APIResponse(responseCode = "400", description = "Datos de entrada inválidos o regla de negocio violada"),
+            @APIResponse(responseCode = "404", description = "Universidad no encontrada"),
+            @APIResponse(responseCode = "409", description = "El curso ya existe")
     })
     public Response create(
-            @Parameter(description = "Datos del curso a crear", required = true)
-            @Valid CursoRequestDTO dto) {
+            @Parameter(description = "Datos del curso a crear", required = true) @Valid CursoRequestDTO dto) {
         CursoResponseDTO curso = cursoService.create(dto);
         return Response.status(Response.Status.CREATED)
                 .entity(ApiResponse.success("Curso creado exitosamente", curso))
@@ -101,16 +96,14 @@ public class CursoController {
     @Path("/{id}")
     @Operation(summary = "Actualizar curso", description = "Actualiza los datos de un curso existente")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Curso actualizado exitosamente"),
-        @APIResponse(responseCode = "400", description = "Datos de entrada inválidos o regla de negocio violada"),
-        @APIResponse(responseCode = "404", description = "Curso no encontrado"),
-        @APIResponse(responseCode = "409", description = "Conflicto con datos existentes")
+            @APIResponse(responseCode = "200", description = "Curso actualizado exitosamente"),
+            @APIResponse(responseCode = "400", description = "Datos de entrada inválidos o regla de negocio violada"),
+            @APIResponse(responseCode = "404", description = "Curso no encontrado"),
+            @APIResponse(responseCode = "409", description = "Conflicto con datos existentes")
     })
     public Response update(
-            @Parameter(description = "ID del curso", required = true)
-            @PathParam("id") Long id,
-            @Parameter(description = "Datos actualizados del curso", required = true)
-            @Valid CursoRequestDTO dto) {
+            @Parameter(description = "ID del curso", required = true) @PathParam("id") Long id,
+            @Parameter(description = "Datos actualizados del curso", required = true) @Valid CursoRequestDTO dto) {
         CursoResponseDTO curso = cursoService.update(id, dto);
         return Response.ok(ApiResponse.success("Curso actualizado exitosamente", curso)).build();
     }
@@ -119,13 +112,12 @@ public class CursoController {
     @Path("/{id}")
     @Operation(summary = "Eliminar curso", description = "Elimina lógicamente un curso del sistema (solo si no es prerequisito de otros cursos)")
     @APIResponses(value = {
-        @APIResponse(responseCode = "200", description = "Curso eliminado exitosamente"),
-        @APIResponse(responseCode = "400", description = "El curso no se puede eliminar porque es prerequisito de otros cursos"),
-        @APIResponse(responseCode = "404", description = "Curso no encontrado")
+            @APIResponse(responseCode = "200", description = "Curso eliminado exitosamente"),
+            @APIResponse(responseCode = "400", description = "El curso no se puede eliminar porque es prerequisito de otros cursos"),
+            @APIResponse(responseCode = "404", description = "Curso no encontrado")
     })
     public Response delete(
-            @Parameter(description = "ID del curso", required = true)
-            @PathParam("id") Long id) {
+            @Parameter(description = "ID del curso", required = true) @PathParam("id") Long id) {
         cursoService.delete(id);
         return Response.ok(ApiResponse.success("Curso eliminado exitosamente")).build();
     }

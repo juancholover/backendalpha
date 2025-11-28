@@ -19,6 +19,8 @@ public class PagoDetalleDeudaRequestDTO {
     @NotNull(message = "El usuario que aplica es obligatorio")
     private String aplicadoPor;
 
+    private String observaciones;
+
     // Constructors
     public PagoDetalleDeudaRequestDTO() {
     }
@@ -61,5 +63,13 @@ public class PagoDetalleDeudaRequestDTO {
 
     public void setAplicadoPor(String aplicadoPor) {
         this.aplicadoPor = aplicadoPor;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 }

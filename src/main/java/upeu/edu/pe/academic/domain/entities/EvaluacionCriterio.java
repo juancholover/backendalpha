@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "evaluacion_criterio", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_ofertado_id", "nombre", "universidad_id"})
+        @UniqueConstraint(columnNames = { "curso_ofertado_id", "nombre", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -67,51 +67,39 @@ public class EvaluacionCriterio extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String estado; // ACTIVO, ELIMINADO
 
-    
     @OneToMany(mappedBy = "criterio", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionNota> evaluacionNotas = new HashSet<>();
 
+    public static EvaluacionCriterio crear(Universidad universidad, CursoOfertado cursoOfertado, String nombre,
+            Integer peso, String tipoEvaluacion) {
+        EvaluacionCriterio criterio = new EvaluacionCriterio();
+        criterio.setUniversidad(universidad);
+        criterio.setCursoOfertado(cursoOfertado);
+        criterio.setNombre(nombre);
+        criterio.setPeso(peso);
+        criterio.setTipoEvaluacion(tipoEvaluacion);
 
-    public EvaluacionCriterio(Universidad universidad, CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
-        this.universidad = universidad;
-        this.cursoOfertado = cursoOfertado;
-        this.nombre = nombre;
-        this.peso = peso;
-        this.tipoEvaluacion = tipoEvaluacion;
-        this.notaMaxima = 20;
-        this.notaMinimaAprobatoria = 11;
-        this.esRecuperable = false;
-        this.estado = "ACTIVO";
-    }
+        // Defaults
+        criterio.setNotaMaxima(20);
+        criterio.setNotaMinimaAprobatoria(11);
+        criterio.setEsRecuperable(false);
+        criterio.setEstado("ACTIVO");
 
-    @PrePersist
-    public void prePersist() {
-        if (this.estado == null) {
-            this.estado = "ACTIVO";
-        }
-        if (this.notaMaxima == null) {
-            this.notaMaxima = 20;
-        }
-        if (this.notaMinimaAprobatoria == null) {
-            this.notaMinimaAprobatoria = 11;
-        }
-        if (this.esRecuperable == null) {
-            this.esRecuperable = false;
-        }
-        validarPeso();
-    }
+        criterio.validarPeso();
 
-    @PreUpdate
-    public void preUpdate() {
-        validarPeso();
+        return criterio;
     }
 
     /**
      * Validación: El peso debe estar entre 0 y 100
      */
-    private void validarPeso() {
+    public void validarPeso() {
         if (peso != null && (peso < 0 || peso > 100)) {
             throw new IllegalArgumentException("El peso debe estar entre 0 y 100");
         }
     }
+
+    /**
+     * Validación: El peso debe estar entre 0 y 100
+     */
 }

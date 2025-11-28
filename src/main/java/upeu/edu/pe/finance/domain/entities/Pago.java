@@ -17,13 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "pago",
-    indexes = {
+@Table(name = "pago", indexes = {
         @Index(name = "idx_pago_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
         @Index(name = "idx_pago_fecha_estado", columnList = "fecha_pago, estado"),
         @Index(name = "idx_pago_numero_recibo", columnList = "numero_recibo")
-    }
-)
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -96,41 +94,32 @@ public class Pago extends AuditableEntity {
     /**
      * Constructor de conveniencia
      */
-    public Pago(Universidad universidad, Estudiante estudiante, String numeroRecibo,
-                       BigDecimal montoPagado, String metodoPago) {
-        this.universidad = universidad;
-        this.estudiante = estudiante;
-        this.numeroRecibo = numeroRecibo;
-        this.montoPagado = montoPagado;
-        this.metodoPago = metodoPago;
-        this.fechaPago = LocalDateTime.now();
-        this.montoAplicado = BigDecimal.ZERO;
-        this.montoPendienteAplicar = montoPagado;
-        this.estado = "PENDIENTE_APLICAR";
-    }
+    public static Pago crear(Universidad universidad, Estudiante estudiante, String numeroRecibo,
+            BigDecimal montoPagado, String metodoPago, String referenciaPago,
+            String banco, String cajero, String observaciones) {
+        Pago pago = new Pago();
+        pago.setUniversidad(universidad);
+        pago.setEstudiante(estudiante);
+        pago.setNumeroRecibo(numeroRecibo);
+        pago.setMontoPagado(montoPagado);
+        pago.setMetodoPago(metodoPago);
+        pago.setReferenciaPago(referenciaPago);
+        pago.setBanco(banco);
+        pago.setCajero(cajero);
+        pago.setObservaciones(observaciones);
 
-    @PrePersist
-    public void prePersist() {
-        if (this.fechaPago == null) {
-            this.fechaPago = LocalDateTime.now();
-        }
-        if (this.montoAplicado == null) {
-            this.montoAplicado = BigDecimal.ZERO;
-        }
-        calcularMontoPendienteAplicar();
-        actualizarEstado();
-    }
+        pago.setFechaPago(LocalDateTime.now());
+        pago.setMontoAplicado(BigDecimal.ZERO);
+        pago.setMontoPendienteAplicar(montoPagado);
+        pago.setEstado("PENDIENTE_APLICAR");
 
-    @PreUpdate
-    public void preUpdate() {
-        calcularMontoPendienteAplicar();
-        actualizarEstado();
+        return pago;
     }
 
     /**
      * Calcula el monto pendiente de aplicar
      */
-    private void calcularMontoPendienteAplicar() {
+    public void calcularMontoPendienteAplicar() {
         if (montoPagado != null && montoAplicado != null) {
             this.montoPendienteAplicar = montoPagado.subtract(montoAplicado);
         }
@@ -139,7 +128,7 @@ public class Pago extends AuditableEntity {
     /**
      * Actualiza el estado según el monto aplicado
      */
-    private void actualizarEstado() {
+    public void actualizarEstado() {
         if (!"ANULADO".equals(this.estado)) {
             if (montoPendienteAplicar != null && montoPendienteAplicar.compareTo(BigDecimal.ZERO) <= 0) {
                 this.estado = "APLICADO";
@@ -156,11 +145,11 @@ public class Pago extends AuditableEntity {
         if (montoAplicar.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto a aplicar debe ser mayor a cero");
         }
-        
+
         if (montoAplicar.compareTo(this.montoPendienteAplicar) > 0) {
             throw new IllegalArgumentException("El monto a aplicar excede el saldo disponible del pago");
         }
-        
+
         this.montoAplicado = this.montoAplicado.add(montoAplicar);
         calcularMontoPendienteAplicar();
         actualizarEstado();
@@ -173,11 +162,11 @@ public class Pago extends AuditableEntity {
         if ("ANULADO".equals(this.estado)) {
             throw new IllegalStateException("El pago ya está anulado");
         }
-        
+
         if (this.montoAplicado.compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalStateException("No se puede anular un pago que ya tiene aplicaciones");
         }
-        
+
         this.estado = "ANULADO";
         this.fechaAnulacion = LocalDateTime.now();
         this.motivoAnulacion = motivo;
@@ -187,8 +176,8 @@ public class Pago extends AuditableEntity {
      * Verifica si el pago tiene saldo disponible
      */
     public boolean tieneSaldoDisponible() {
-        return montoPendienteAplicar != null && 
-               montoPendienteAplicar.compareTo(BigDecimal.ZERO) > 0 &&
-               !"ANULADO".equals(this.estado);
+        return montoPendienteAplicar != null &&
+                montoPendienteAplicar.compareTo(BigDecimal.ZERO) > 0 &&
+                !"ANULADO".equals(this.estado);
     }
 }

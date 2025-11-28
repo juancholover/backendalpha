@@ -1,0 +1,152 @@
+Initialized native services in: C:\Users\Glend\.gradle\native
+Initialized jansi services in: C:\Users\Glend\.gradle\native
+Found daemon DaemonInfo{pid=24824, address=[83ead386-3302-4a33-9741-a44cf8063393 port:50474, addresses:[/127.0.0.1]], state=Idle, lastBusy=1760661436010, context=DefaultDaemonContext[uid=f8ffbc11-785a-4b65-a742-0afb8fe231bc,javaHome=C:\Users\Glend\.vscode\extensions\redhat.java-1.46.0-win32-x64\jre\21.0.8-win32-x86_64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=C:\Users\Glend\.gradle\daemon,pid=24824,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=PE,-Duser.language=es,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Program Files\Java\jdk-21 (no JDK specified, using current Java home), daemonOpts=[-XX:MaxMetaspaceSize=384m, -XX:+HeapDumpOnOutOfMemoryError, -Xms256m, -Xmx512m, -Dfile.encoding=UTF-8, -Duser.country=PE, -Duser.language=es, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=f8ffbc11-785a-4b65-a742-0afb8fe231bc,javaHome=C:\Users\Glend\.vscode\extensions\redhat.java-1.46.0-win32-x64\jre\21.0.8-win32-x86_64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=C:\Users\Glend\.gradle\daemon,pid=24824,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=PE,-Duser.language=es,-Duser.variant]
+
+  Looking for a different daemon...
+Found daemon DaemonInfo{pid=15256, address=[a835a5b3-7b73-421a-bdbf-476894cf3705 port:59351, addresses:[/127.0.0.1]], state=Idle, lastBusy=1764334089180, context=DefaultDaemonContext[uid=d703d726-bbf0-4513-a87b-ed269e516d0e,javaHome=C:\Users\Glend\.antigravity\extensions\redhat.java-1.50.0-win32-x64\jre\21.0.9-win32-x86_64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=C:\Users\Glend\.gradle\daemon,pid=15256,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=PE,-Duser.language=es,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Program Files\Java\jdk-21 (no JDK specified, using current Java home), daemonOpts=[-XX:MaxMetaspaceSize=384m, -XX:+HeapDumpOnOutOfMemoryError, -Xms256m, -Xmx512m, -Dfile.encoding=UTF-8, -Duser.country=PE, -Duser.language=es, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=d703d726-bbf0-4513-a87b-ed269e516d0e,javaHome=C:\Users\Glend\.antigravity\extensions\redhat.java-1.50.0-win32-x64\jre\21.0.9-win32-x86_64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=C:\Users\Glend\.gradle\daemon,pid=15256,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=PE,-Duser.language=es,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 15876). The daemon log file: C:\Users\Glend\.gradle\daemon\9.0.0\daemon-15876.out.log
+Starting 4th build in daemon [uptime: 3 mins 12.852 secs, performance: 98%, GC rate: 0.00/s, heap usage: 0% of 512 MiB, non-heap usage: 27% of 384 MiB]
+Using 12 worker leases.
+Now considering [D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\settings.gradle'.
+Projects loaded. Root project using build file 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build.gradle'.
+Included projects: [root project 'lamb-upeu-sis']
+
+> Configure project :
+Evaluating root project 'lamb-upeu-sis' using build file 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build.gradle'.
+Resolved plugin [id: 'java']
+Resolved plugin [id: 'io.quarkus', version: '3.26.4']
+Resolved plugin [id: 'io.freefair.lombok', version: '8.4']
+All projects evaluated.
+Task name matched 'compileJava'
+Selected primary task 'compileJava' from project :
+Tasks to be executed: [task ':generateEffectiveLombokConfig', task ':processResources', task ':quarkusGenerateAppModel', task ':quarkusGenerateCode', task ':compileJava']
+Tasks that were excluded: []
+Resolve mutations for :generateEffectiveLombokConfig (Thread[#302,Execution worker Thread 3,5,main]) started.
+:generateEffectiveLombokConfig (Thread[#302,Execution worker Thread 3,5,main]) started.
+
+> Task :generateEffectiveLombokConfig UP-TO-DATE
+Custom actions are attached to task ':generateEffectiveLombokConfig'.
+Caching disabled for task ':generateEffectiveLombokConfig' because:
+  Build cache is disabled
+  Caching has not been enabled for the task
+Skipping task ':generateEffectiveLombokConfig' as it is up-to-date.
+Resolve mutations for :processResources (Thread[#302,Execution worker Thread 3,5,main]) started.
+:processResources (Thread[#299,included builds,5,main]) started.
+
+> Task :processResources UP-TO-DATE
+Caching disabled for task ':processResources' because:
+  Build cache is disabled
+  Not worth caching
+Skipping task ':processResources' as it is up-to-date.
+Resolve mutations for :quarkusGenerateAppModel (Thread[#299,included builds,5,main]) started.
+:quarkusGenerateAppModel (Thread[#299,included builds,5,main]) started.
+
+> Task :quarkusGenerateAppModel UP-TO-DATE
+Caching disabled for task ':quarkusGenerateAppModel' because:
+  Build cache is disabled
+  Caching has not been enabled for the task
+Skipping task ':quarkusGenerateAppModel' as it is up-to-date.
+Resolve mutations for :quarkusGenerateCode (Thread[#300,Execution worker,5,main]) started.
+:quarkusGenerateCode (Thread[#299,included builds,5,main]) started.
+
+> Task :quarkusGenerateCode UP-TO-DATE
+Caching disabled for task ':quarkusGenerateCode' because:
+  Build cache is disabled
+Skipping task ':quarkusGenerateCode' as it is up-to-date.
+Resolve mutations for :compileJava (Thread[#299,included builds,5,main]) started.
+:compileJava (Thread[#309,Execution worker Thread 10,5,main]) started.
+
+> Task :compileJava
+Caching disabled for task ':compileJava' because:
+  Build cache is disabled
+Task ':compileJava' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':compileJava'.
+Compilation mode: in-process compilation
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with toolchain 'C:\Program Files\Java\jdk-21'.
+file or directory 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build\classes\java\quarkus-generated-sources\grpc', not found
+file or directory 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build\classes\java\quarkus-generated-sources\avdl', not found
+file or directory 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build\classes\java\quarkus-generated-sources\avpr', not found
+file or directory 'D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\build\classes\java\quarkus-generated-sources\avsc', not found
+Compiling with JDK Java compiler API.
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\security\application\mapper\RolPermisoMapper.java:35: warning: Unmapped target property: "puedeDeleagar".
+    RolPermisoResponseDTO toResponseDTO(RolPermiso entity);
+                          ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\EstudiantePanacheRepository.java:13: error: EstudiantePanacheRepository is not abstract and does not override abstract method persist(Estudiante) in EstudianteRepository
+public class EstudiantePanacheRepository implements PanacheRepositoryBase<Estudiante, Long>, EstudianteRepository {
+       ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\MatriculaPanacheRepository.java:12: error: MatriculaPanacheRepository is not abstract and does not override abstract method persist(Matricula) in MatriculaRepository
+public class MatriculaPanacheRepository implements PanacheRepositoryBase<Matricula, Long>, MatriculaRepository {
+       ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\PeriodoAcademicoPanacheRepository.java:13: error: PeriodoAcademicoPanacheRepository is not abstract and does not override abstract method persist(PeriodoAcademico) in PeriodoAcademicoRepository
+public class PeriodoAcademicoPanacheRepository
+       ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\PersonaPanacheRepository.java:13: error: PersonaPanacheRepository is not abstract and does not override abstract method persist(Persona) in PersonaRepository
+public class PersonaPanacheRepository implements PanacheRepositoryBase<Persona, Long>, PersonaRepository {
+       ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\UniversidadPanacheRepository.java:12: error: UniversidadPanacheRepository is not abstract and does not override abstract method persist(Universidad) in UniversidadRepository
+public class UniversidadPanacheRepository implements PanacheRepositoryBase<Universidad, Long>, UniversidadRepository {
+       ^
+D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\security\domain\usecases\ActualizarRolPermisoUseCase.java:32: error: cannot find symbol
+        rolPermiso.setPuedeDeleagar(!rolPermiso.getPuedeDeleagar());
+                                               ^
+  symbol:   method getPuedeDeleagar()
+  location: variable rolPermiso of type RolPermiso
+6 errors
+1 warning
+
+> Task :compileJava FAILED
+
+[Incubating] Problems report is available at: file:///D:/Universidad%20Peruana%20Union/recursos%206to%20ciclo/ALPHA/BACKEND/backendalpha/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler output below.
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\security\application\mapper\RolPermisoMapper.java:35: warning: Unmapped target property: "puedeDeleagar".
+      RolPermisoResponseDTO toResponseDTO(RolPermiso entity);
+                            ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\EstudiantePanacheRepository.java:13: error: EstudiantePanacheRepository is not abstract and does not override abstract method persist(Estudiante) in EstudianteRepository
+  public class EstudiantePanacheRepository implements PanacheRepositoryBase<Estudiante, Long>, EstudianteRepository {
+         ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\MatriculaPanacheRepository.java:12: error: MatriculaPanacheRepository is not abstract and does not override abstract method persist(Matricula) in MatriculaRepository
+  public class MatriculaPanacheRepository implements PanacheRepositoryBase<Matricula, Long>, MatriculaRepository {
+         ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\PeriodoAcademicoPanacheRepository.java:13: error: PeriodoAcademicoPanacheRepository is not abstract and does not override abstract method persist(PeriodoAcademico) in PeriodoAcademicoRepository
+  public class PeriodoAcademicoPanacheRepository
+         ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\PersonaPanacheRepository.java:13: error: PersonaPanacheRepository is not abstract and does not override abstract method persist(Persona) in PersonaRepository
+  public class PersonaPanacheRepository implements PanacheRepositoryBase<Persona, Long>, PersonaRepository {
+         ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\academic\infrastructure\persistence\UniversidadPanacheRepository.java:12: error: UniversidadPanacheRepository is not abstract and does not override abstract method persist(Universidad) in UniversidadRepository
+  public class UniversidadPanacheRepository implements PanacheRepositoryBase<Universidad, Long>, UniversidadRepository {
+         ^
+  D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha\src\main\java\upeu\edu\pe\security\domain\usecases\ActualizarRolPermisoUseCase.java:32: error: cannot find symbol
+          rolPermiso.setPuedeDeleagar(!rolPermiso.getPuedeDeleagar());
+                                                 ^
+    symbol:   method getPuedeDeleagar()
+    location: variable rolPermiso of type RolPermiso
+  6 errors
+  1 warning
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to generate a Build Scan (Powered by Develocity).
+
+BUILD FAILED in 20s
+5 actionable tasks: 1 executed, 4 up-to-date
+Watched directory hierarchies: [D:\Universidad Peruana Union\recursos 6to ciclo\ALPHA\BACKEND\backendalpha]

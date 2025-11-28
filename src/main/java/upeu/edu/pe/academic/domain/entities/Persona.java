@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
+import upeu.edu.pe.shared.domain.valueobjects.Email;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "persona", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"numero_documento", "universidad_id"}),
-    @UniqueConstraint(columnNames = {"email", "universidad_id"})
+        @UniqueConstraint(columnNames = { "numero_documento", "universidad_id" }),
+        @UniqueConstraint(columnNames = { "email", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -53,9 +54,9 @@ public class Persona extends AuditableEntity {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "genero", length = 20) 
+    @Column(name = "genero", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String genero; 
+    private String genero;
 
     @Column(name = "estado_civil", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
@@ -71,10 +72,41 @@ public class Persona extends AuditableEntity {
     @Column(name = "celular", length = 15)
     private String celular;
 
-    @Column(name = "email", unique = true, length = 100)
-    @Normalize(Normalize.NormalizeType.LOWERCASE)
-    private String email;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "email", unique = true, length = 100))
+    })
+    private Email email;
+
+    // ...
+
+    // Factory Method
+    public static Persona crear(Universidad universidad, String nombres, String apellidoPaterno, String apellidoMaterno,
+            String tipoDocumento, String numeroDocumento, LocalDate fechaNacimiento,
+            String genero, String estadoCivil, String direccion, String telefono,
+            String celular, String emailValue, String fotoUrl) {
+        Persona persona = new Persona();
+        persona.setUniversidad(universidad);
+        persona.setNombres(nombres);
+        persona.setApellidoPaterno(apellidoPaterno);
+        persona.setApellidoMaterno(apellidoMaterno);
+        persona.setTipoDocumento(tipoDocumento);
+        persona.setNumeroDocumento(numeroDocumento);
+        persona.setFechaNacimiento(fechaNacimiento);
+        persona.setGenero(genero);
+        persona.setEstadoCivil(estadoCivil);
+        persona.setDireccion(direccion);
+        persona.setTelefono(telefono);
+        persona.setCelular(celular);
+        if (emailValue != null && !emailValue.isEmpty()) {
+            persona.setEmail(new Email(emailValue));
+        }
+        persona.setFotoUrl(fotoUrl);
+        persona.setActive(true); // Default active
+        return persona;
+    }
 
     @Column(name = "foto_url", length = 255)
     private String fotoUrl;
+
 }

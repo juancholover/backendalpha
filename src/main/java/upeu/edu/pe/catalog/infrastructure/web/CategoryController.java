@@ -14,7 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.catalog.application.dto.CategoryRequestDto;
 import upeu.edu.pe.catalog.application.dto.CategoryResponseDto;
 import upeu.edu.pe.catalog.application.dto.CategoryUpdateDto;
-import upeu.edu.pe.catalog.domain.services.CategoryService;
+import upeu.edu.pe.catalog.application.services.CategoryApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -23,27 +23,28 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @SecurityRequirement(name = "bearerAuth")
-//@Secured  // Agregar esta anotación
+// @Secured // Agregar esta anotación
 
 @Tag(name = "Categories", description = "Category management operations")
 public class CategoryController {
 
     @Inject
-    CategoryService categoryService;
+    CategoryApplicationService categoryService;
+
     @GET
     @Path("/ping")
     public Response ping() {
         System.out.println("=== PING ENDPOINT CALLED ===");
         return Response.ok("pong").build();
     }
+
     @GET
     @Operation(summary = "Get all categories", description = "Retrieve all categories")
     @APIResponse(responseCode = "200", description = "Categories retrieved successfully")
     public Response getAllCategories(@QueryParam("active") @DefaultValue("false") boolean activeOnly) {
         System.out.println("=== CATEGORIES ENDPOINT CALLED ===");
 
-        List<CategoryResponseDto> categories = activeOnly ?
-                categoryService.findAll() : categoryService.findAll();
+        List<CategoryResponseDto> categories = activeOnly ? categoryService.findAll() : categoryService.findAll();
 
         return Response.ok(ApiResponse.success("Categories retrieved successfully", categories)).build();
     }
@@ -89,7 +90,7 @@ public class CategoryController {
     @APIResponse(responseCode = "200", description = "Category deleted successfully")
     @APIResponse(responseCode = "404", description = "Category not found")
     public Response deleteCategory(@Parameter(description = "Category ID") @PathParam("id") Long id) {
-        categoryService.deleteById(id);
+        categoryService.delete(id);
         return Response.ok(ApiResponse.success("Category deleted successfully", null)).build();
     }
 }

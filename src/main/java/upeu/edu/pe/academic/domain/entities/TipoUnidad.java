@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "tipo_unidad", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"nombre", "universidad_id"})
+        @UniqueConstraint(columnNames = { "nombre", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -38,4 +38,13 @@ public class TipoUnidad extends AuditableEntity {
 
     @Column(name = "nivel")
     private Integer nivel; // 1=Facultad, 2=Escuela, 3=Departamento
+
+    public static TipoUnidad crear(Universidad universidad, String nombre, String descripcion, Integer nivel) {
+        TipoUnidad tipoUnidad = new TipoUnidad();
+        tipoUnidad.setUniversidad(universidad);
+        tipoUnidad.setNombre(nombre);
+        tipoUnidad.setDescripcion(descripcion);
+        tipoUnidad.setNivel(nivel);
+        return tipoUnidad;
+    }
 }

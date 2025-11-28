@@ -1,84 +1,37 @@
 package upeu.edu.pe.academic.domain.repositories;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import jakarta.enterprise.context.ApplicationScoped;
 import upeu.edu.pe.academic.domain.entities.PeriodoAcademico;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@ApplicationScoped
-public class PeriodoAcademicoRepository implements PanacheRepository<PeriodoAcademico> {
+public interface PeriodoAcademicoRepository {
+    void persist(PeriodoAcademico periodoAcademico);
 
-    /**
-     * Busca períodos por universidad
-     */
-    public List<PeriodoAcademico> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY fechaInicio DESC", 
-                   universidadId).list();
-    }
+    Optional<PeriodoAcademico> findByIdOptional(Long id);
 
-    /**
-     * Busca el período actual de una universidad
-     */
-    public Optional<PeriodoAcademico> findActualByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and esActual = true and active = true", 
-                   universidadId).firstResultOptional();
-    }
+    Optional<PeriodoAcademico> findByCodigoPeriodo(String codigoPeriodo);
 
-    /**
-     * Busca período por código y universidad
-     */
-    public Optional<PeriodoAcademico> findByCodigoAndUniversidad(String codigoPeriodo, Long universidadId) {
-        return find("UPPER(codigoPeriodo) = UPPER(?1) and universidad.id = ?2 and active = true", 
-                   codigoPeriodo, universidadId).firstResultOptional();
-    }
+    Optional<PeriodoAcademico> findPeriodoActual(Long universidadId);
 
-    /**
-     * Busca períodos por año y universidad
-     */
-    public List<PeriodoAcademico> findByAnioAndUniversidad(Integer anio, Long universidadId) {
-        return find("anio = ?1 and universidad.id = ?2 and active = true ORDER BY numeroPeriodo", 
-                   anio, universidadId).list();
-    }
+    List<PeriodoAcademico> findAllActive();
 
-    /**
-     * Busca períodos por estado
-     */
-    public List<PeriodoAcademico> findByEstadoAndUniversidad(String estado, Long universidadId) {
-        return find("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY fechaInicio DESC", 
-                   estado, universidadId).list();
-    }
+    List<PeriodoAcademico> findByUniversidad(Long universidadId);
 
-    /**
-     * Busca períodos en un rango de fechas
-     */
-    public List<PeriodoAcademico> findByFechasAndUniversidad(LocalDate fechaInicio, LocalDate fechaFin, Long universidadId) {
-        return find("universidad.id = ?1 and fechaInicio >= ?2 and fechaFin <= ?3 and active = true ORDER BY fechaInicio", 
-                   universidadId, fechaInicio, fechaFin).list();
-    }
+    Optional<PeriodoAcademico> findByCodigoAndUniversidad(String codigo, Long universidadId);
 
-    /**
-     * Verifica si existe un período con ese código en la universidad
-     */
-    public boolean existsByCodigoAndUniversidad(String codigoPeriodo, Long universidadId) {
-        return count("UPPER(codigoPeriodo) = UPPER(?1) and universidad.id = ?2", 
-                    codigoPeriodo, universidadId) > 0;
-    }
+    List<PeriodoAcademico> findByAnioAndUniversidad(Integer anio, Long universidadId);
 
-    /**
-     * Busca períodos activos (en curso o matrícula abierta)
-     */
-    public List<PeriodoAcademico> findActivosAndUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and estado IN ('EN_CURSO', 'MATRICULA_ABIERTA') and active = true ORDER BY fechaInicio DESC", 
-                   universidadId).list();
-    }
+    List<PeriodoAcademico> findByEstadoAndUniversidad(String estado, Long universidadId);
 
-    /**
-     * Desmarca todos los períodos como actual en una universidad
-     */
-    public void desmarcarTodosComoActual(Long universidadId) {
-        update("esActual = false WHERE universidad.id = ?1", universidadId);
-    }
+    List<PeriodoAcademico> findActivosAndUniversidad(Long universidadId);
+
+    List<PeriodoAcademico> findByAnio(Integer anio);
+
+    List<PeriodoAcademico> findByEstado(String estado);
+
+    boolean existsByCodigoPeriodo(String codigoPeriodo);
+
+    boolean existsByCodigoPeriodoAndIdNot(String codigoPeriodo, Long id);
+
+    void desactivarOtrosPeriodosActuales(Long universidadId, Long periodoActualId);
 }

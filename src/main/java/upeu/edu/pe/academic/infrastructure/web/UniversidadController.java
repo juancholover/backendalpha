@@ -10,7 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.academic.application.dto.UniversidadRequestDTO;
 import upeu.edu.pe.academic.application.dto.UniversidadResponseDTO;
-import upeu.edu.pe.academic.domain.services.UniversidadService;
+import upeu.edu.pe.academic.application.services.UniversidadApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
 public class UniversidadController {
 
     @Inject
-    UniversidadService universidadService;
+    UniversidadApplicationService universidadService;
 
     @POST
     @Operation(summary = "Crear universidad", description = "Crea una nueva universidad en el sistema")

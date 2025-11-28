@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "evaluacion_nota", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"matricula_id", "criterio_id"})
+        @UniqueConstraint(columnNames = { "matricula_id", "criterio_id" })
 })
 @Data
 @NoArgsConstructor
@@ -56,27 +56,29 @@ public class EvaluacionNota extends AuditableEntity {
     @Column(name = "estado", length = 20)
     private String estado = "PENDIENTE"; // PENDIENTE, CALIFICADO, AUSENTE, NSP (No Se Presentó)
 
-   
-    public EvaluacionNota(Matricula matricula, EvaluacionCriterio criterio) {
-        this.matricula = matricula;
-        this.criterio = criterio;
-        this.estado = "PENDIENTE";
+    public static EvaluacionNota crear(Matricula matricula, EvaluacionCriterio criterio) {
+        EvaluacionNota evaluacion = new EvaluacionNota();
+        evaluacion.setMatricula(matricula);
+        evaluacion.setCriterio(criterio);
+        evaluacion.setEstado("PENDIENTE");
+        return evaluacion;
     }
 
-
-    public EvaluacionNota(Matricula matricula, EvaluacionCriterio criterio, BigDecimal nota) {
-        this.matricula = matricula;
-        this.criterio = criterio;
-        this.nota = nota;
-        this.notaFinal = nota;
-        this.estado = "CALIFICADO";
-        this.fechaCalificacion = LocalDateTime.now();
+    public static EvaluacionNota crearConNota(Matricula matricula, EvaluacionCriterio criterio, BigDecimal nota) {
+        EvaluacionNota evaluacion = new EvaluacionNota();
+        evaluacion.setMatricula(matricula);
+        evaluacion.setCriterio(criterio);
+        evaluacion.setNota(nota);
+        evaluacion.calcularNotaFinal();
+        evaluacion.setEstado("CALIFICADO");
+        evaluacion.setFechaCalificacion(LocalDateTime.now());
+        return evaluacion;
     }
 
     /**
      * Calcula la nota final (la mayor entre nota normal y recuperación)
      */
-    private void calcularNotaFinal() {
+    public void calcularNotaFinal() {
         if (nota != null && notaRecuperacion != null) {
             this.notaFinal = nota.compareTo(notaRecuperacion) > 0 ? nota : notaRecuperacion;
         } else if (nota != null) {
@@ -86,17 +88,20 @@ public class EvaluacionNota extends AuditableEntity {
         }
     }
 
-    
-    @PrePersist
-    @PreUpdate
-    public void calcularNotaFinalAutomatico() {
+    public void registrarNota(BigDecimal nota) {
+        this.nota = nota;
         calcularNotaFinal();
+        if (this.estado == null || "PENDIENTE".equals(this.estado)) {
+            this.estado = "CALIFICADO";
+            this.fechaCalificacion = LocalDateTime.now();
+        }
     }
-
 
     public void registrarNotaRecuperacion(BigDecimal notaRecuperacion) {
         this.notaRecuperacion = notaRecuperacion;
         calcularNotaFinal();
+        // Si se registra recuperación, asumimos que ya estaba calificado o se califica
+        // ahora
         if (this.estado == null || "PENDIENTE".equals(this.estado)) {
             this.estado = "CALIFICADO";
             this.fechaCalificacion = LocalDateTime.now();

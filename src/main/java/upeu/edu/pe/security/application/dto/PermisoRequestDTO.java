@@ -20,11 +20,15 @@ public class PermisoRequestDTO {
     @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
     private String descripcion;
 
+    @Size(max = 100, message = "El nombre clave no puede exceder 100 caracteres")
+    private String nombreClave;
+
     // Constructors
     public PermisoRequestDTO() {
     }
 
-    public PermisoRequestDTO(String modulo, String recurso, String accion, String descripcion) {
+    public PermisoRequestDTO(String nombreClave, String modulo, String recurso, String accion, String descripcion) {
+        this.nombreClave = nombreClave;
         this.modulo = modulo;
         this.recurso = recurso;
         this.accion = accion;
@@ -62,5 +66,13 @@ public class PermisoRequestDTO {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getNombreClave() {
+        return nombreClave;
+    }
+
+    public void setNombreClave(String nombreClave) {
+        this.nombreClave = nombreClave;
     }
 }

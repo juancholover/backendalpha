@@ -10,7 +10,7 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 
 @Entity
 @Table(name = "rol_permiso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"rol_id", "permiso_id"})
+        @UniqueConstraint(columnNames = { "rol_id", "permiso_id" })
 })
 @Data
 @NoArgsConstructor
@@ -33,22 +33,17 @@ public class RolPermiso extends AuditableEntity {
     private Permiso permiso;
 
     @Column(name = "puede_delegar")
-    private Boolean puedeDeleagar = false; // Si el rol puede otorgar este permiso a otros
+    private Boolean puedeDelegar = false; // Si el rol puede otorgar este permiso a otros
 
     @Column(name = "restriccion", length = 500)
     private String restriccion; // JSON con restricciones adicionales (ej: solo su propia data)
 
-    public RolPermiso(Rol rol, Permiso permiso) {
-        this.rol = rol;
-        this.permiso = permiso;
-        this.puedeDeleagar = false;
-    }
-
-
-    public RolPermiso(Rol rol, Permiso permiso, Boolean puedeDeleagar, String restriccion) {
-        this.rol = rol;
-        this.permiso = permiso;
-        this.puedeDeleagar = puedeDeleagar;
-        this.restriccion = restriccion;
+    public static RolPermiso crear(Rol rol, Permiso permiso, Boolean puedeDelegar, String restriccion) {
+        RolPermiso rolPermiso = new RolPermiso();
+        rolPermiso.setRol(rol);
+        rolPermiso.setPermiso(permiso);
+        rolPermiso.setPuedeDelegar(puedeDelegar != null ? puedeDelegar : false);
+        rolPermiso.setRestriccion(restriccion);
+        return rolPermiso;
     }
 }

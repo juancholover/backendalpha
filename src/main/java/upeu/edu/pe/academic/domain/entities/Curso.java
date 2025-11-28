@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_curso", "universidad_id"})
+        @UniqueConstraint(columnNames = { "codigo_curso", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -61,9 +61,30 @@ public class Curso extends AuditableEntity {
     @Column(name = "silabo_url", length = 255)
     private String silaboUrl;
 
-    public Curso(Universidad universidad, String codigoCurso, String nombre) {
-        this.universidad = universidad;
-        this.codigoCurso = codigoCurso;
-        this.nombre = nombre;
+    public static Curso crear(Universidad universidad, String codigoCurso, String nombre,
+            String descripcion, Integer horasTeoricas, Integer horasPracticas,
+            Integer horasSemanales, String tipoCurso, String areaCurricular,
+            String silaboUrl) {
+        Curso curso = new Curso();
+        curso.setUniversidad(universidad);
+        curso.setCodigoCurso(codigoCurso);
+        curso.setNombre(nombre);
+        curso.setDescripcion(descripcion);
+
+        // Default values
+        curso.setHorasTeoricas(horasTeoricas != null ? horasTeoricas : 0);
+        curso.setHorasPracticas(horasPracticas != null ? horasPracticas : 0);
+
+        if (horasSemanales != null) {
+            curso.setHorasSemanales(horasSemanales);
+        } else {
+            curso.setHorasSemanales(curso.getHorasTeoricas() + curso.getHorasPracticas());
+        }
+
+        curso.setTipoCurso(tipoCurso != null ? tipoCurso : "OBLIGATORIO");
+        curso.setAreaCurricular(areaCurricular);
+        curso.setSilaboUrl(silaboUrl);
+
+        return curso;
     }
 }

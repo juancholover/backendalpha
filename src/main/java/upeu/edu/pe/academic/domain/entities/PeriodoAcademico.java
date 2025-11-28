@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "periodo_academico", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_periodo", "universidad_id"})
+        @UniqueConstraint(columnNames = { "codigo_periodo", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -83,9 +83,8 @@ public class PeriodoAcademico extends AuditableEntity {
     @OneToMany(mappedBy = "periodoAcademico", fetch = FetchType.LAZY)
     private List<CursoOfertado> cursosOfertados = new ArrayList<>();
 
-
-    public PeriodoAcademico(Universidad universidad, String codigoPeriodo, String nombre, 
-                           LocalDate fechaInicio, LocalDate fechaFin) {
+    public PeriodoAcademico(Universidad universidad, String codigoPeriodo, String nombre,
+            LocalDate fechaInicio, LocalDate fechaFin) {
         this.universidad = universidad;
         this.codigoPeriodo = codigoPeriodo;
         this.nombre = nombre;
@@ -95,13 +94,33 @@ public class PeriodoAcademico extends AuditableEntity {
         this.esActual = false;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (this.estado == null) {
-            this.estado = "PLANIFICADO";
-        }
-        if (this.esActual == null) {
-            this.esActual = false;
-        }
+    // Factory Method
+    public static PeriodoAcademico crear(Universidad universidad, String codigoPeriodo, String nombre,
+            Integer anio, String tipoPeriodo, Integer numeroPeriodo,
+            LocalDate fechaInicio, LocalDate fechaFin,
+            LocalDate fechaInicioMatricula, LocalDate fechaFinMatricula,
+            LocalDate fechaInicioClases, LocalDate fechaFinClases,
+            String descripcion) {
+        PeriodoAcademico periodo = new PeriodoAcademico();
+        periodo.setUniversidad(universidad);
+        periodo.setCodigoPeriodo(codigoPeriodo);
+        periodo.setNombre(nombre);
+        periodo.setAnio(anio);
+        periodo.setTipoPeriodo(tipoPeriodo);
+        periodo.setNumeroPeriodo(numeroPeriodo);
+        periodo.setFechaInicio(fechaInicio);
+        periodo.setFechaFin(fechaFin);
+        periodo.setFechaInicioMatricula(fechaInicioMatricula);
+        periodo.setFechaFinMatricula(fechaFinMatricula);
+        periodo.setFechaInicioClases(fechaInicioClases);
+        periodo.setFechaFinClases(fechaFinClases);
+        periodo.setDescripcion(descripcion);
+
+        // Default values
+        periodo.setEstado("PLANIFICADO");
+        periodo.setEsActual(false);
+        periodo.setActive(true);
+
+        return periodo;
     }
 }

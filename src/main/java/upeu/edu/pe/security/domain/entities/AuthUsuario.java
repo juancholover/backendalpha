@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Entity
 @Table(name = "auth_usuario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"universidad_id", "persona_id"}),
-    @UniqueConstraint(columnNames = "persona_id")
+        @UniqueConstraint(columnNames = { "universidad_id", "persona_id" }),
+        @UniqueConstraint(columnNames = "persona_id")
 })
 @EntityListeners(AuditListener.class)
 public class AuthUsuario extends AuditableEntity {
@@ -64,9 +64,20 @@ public class AuthUsuario extends AuditableEntity {
     @Column(name = "fecha_expiracion_token")
     private LocalDateTime fechaExpiracionToken;
 
+    public static AuthUsuario crear(Persona persona, Rol rol, Universidad universidad, String passwordHash) {
+        AuthUsuario usuario = new AuthUsuario();
+        usuario.setPersona(persona);
+        usuario.setRol(rol);
+        usuario.setUniversidad(universidad);
+        usuario.setPasswordHash(passwordHash);
+        usuario.setIntentosFallidos(0);
+        usuario.setRequiereCambioPassword(false);
+        return usuario;
+    }
+
     // Métodos de conveniencia para obtener datos de Persona
     public String getEmail() {
-        return persona != null ? persona.getEmail() : null;
+        return (persona != null && persona.getEmail() != null) ? persona.getEmail().getValue() : null;
     }
 
     public String getUsername() {

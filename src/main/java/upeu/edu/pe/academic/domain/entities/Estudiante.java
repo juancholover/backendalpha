@@ -13,8 +13,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "estudiante", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_estudiante", "universidad_id"}),
-    @UniqueConstraint(columnNames = {"persona_id", "universidad_id"})
+        @UniqueConstraint(columnNames = { "codigo_estudiante", "universidad_id" }),
+        @UniqueConstraint(columnNames = { "persona_id", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -34,7 +34,7 @@ public class Estudiante extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; 
+    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "programa_id", nullable = false)
@@ -77,7 +77,6 @@ public class Estudiante extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoEstudiante; // REGULAR, IRREGULAR
 
-
     /**
      * Verifica si el estudiante puede graduarse según el plan académico
      */
@@ -85,24 +84,37 @@ public class Estudiante extends AuditableEntity {
         if (plan == null || creditosObligatoriosAprobados == null || creditosElectivosAprobados == null) {
             return false;
         }
-        boolean cumpleObligatorios = creditosObligatoriosAprobados >= (plan.getCreditosObligatorios() != null ? plan.getCreditosObligatorios() : 0);
-        boolean cumpleElectivos = creditosElectivosAprobados >= (plan.getCreditosElectivos() != null ? plan.getCreditosElectivos() : 0);
+        boolean cumpleObligatorios = creditosObligatoriosAprobados >= (plan.getCreditosObligatorios() != null
+                ? plan.getCreditosObligatorios()
+                : 0);
+        boolean cumpleElectivos = creditosElectivosAprobados >= (plan.getCreditosElectivos() != null
+                ? plan.getCreditosElectivos()
+                : 0);
         return cumpleObligatorios && cumpleElectivos;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (this.creditosCursando == null) {
-            this.creditosCursando = 0;
-        }
-        if (this.creditosObligatoriosAprobados == null) {
-            this.creditosObligatoriosAprobados = 0;
-        }
-        if (this.creditosElectivosAprobados == null) {
-            this.creditosElectivosAprobados = 0;
-        }
-        if (this.estadoAcademico == null) {
-            this.estadoAcademico = "ACTIVO";
-        }
+    // Factory Method
+    public static Estudiante crear(Persona persona, Universidad universidad, ProgramaAcademico programaAcademico,
+            String codigoEstudiante, LocalDate fechaIngreso, Integer cicloActual,
+            String modalidadIngreso, String tipoEstudiante) {
+        Estudiante estudiante = new Estudiante();
+        estudiante.setPersona(persona);
+        estudiante.setUniversidad(universidad);
+        estudiante.setProgramaAcademico(programaAcademico);
+        estudiante.setCodigoEstudiante(codigoEstudiante);
+        estudiante.setFechaIngreso(fechaIngreso);
+        estudiante.setCicloActual(cicloActual);
+        estudiante.setModalidadIngreso(modalidadIngreso);
+
+        // Default values
+        estudiante.setTipoEstudiante(tipoEstudiante != null ? tipoEstudiante : "REGULAR");
+        estudiante.setEstadoAcademico("ACTIVO");
+        estudiante.setCreditosAprobados(0);
+        estudiante.setCreditosCursando(0);
+        estudiante.setCreditosObligatoriosAprobados(0);
+        estudiante.setCreditosElectivosAprobados(0);
+        estudiante.setActive(true);
+
+        return estudiante;
     }
 }

@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.academic.application.dto.PeriodoAcademicoRequestDTO;
 import upeu.edu.pe.academic.application.dto.PeriodoAcademicoResponseDTO;
-import upeu.edu.pe.academic.domain.services.PeriodoAcademicoService;
+import upeu.edu.pe.academic.application.services.PeriodoAcademicoApplicationService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class PeriodoAcademicoController {
 
     @Inject
-    PeriodoAcademicoService periodoService;
+    PeriodoAcademicoApplicationService periodoService;
 
     @GET
     @Path("/universidad/{universidadId}")

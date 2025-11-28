@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.academic.application.dto.MatriculaRequestDTO;
 import upeu.edu.pe.academic.application.dto.MatriculaResponseDTO;
-import upeu.edu.pe.academic.domain.services.MatriculaService;
+import upeu.edu.pe.academic.application.services.MatriculaApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 public class MatriculaController {
 
     @Inject
-    MatriculaService matriculaService;
+    MatriculaApplicationService matriculaService;
 
     @GET
     @Path("/estudiante/{estudianteId}")
@@ -38,16 +38,19 @@ public class MatriculaController {
     @Path("/periodo/{periodoId}")
     public Response findByPeriodoAcademico(@PathParam("periodoId") Long periodoId) {
         List<MatriculaResponseDTO> matriculas = matriculaService.findByPeriodoAcademico(periodoId);
-        return Response.ok(ApiResponse.success("Matrículas por período académico obtenidas exitosamente", matriculas)).build();
+        return Response.ok(ApiResponse.success("Matrículas por período académico obtenidas exitosamente", matriculas))
+                .build();
     }
 
     @GET
     @Path("/estudiante/{estudianteId}/periodo/{periodoId}")
     public Response findByEstudianteAndPeriodo(
-            @PathParam("estudianteId") Long estudianteId, 
+            @PathParam("estudianteId") Long estudianteId,
             @PathParam("periodoId") Long periodoId) {
         List<MatriculaResponseDTO> matriculas = matriculaService.findByEstudianteAndPeriodo(estudianteId, periodoId);
-        return Response.ok(ApiResponse.success("Matrículas del estudiante en el período obtenidas exitosamente", matriculas)).build();
+        return Response
+                .ok(ApiResponse.success("Matrículas del estudiante en el período obtenidas exitosamente", matriculas))
+                .build();
     }
 
     @GET
@@ -74,7 +77,7 @@ public class MatriculaController {
     @GET
     @Path("/tipo/{tipoMatricula}/periodo/{periodoId}")
     public Response findByTipoMatricula(
-            @PathParam("tipoMatricula") String tipoMatricula, 
+            @PathParam("tipoMatricula") String tipoMatricula,
             @PathParam("periodoId") Long periodoId) {
         List<MatriculaResponseDTO> matriculas = matriculaService.findByTipoMatricula(tipoMatricula, periodoId);
         return Response.ok(ApiResponse.success("Matrículas por tipo obtenidas exitosamente", matriculas)).build();

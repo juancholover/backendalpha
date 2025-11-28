@@ -17,13 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "cuenta_corriente_alumno",
-    indexes = {
+@Table(name = "cuenta_corriente_alumno", indexes = {
         @Index(name = "idx_cta_cte_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
         @Index(name = "idx_cta_cte_estado_vencimiento", columnList = "estado, fecha_vencimiento"),
         @Index(name = "idx_cta_cte_periodo_tipo", columnList = "periodo_academico, tipo_cargo")
-    }
-)
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -85,44 +83,32 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
     @OneToMany(mappedBy = "deuda", cascade = CascadeType.ALL)
     private Set<PagoDetalleDeuda> pagosDetalle = new HashSet<>();
 
-    /**
-     * Constructor de conveniencia
-     */
-    public CuentaCorrienteAlumno(Universidad universidad, Estudiante estudiante, 
-                                 BigDecimal monto, String concepto, LocalDate fechaVencimiento) {
-        this.universidad = universidad;
-        this.estudiante = estudiante;
-        this.monto = monto;
-        this.concepto = concepto;
-        this.fechaVencimiento = fechaVencimiento;
-        this.fechaEmision = LocalDate.now();
-        this.montoPagado = BigDecimal.ZERO;
-        this.montoPendiente = monto;
-        this.estado = "PENDIENTE";
-    }
+    public static CuentaCorrienteAlumno crear(Universidad universidad, Estudiante estudiante,
+            BigDecimal monto, String concepto, LocalDate fechaVencimiento,
+            String tipoCargo, String periodoAcademico, Integer numeroCuota, String observaciones) {
+        CuentaCorrienteAlumno cta = new CuentaCorrienteAlumno();
+        cta.setUniversidad(universidad);
+        cta.setEstudiante(estudiante);
+        cta.setMonto(monto);
+        cta.setConcepto(concepto);
+        cta.setFechaVencimiento(fechaVencimiento);
+        cta.setTipoCargo(tipoCargo);
+        cta.setPeriodoAcademico(periodoAcademico);
+        cta.setNumeroCuota(numeroCuota);
+        cta.setObservaciones(observaciones);
 
-    @PrePersist
-    public void prePersist() {
-        if (this.fechaEmision == null) {
-            this.fechaEmision = LocalDate.now();
-        }
-        if (this.montoPagado == null) {
-            this.montoPagado = BigDecimal.ZERO;
-        }
-        calcularMontoPendiente();
-        actualizarEstado();
-    }
+        cta.setFechaEmision(LocalDate.now());
+        cta.setMontoPagado(BigDecimal.ZERO);
+        cta.setMontoPendiente(monto);
+        cta.setEstado("PENDIENTE");
 
-    @PreUpdate
-    public void preUpdate() {
-        calcularMontoPendiente();
-        actualizarEstado();
+        return cta;
     }
 
     /**
      * Calcula el monto pendiente
      */
-    private void calcularMontoPendiente() {
+    public void calcularMontoPendiente() {
         if (monto != null && montoPagado != null) {
             this.montoPendiente = monto.subtract(montoPagado);
         }
@@ -131,9 +117,10 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
     /**
      * Actualiza el estado según el monto pagado
      */
-    private void actualizarEstado() {
-        if (montoPendiente == null) return;
-        
+    public void actualizarEstado() {
+        if (montoPendiente == null)
+            return;
+
         if (montoPendiente.compareTo(BigDecimal.ZERO) <= 0) {
             this.estado = "PAGADO";
         } else if (montoPagado.compareTo(BigDecimal.ZERO) > 0) {
@@ -152,12 +139,12 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
         if (montoPago.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
-        
+
         BigDecimal nuevoMontoPagado = this.montoPagado.add(montoPago);
         if (nuevoMontoPagado.compareTo(this.monto) > 0) {
             throw new IllegalArgumentException("El pago excede el monto de la deuda");
         }
-        
+
         this.montoPagado = nuevoMontoPagado;
         calcularMontoPendiente();
         actualizarEstado();
@@ -174,8 +161,8 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
      * Verifica si la deuda está vencida
      */
     public boolean estaVencida() {
-        return fechaVencimiento != null && 
-               LocalDate.now().isAfter(fechaVencimiento) && 
-               !estaPagada();
+        return fechaVencimiento != null &&
+                LocalDate.now().isAfter(fechaVencimiento) &&
+                !estaPagada();
     }
 }

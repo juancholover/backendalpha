@@ -4,6 +4,7 @@ import org.mapstruct.*;
 import upeu.edu.pe.academic.application.dto.HorarioRequestDTO;
 import upeu.edu.pe.academic.application.dto.HorarioResponseDTO;
 import upeu.edu.pe.academic.domain.entities.Horario;
+import java.util.List;
 
 @Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface HorarioMapper {
@@ -29,6 +30,8 @@ public interface HorarioMapper {
     @Mapping(target = "localizacionCodigo", source = "localizacion.codigo")
     HorarioResponseDTO toResponseDTO(Horario entity);
 
+    List<HorarioResponseDTO> toResponseDTOList(List<Horario> entities);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
@@ -37,14 +40,14 @@ public interface HorarioMapper {
     void updateEntityFromDto(HorarioRequestDTO dto, @MappingTarget Horario entity);
 
     default String getNombreProfesor(Horario horario) {
-        if (horario.getCursoOfertado() != null && 
-            horario.getCursoOfertado().getProfesor() != null && 
-            horario.getCursoOfertado().getProfesor().getPersona() != null) {
-            
+        if (horario.getCursoOfertado() != null &&
+                horario.getCursoOfertado().getProfesor() != null &&
+                horario.getCursoOfertado().getProfesor().getPersona() != null) {
+
             var persona = horario.getCursoOfertado().getProfesor().getPersona();
-            return persona.getApellidoPaterno() + " " + 
-                   persona.getApellidoMaterno() + ", " + 
-                   persona.getNombres();
+            return persona.getApellidoPaterno() + " " +
+                    persona.getApellidoMaterno() + ", " +
+                    persona.getNombres();
         }
         return null;
     }

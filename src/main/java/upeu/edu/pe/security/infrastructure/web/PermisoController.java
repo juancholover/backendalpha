@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.security.application.dto.PermisoRequestDTO;
 import upeu.edu.pe.security.application.dto.PermisoResponseDTO;
-import upeu.edu.pe.security.domain.services.PermisoService;
+import upeu.edu.pe.security.application.services.PermisoApplicationService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class PermisoController {
 
     @Inject
-    PermisoService permisoService;
+    PermisoApplicationService permisoService;
 
     @GET
     public Response findAll() {

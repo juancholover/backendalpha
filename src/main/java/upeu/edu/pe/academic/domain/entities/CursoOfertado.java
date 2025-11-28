@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "curso_ofertado", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_seccion", "periodo_academico_id", "universidad_id"})
+        @UniqueConstraint(columnNames = { "codigo_seccion", "periodo_academico_id", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -76,31 +76,22 @@ public class CursoOfertado extends AuditableEntity {
     @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionCriterio> evaluacionCriterios = new HashSet<>();
 
-
-    public CursoOfertado(Universidad universidad, PlanCurso planCurso, 
-                  PeriodoAcademico periodoAcademico, String codigoSeccion, 
-                  Integer capacidadMaxima) {
-        this.universidad = universidad;
-        this.planCurso = planCurso;
-        this.periodoAcademico = periodoAcademico;
-        this.codigoSeccion = codigoSeccion;
-        this.capacidadMaxima = capacidadMaxima;
-        this.vacantesDisponibles = capacidadMaxima;
-        this.estado = "ABIERTA";
-        this.modalidad = "PRESENCIAL";
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (this.estado == null) {
-            this.estado = "ABIERTA";
-        }
-        if (this.vacantesDisponibles == null && this.capacidadMaxima != null) {
-            this.vacantesDisponibles = this.capacidadMaxima;
-        }
-        if (this.modalidad == null) {
-            this.modalidad = "PRESENCIAL";
-        }
+    public static CursoOfertado crear(Universidad universidad, PlanCurso planCurso,
+            PeriodoAcademico periodoAcademico, String codigoSeccion,
+            Integer capacidadMaxima, String modalidad, Profesor profesor,
+            Localizacion localizacion) {
+        CursoOfertado curso = new CursoOfertado();
+        curso.setUniversidad(universidad);
+        curso.setPlanCurso(planCurso);
+        curso.setPeriodoAcademico(periodoAcademico);
+        curso.setCodigoSeccion(codigoSeccion);
+        curso.setCapacidadMaxima(capacidadMaxima);
+        curso.setVacantesDisponibles(capacidadMaxima);
+        curso.setModalidad(modalidad != null ? modalidad : "PRESENCIAL");
+        curso.setProfesor(profesor);
+        curso.setLocalizacion(localizacion);
+        curso.setEstado("ABIERTA");
+        return curso;
     }
 
     /**

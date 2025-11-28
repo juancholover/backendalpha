@@ -5,7 +5,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import upeu.edu.pe.catalog.application.dto.TipoLocalizacionRequestDTO;
 import upeu.edu.pe.catalog.application.dto.TipoLocalizacionResponseDTO;
-import upeu.edu.pe.catalog.domain.services.TipoLocalizacionService;
+import upeu.edu.pe.catalog.application.services.TipoLocalizacionApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class TipoLocalizacionController {
 
     @Inject
-    TipoLocalizacionService tipoLocalizacionService;
+    TipoLocalizacionApplicationService tipoLocalizacionService;
 
     @GET
     public ApiResponse<List<TipoLocalizacionResponseDTO>> getAll() {
@@ -31,13 +31,16 @@ public class TipoLocalizacionController {
 
     @POST
     public ApiResponse<TipoLocalizacionResponseDTO> create(TipoLocalizacionRequestDTO requestDTO) {
-        return ApiResponse.success("Tipo de localización creado exitosamente", tipoLocalizacionService.create(requestDTO));
+        return ApiResponse.success("Tipo de localización creado exitosamente",
+                tipoLocalizacionService.create(requestDTO));
     }
 
     @PUT
     @Path("/{id}")
-    public ApiResponse<TipoLocalizacionResponseDTO> update(@PathParam("id") Long id, TipoLocalizacionRequestDTO requestDTO) {
-        return ApiResponse.success("Tipo de localización actualizado exitosamente", tipoLocalizacionService.update(id, requestDTO));
+    public ApiResponse<TipoLocalizacionResponseDTO> update(@PathParam("id") Long id,
+            TipoLocalizacionRequestDTO requestDTO) {
+        return ApiResponse.success("Tipo de localización actualizado exitosamente",
+                tipoLocalizacionService.update(id, requestDTO));
     }
 
     @DELETE

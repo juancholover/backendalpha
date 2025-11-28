@@ -9,10 +9,7 @@ import upeu.edu.pe.finance.domain.entities.PagoDetalleDeuda;
 
 import java.util.List;
 
-@Mapper(
-    componentModel = "cdi",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
+@Mapper(componentModel = "cdi", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PagoDetalleDeudaMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -23,7 +20,7 @@ public interface PagoDetalleDeudaMapper {
     @Mapping(target = "fechaReversion", ignore = true)
     @Mapping(target = "motivoReversion", ignore = true)
     @Mapping(target = "aplicadoPor", ignore = true)
-    @Mapping(target = "observaciones", ignore = true)
+    @Mapping(target = "observaciones", source = "observaciones")
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

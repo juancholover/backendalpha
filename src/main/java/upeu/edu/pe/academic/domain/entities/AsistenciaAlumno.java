@@ -11,10 +11,9 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "asistencia_alumno", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"estudiante_id", "horario_id", "fecha_clase"})
+        @UniqueConstraint(columnNames = { "estudiante_id", "horario_id", "fecha_clase" })
 })
 @Data
 @NoArgsConstructor
@@ -57,14 +56,29 @@ public class AsistenciaAlumno extends AuditableEntity {
     /**
      * Validar que el estado sea válido
      */
-    @PrePersist
-    @PreUpdate
-    private void validarEstado() {
-        if (estado != null && 
-            !estado.equals("PRESENTE") && 
-            !estado.equals("AUSENTE") && 
-            !estado.equals("TARDANZA") && 
-            !estado.equals("JUSTIFICADO")) {
+    public static AsistenciaAlumno crear(Universidad universidad, Estudiante estudiante, Horario horario,
+            LocalDate fechaClase, String estado) {
+        AsistenciaAlumno asistencia = new AsistenciaAlumno();
+        asistencia.setUniversidad(universidad);
+        asistencia.setEstudiante(estudiante);
+        asistencia.setHorario(horario);
+        asistencia.setFechaClase(fechaClase);
+        asistencia.setEstado(estado);
+
+        asistencia.validarEstado();
+
+        return asistencia;
+    }
+
+    /**
+     * Validar que el estado sea válido
+     */
+    public void validarEstado() {
+        if (estado != null &&
+                !estado.equals("PRESENTE") &&
+                !estado.equals("AUSENTE") &&
+                !estado.equals("TARDANZA") &&
+                !estado.equals("JUSTIFICADO")) {
             throw new IllegalArgumentException("Estado de asistencia inválido: " + estado);
         }
     }

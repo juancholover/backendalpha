@@ -39,6 +39,9 @@ public class CuentaCorrienteAlumnoRequestDTO {
     @Size(max = 500, message = "Las observaciones no pueden exceder 500 caracteres")
     private String observaciones;
 
+    private String periodoAcademico;
+    private Integer numeroCuota;
+
     // Constructors
     public CuentaCorrienteAlumnoRequestDTO() {
     }
@@ -114,5 +117,21 @@ public class CuentaCorrienteAlumnoRequestDTO {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public String getPeriodoAcademico() {
+        return periodoAcademico;
+    }
+
+    public void setPeriodoAcademico(String periodoAcademico) {
+        this.periodoAcademico = periodoAcademico;
+    }
+
+    public Integer getNumeroCuota() {
+        return numeroCuota;
+    }
+
+    public void setNumeroCuota(Integer numeroCuota) {
+        this.numeroCuota = numeroCuota;
     }
 }

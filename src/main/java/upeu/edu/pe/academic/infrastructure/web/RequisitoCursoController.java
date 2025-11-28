@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.academic.application.dto.RequisitoCursoRequestDTO;
 import upeu.edu.pe.academic.application.dto.RequisitoCursoResponseDTO;
-import upeu.edu.pe.academic.domain.services.RequisitoCursoService;
+import upeu.edu.pe.academic.application.services.RequisitoCursoApplicationService;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class RequisitoCursoController {
 
     @Inject
-    RequisitoCursoService requisitoService;
+    RequisitoCursoApplicationService requisitoService;
 
     @GET
     @Path("/curso/{cursoId}")

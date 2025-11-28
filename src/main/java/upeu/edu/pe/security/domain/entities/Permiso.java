@@ -49,22 +49,34 @@ public class Permiso extends AuditableEntity {
     @OneToMany(mappedBy = "permiso", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolPermiso> rolPermisos = new HashSet<>();
 
-
-    public Permiso(String nombreClave, String descripcion, String modulo, String recurso, String accion) {
-        this.nombreClave = nombreClave;
-        this.descripcion = descripcion;
-        this.modulo = modulo;
-        this.recurso = recurso;
-        this.accion = accion;
+    public static Permiso crear(String nombreClave, String descripcion, String modulo, String recurso, String accion) {
+        Permiso permiso = new Permiso();
+        // Si no se proporciona nombreClave, se genera automáticamente
+        if (nombreClave == null || nombreClave.trim().isEmpty()) {
+            permiso.generarNombreClave(modulo, accion, recurso);
+        } else {
+            permiso.setNombreClave(nombreClave);
+        }
+        permiso.setDescripcion(descripcion);
+        permiso.setModulo(modulo);
+        permiso.setRecurso(recurso);
+        permiso.setAccion(accion);
+        return permiso;
     }
 
-    @PrePersist
-    @PreUpdate
-    public void generarNombreClave() {
-        if (nombreClave == null && modulo != null && accion != null && recurso != null) {
+    public void generarNombreClave(String modulo, String accion, String recurso) {
+        if (modulo != null && accion != null && recurso != null) {
             this.nombreClave = String.format("%s_%s_%s", modulo, accion, recurso)
                     .toUpperCase()
                     .replaceAll("\\s+", "_");
         }
+    }
+
+    public void actualizar(String descripcion, String modulo, String recurso, String accion) {
+        this.descripcion = descripcion;
+        this.modulo = modulo;
+        this.recurso = recurso;
+        this.accion = accion;
+        generarNombreClave(modulo, accion, recurso);
     }
 }

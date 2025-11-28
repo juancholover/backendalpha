@@ -7,6 +7,9 @@ import java.time.LocalDate;
 @Data
 public class PersonaRequestDTO {
 
+    @NotNull(message = "El ID de la universidad es obligatorio")
+    private Long universidadId;
+
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 100, message = "Los nombres no pueden exceder 100 caracteres")
     private String nombres;

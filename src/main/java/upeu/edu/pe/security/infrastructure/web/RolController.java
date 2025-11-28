@@ -7,17 +7,19 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.security.application.dto.RolRequestDTO;
 import upeu.edu.pe.security.application.dto.RolResponseDTO;
-import upeu.edu.pe.security.domain.services.RolService;
+import upeu.edu.pe.security.application.services.RolApplicationService;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.List;
 
 @Path("/api/v1/roles")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Roles", description = "Role management operations")
 public class RolController {
 
     @Inject
-    RolService rolService;
+    RolApplicationService rolService;
 
     @GET
     public Response findAll() {

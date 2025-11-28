@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.academic.application.dto.HorarioRequestDTO;
 import upeu.edu.pe.academic.application.dto.HorarioResponseDTO;
-import upeu.edu.pe.academic.domain.services.HorarioService;
+import upeu.edu.pe.academic.application.services.HorarioApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 public class HorarioController {
 
     @Inject
-    HorarioService horarioService;
+    HorarioApplicationService horarioService;
 
     /**
      * GET /api/horarios?universidadId=1
@@ -87,7 +87,7 @@ public class HorarioController {
     @GET
     @Path("/dia/{diaSemana}")
     public Response findByDiaSemana(@PathParam("diaSemana") Integer diaSemana,
-                                    @QueryParam("universidadId") Long universidadId) {
+            @QueryParam("universidadId") Long universidadId) {
         if (universidadId == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("El parámetro universidadId es obligatorio"))
@@ -106,7 +106,8 @@ public class HorarioController {
     @Path("/localizacion/{localizacionId}")
     public Response findByLocalizacion(@PathParam("localizacionId") Long localizacionId) {
         List<HorarioResponseDTO> horarios = horarioService.findByLocalizacion(localizacionId);
-        return Response.ok(ApiResponse.success("Horarios de la localización recuperados exitosamente", horarios)).build();
+        return Response.ok(ApiResponse.success("Horarios de la localización recuperados exitosamente", horarios))
+                .build();
     }
 
     /**
@@ -150,7 +151,7 @@ public class HorarioController {
     @GET
     @Path("/validar-cruce")
     public Response validarCruce(@QueryParam("estudianteId") Long estudianteId,
-                                 @QueryParam("cursoOfertadoId") Long cursoOfertadoId) {
+            @QueryParam("cursoOfertadoId") Long cursoOfertadoId) {
         if (estudianteId == null || cursoOfertadoId == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Los parámetros estudianteId y cursoOfertadoId son obligatorios"))
@@ -158,7 +159,7 @@ public class HorarioController {
         }
 
         boolean tieneCruce = horarioService.tieneCreceHorario(estudianteId, cursoOfertadoId);
-        
+
         if (tieneCruce) {
             return Response.status(Response.Status.CONFLICT)
                     .entity(ApiResponse.error("El estudiante tiene cruce de horarios con este curso"))

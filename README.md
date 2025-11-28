@@ -17,6 +17,8 @@ Este proyecto está en proceso de migración hacia **Clean Architecture Pragmát
 - ✅ Repositorios como interfaces en `domain/`
 - ✅ Application Services para orquestar DTOs
 - ✅ Entidades con lógica de negocio (no anémicas)
+- ✅ Value Objects (`Email`, `Ruc`) para integridad de datos
+- ✅ Validaciones estandarizadas en entidades y casos de uso
 
 ---
 
@@ -34,6 +36,7 @@ src/main/java/upeu/edu/pe/
 │   └── infrastructure/      # JWT, filtros, controllers
 └── shared/                   # Componentes compartidos
     ├── annotations/         # Anotaciones personalizadas (@Normalize)
+    ├── domain/              # Value Objects (Email, Ruc, etc.)
     ├── entities/           # AuditableEntity base
     ├── context/            # Contexto de auditoría
     └── utils/              # Utilidades generales
@@ -241,6 +244,12 @@ Todas las entidades que extiendan `AuditableEntity` tendrán:
 - `createdAt`, `updatedAt`: Timestamps automáticos
 - `createdBy`, `updatedBy`: Usuario del JWT automático
 - `active`: Flag de estado (soft delete)
+
+### Value Objects
+Se han introducido Value Objects para encapsular reglas de negocio y validaciones:
+- `Email`: Valida formato y unicidad en `Persona` y `AuthUsuario`.
+- `Ruc`: Valida longitud (11 dígitos) y formato en `Universidad`.
+- *Nota: `Dni` está implementado pero su uso en `Persona` se ha pospuesto para mantener flexibilidad con otros tipos de documentos.*
 
 ## 🐞 Debugging
 

@@ -3,8 +3,6 @@ package upeu.edu.pe.security.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import upeu.edu.pe.security.domain.enums.UserRole;
-import upeu.edu.pe.security.domain.enums.UserStatus;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +25,8 @@ public class AuthResponseDto {
         private String email;
         private String firstName;
         private String lastName;
-        private UserRole role;
-        private UserStatus status;
+        private String role;
+        private String status;
         private LocalDateTime lastLogin;
     }
 }

@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "plan_curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"plan_academico_id", "curso_id", "universidad_id"})
+        @UniqueConstraint(columnNames = { "plan_academico_id", "curso_id", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -50,25 +50,26 @@ public class PlanCurso extends AuditableEntity {
     @Column(name = "es_obligatorio")
     private Boolean esObligatorio = true;
 
-    
-    public PlanCurso(Universidad universidad, PlanAcademico planAcademico, Curso curso, 
-                     Integer creditos, Integer ciclo, String tipoCurso) {
-        this.universidad = universidad;
-        this.planAcademico = planAcademico;
-        this.curso = curso;
-        this.creditos = creditos;
-        this.ciclo = ciclo;
-        this.tipoCurso = tipoCurso;
-        this.esObligatorio = "OBLIGATORIO".equals(tipoCurso);
-    }
+    public static PlanCurso crear(Universidad universidad, PlanAcademico planAcademico, Curso curso,
+            Integer creditos, Integer ciclo, String tipoCurso, Boolean esObligatorio) {
+        PlanCurso planCurso = new PlanCurso();
+        planCurso.setUniversidad(universidad);
+        planCurso.setPlanAcademico(planAcademico);
+        planCurso.setCurso(curso);
+        planCurso.setCreditos(creditos);
+        planCurso.setCiclo(ciclo);
 
-    @PrePersist
-    public void prePersist() {
-        if (this.esObligatorio == null) {
-            this.esObligatorio = "OBLIGATORIO".equals(this.tipoCurso);
+        // Default values logic
+        if (esObligatorio != null) {
+            planCurso.setEsObligatorio(esObligatorio);
+            planCurso.setTipoCurso(tipoCurso != null ? tipoCurso : (esObligatorio ? "OBLIGATORIO" : "ELECTIVO"));
+        } else {
+            // If esObligatorio is null, derive from tipoCurso
+            String tipo = tipoCurso != null ? tipoCurso : "OBLIGATORIO";
+            planCurso.setTipoCurso(tipo);
+            planCurso.setEsObligatorio("OBLIGATORIO".equals(tipo));
         }
-        if (this.tipoCurso == null) {
-            this.tipoCurso = this.esObligatorio ? "OBLIGATORIO" : "ELECTIVO";
-        }
+
+        return planCurso;
     }
 }

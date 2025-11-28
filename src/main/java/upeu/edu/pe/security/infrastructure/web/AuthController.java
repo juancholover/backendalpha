@@ -11,7 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.security.application.dto.*;
-import upeu.edu.pe.security.domain.services.AuthService;
+import upeu.edu.pe.security.application.services.AuthApplicationService;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 @Path("/api/v1/auth")
@@ -21,7 +21,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 public class AuthController {
 
     @Inject
-    AuthService authService;
+    AuthApplicationService authService;
 
     @POST
     @Path("/login")
@@ -41,29 +41,38 @@ public class AuthController {
     }
 
     // NOTA: El registro ahora requiere crear primero Persona y Universidad
-    // Este endpoint fue deshabilitado porque AuthUsuario necesita referencias completas
+    // Este endpoint fue deshabilitado porque AuthUsuario necesita referencias
+    // completas
     // Ver docs/MIGRACION-AUTHUSUARIO.md para implementar el nuevo flujo de registro
     /*
-    @POST
-    @Path("/register")
-    @Operation(summary = "User registration", description = "Create new user account and return JWT tokens")
-    @APIResponse(responseCode = "201", description = "User registered successfully")
-    @APIResponse(responseCode = "409", description = "Username or email already exists")
-    @APIResponse(responseCode = "400", description = "Invalid request data")
-    public Response register(@Valid RegisterRequestDto registerRequest) {
-        System.out.println("=====> "+registerRequest.toString());
-        try {
-            AuthResponseDto authResponse = authService.register(registerRequest);
-            return Response.status(Response.Status.CREATED)
-                    .entity(ApiResponse.success("User registered successfully", authResponse))
-                    .build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(ApiResponse.error("Registration failed", e.getMessage()))
-                    .build();
-        }
-    }
-    */
+     * @POST
+     * 
+     * @Path("/register")
+     * 
+     * @Operation(summary = "User registration", description =
+     * "Create new user account and return JWT tokens")
+     * 
+     * @APIResponse(responseCode = "201", description =
+     * "User registered successfully")
+     * 
+     * @APIResponse(responseCode = "409", description =
+     * "Username or email already exists")
+     * 
+     * @APIResponse(responseCode = "400", description = "Invalid request data")
+     * public Response register(@Valid RegisterRequestDto registerRequest) {
+     * System.out.println("=====> "+registerRequest.toString());
+     * try {
+     * AuthResponseDto authResponse = authService.register(registerRequest);
+     * return Response.status(Response.Status.CREATED)
+     * .entity(ApiResponse.success("User registered successfully", authResponse))
+     * .build();
+     * } catch (Exception e) {
+     * return Response.status(Response.Status.CONFLICT)
+     * .entity(ApiResponse.error("Registration failed", e.getMessage()))
+     * .build();
+     * }
+     * }
+     */
 
     @POST
     @Path("/refresh")
@@ -104,8 +113,7 @@ public class AuthController {
     @APIResponse(responseCode = "404", description = "User not found")
     @APIResponse(responseCode = "400", description = "Username header is required")
     public Response logoutAllDevices(
-            @Parameter(description = "Username from JWT token")
-            @HeaderParam("X-Username") String username) {
+            @Parameter(description = "Username from JWT token") @HeaderParam("X-Username") String username) {
 
         if (username == null || username.trim().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -135,7 +143,8 @@ public class AuthController {
                     .build();
         }
 
-        // Token format validated - in a complete implementation, validate signature here
+        // Token format validated - in a complete implementation, validate signature
+        // here
 
         return Response.ok(ApiResponse.success("Token format is valid")).build();
     }

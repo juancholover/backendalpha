@@ -6,17 +6,19 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import upeu.edu.pe.security.application.dto.RolPermisoRequestDTO;
 import upeu.edu.pe.security.application.dto.RolPermisoResponseDTO;
-import upeu.edu.pe.security.domain.services.RolPermisoService;
+import upeu.edu.pe.security.application.services.RolPermisoApplicationService;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.List;
 
-@Path("/api/v1/roles-permisos")
+@Path("/api/v1/rol-permisos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Rol Permisos", description = "Role Permission assignment operations")
 public class RolPermisoController {
 
     @Inject
-    RolPermisoService rolPermisoService;
+    RolPermisoApplicationService rolPermisoService;
 
     @GET
     @Path("/rol/{rolId}")
@@ -49,7 +51,7 @@ public class RolPermisoController {
         RolPermisoRequestDTO requestDTO = new RolPermisoRequestDTO();
         requestDTO.setRolId(rolId);
         requestDTO.setPermisoId(permisoId);
-        requestDTO.setPuedeDeleagar(puedeDeleagar);
+        requestDTO.setPuedeDelegar(false); // Por defecto no puede delegar
         requestDTO.setRestriccion(restriccion);
         RolPermisoResponseDTO resultado = rolPermisoService.assignPermiso(requestDTO);
         return Response.status(Response.Status.CREATED).entity(resultado).build();

@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "requisito_curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_id", "curso_requisito_id", "tipo_requisito", "universidad_id"})
+        @UniqueConstraint(columnNames = { "curso_id", "curso_requisito_id", "tipo_requisito", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -59,9 +59,8 @@ public class RequisitoCurso extends AuditableEntity {
         this.esObligatorio = true;
     }
 
-    
-    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito, 
-                         Boolean esObligatorio, Integer notaMinimaRequerida) {
+    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito,
+            Boolean esObligatorio, Integer notaMinimaRequerida) {
         this.universidad = universidad;
         this.curso = curso;
         this.cursoRequisito = cursoRequisito;
@@ -70,28 +69,21 @@ public class RequisitoCurso extends AuditableEntity {
         this.notaMinimaRequerida = notaMinimaRequerida;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (this.esObligatorio == null) {
-            this.esObligatorio = true;
-        }
-        if (this.tipoRequisito == null) {
-            this.tipoRequisito = "PRERREQUISITO";
-        }
-        validarRequisito();
-    }
+    public static RequisitoCurso crear(Universidad universidad, Curso curso, Curso cursoRequisito,
+            String tipoRequisito, Boolean esObligatorio,
+            Integer notaMinimaRequerida, String observacion) {
+        RequisitoCurso requisito = new RequisitoCurso();
+        requisito.setUniversidad(universidad);
+        requisito.setCurso(curso);
+        requisito.setCursoRequisito(cursoRequisito);
 
-    @PreUpdate
-    public void preUpdate() {
-        validarRequisito();
-    }
+        // Default values logic
+        requisito.setTipoRequisito(tipoRequisito != null ? tipoRequisito : "PRERREQUISITO");
+        requisito.setEsObligatorio(esObligatorio != null ? esObligatorio : true);
 
-    /**
-     * Validación: un curso no puede ser prerequisito de sí mismo
-     */
-    private void validarRequisito() {
-        if (curso != null && cursoRequisito != null && curso.getId().equals(cursoRequisito.getId())) {
-            throw new IllegalArgumentException("Un curso no puede ser requisito de sí mismo");
-        }
+        requisito.setNotaMinimaRequerida(notaMinimaRequerida);
+        requisito.setObservacion(observacion);
+
+        return requisito;
     }
 }

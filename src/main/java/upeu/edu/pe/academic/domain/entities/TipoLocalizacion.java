@@ -25,4 +25,10 @@ public class TipoLocalizacion extends AuditableEntity {
     @Column(name = "nombre", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre; // Ej: Aula, Laboratorio, Edificio, Sede
+
+    public static TipoLocalizacion crear(String nombre) {
+        TipoLocalizacion tipoLocalizacion = new TipoLocalizacion();
+        tipoLocalizacion.setNombre(nombre);
+        return tipoLocalizacion;
+    }
 }

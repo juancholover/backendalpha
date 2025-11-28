@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "rol", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"nombre", "universidad_id"})
+        @UniqueConstraint(columnNames = { "nombre", "universidad_id" })
 })
 @Data
 @NoArgsConstructor
@@ -47,19 +47,12 @@ public class Rol extends AuditableEntity {
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RolPermiso> rolPermisos = new HashSet<>();
 
-   
-    public Rol(Universidad universidad, String nombre, String descripcion) {
-        this.universidad = universidad;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.esSistema = false;
-    }
-
-
-    public Rol(Universidad universidad, String nombre, String descripcion, Boolean esSistema) {
-        this.universidad = universidad;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.esSistema = esSistema;
+    public static Rol crear(Universidad universidad, String nombre, String descripcion, Boolean esSistema) {
+        Rol rol = new Rol();
+        rol.setUniversidad(universidad);
+        rol.setNombre(nombre);
+        rol.setDescripcion(descripcion);
+        rol.setEsSistema(esSistema != null ? esSistema : false);
+        return rol;
     }
 }

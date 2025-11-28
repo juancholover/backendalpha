@@ -7,4 +7,5 @@ public class TipoUnidadRequestDTO {
     private String nombre; // Ej: "Facultad", "Rectorado", "Escuela"
     private String descripcion;
     private Integer nivel; // Nivel jerárquico
+    private Long universidadId;
 }

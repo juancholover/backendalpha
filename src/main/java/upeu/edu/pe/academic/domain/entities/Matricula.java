@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "matricula", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"estudiante_id", "curso_ofertado_id"})
+        @UniqueConstraint(columnNames = { "estudiante_id", "curso_ofertado_id" })
 })
 @Data
 @NoArgsConstructor
@@ -30,7 +30,7 @@ public class Matricula extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "universidad_id", nullable = false)
     private Universidad universidad;
@@ -50,7 +50,6 @@ public class Matricula extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String tipoMatricula = "REGULAR"; // REGULAR, EXTRAORDINARIA
 
-
     @Column(name = "creditos_matriculados")
     private Integer creditosMatriculados; // Créditos del curso matriculado
 
@@ -62,7 +61,7 @@ public class Matricula extends AuditableEntity {
     private LocalDate fechaRetiro;
 
     @Column(name = "nota_final", precision = 5, scale = 2)
-    private BigDecimal notaFinal; 
+    private BigDecimal notaFinal;
 
     @Column(name = "estado_aprobacion", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
@@ -71,20 +70,24 @@ public class Matricula extends AuditableEntity {
     @Column(name = "inasistencias")
     private Integer inasistencias = 0;
 
-
     @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionNota> evaluacionNotas = new HashSet<>();
 
-
-    public Matricula(Universidad universidad, Estudiante estudiante, CursoOfertado cursoOfertado) {
-        this.universidad = universidad;
-        this.estudiante = estudiante;
-        this.cursoOfertado = cursoOfertado;
-        this.fechaMatricula = LocalDate.now();
-        this.estadoMatricula = "MATRICULADO";
-        this.tipoMatricula = "REGULAR";
-        this.inasistencias = 0;
-        this.estadoAprobacion = "PENDIENTE";
+    // Factory Method
+    public static Matricula crear(Universidad universidad, Estudiante estudiante, CursoOfertado cursoOfertado,
+            String tipoMatricula) {
+        Matricula matricula = new Matricula();
+        matricula.setUniversidad(universidad);
+        matricula.setEstudiante(estudiante);
+        matricula.setCursoOfertado(cursoOfertado);
+        matricula.setFechaMatricula(LocalDate.now());
+        matricula.setTipoMatricula(tipoMatricula != null ? tipoMatricula : "REGULAR");
+        matricula.setEstadoMatricula("MATRICULADO");
+        matricula.setEstadoAprobacion("PENDIENTE");
+        matricula.setInasistencias(0);
+        matricula.setCreditosMatriculados(cursoOfertado.getPlanCurso().getCreditos());
+        matricula.setActive(true);
+        return matricula;
     }
 
     /**
@@ -102,7 +105,7 @@ public class Matricula extends AuditableEntity {
             if (evaluacionNota.getNotaFinal() != null && evaluacionNota.getCriterio() != null) {
                 BigDecimal nota = evaluacionNota.getNotaFinal();
                 int peso = evaluacionNota.getCriterio().getPeso();
-                
+
                 notaTotal = notaTotal.add(nota.multiply(new BigDecimal(peso)));
                 pesoTotal += peso;
             }
@@ -129,7 +132,7 @@ public class Matricula extends AuditableEntity {
             }
         }
     }
-    
+
     public void retirar() {
         if ("RETIRADO".equals(this.estadoMatricula)) {
             throw new IllegalStateException("El estudiante ya está retirado");

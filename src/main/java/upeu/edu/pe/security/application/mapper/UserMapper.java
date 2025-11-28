@@ -1,48 +1,45 @@
 package upeu.edu.pe.security.application.mapper;
 
 import org.mapstruct.*;
-import upeu.edu.pe.security.domain.entities.User;
-import upeu.edu.pe.security.application.dto.UserRequestDto;
 import upeu.edu.pe.security.application.dto.UserResponseDto;
-import upeu.edu.pe.security.application.dto.UserUpdateDto;
+import upeu.edu.pe.security.domain.entities.AuthUsuario;
+import upeu.edu.pe.security.domain.enums.UserRole;
+import upeu.edu.pe.security.domain.enums.UserStatus;
 
 import java.util.List;
 
 @Mapper(componentModel = "cdi")
 public interface UserMapper {
 
-    // No need to ignore password since UserResponseDto doesn't have password field
-    UserResponseDto toResponseDto(User user);
+    @Mapping(target = "username", source = "persona.email")
+    @Mapping(target = "email", source = "persona.email")
+    @Mapping(target = "firstName", source = "persona.nombres")
+    @Mapping(target = "lastName", source = "persona.apellidoPaterno")
+    @Mapping(target = "phone", source = "persona.telefono")
+    @Mapping(target = "lastLogin", source = "ultimoAcceso")
+    @Mapping(target = "role", expression = "java(mapRole(authUsuario.getRol().getNombre()))")
+    @Mapping(target = "status", expression = "java(mapStatus(authUsuario))")
+    UserResponseDto toResponseDto(AuthUsuario authUsuario);
 
-    List<UserResponseDto> toResponseDtoList(List<User> users);
+    List<UserResponseDto> toResponseDtoList(List<AuthUsuario> authUsuarios);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "intentosFallidos", ignore = true)
-    @Mapping(target = "fechaBloqueo", ignore = true)
-    @Mapping(target = "tokenRecuperacion", ignore = true)
-    @Mapping(target = "fechaExpiracionToken", ignore = true)
-    @Mapping(target = "lastLogin", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "active", ignore = true)
-    User toEntity(UserRequestDto requestDto);
+    default UserRole mapRole(String rolNombre) {
+        if (rolNombre == null)
+            return UserRole.USER;
+        try {
+            return UserRole.valueOf(rolNombre.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return UserRole.USER;
+        }
+    }
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "username", ignore = true) // Username should not be updatable
-    @Mapping(target = "password", ignore = true) // Password updated separately
-    @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "intentosFallidos", ignore = true)
-    @Mapping(target = "fechaBloqueo", ignore = true)
-    @Mapping(target = "tokenRecuperacion", ignore = true)
-    @Mapping(target = "fechaExpiracionToken", ignore = true)
-    @Mapping(target = "lastLogin", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "updatedBy", ignore = true)
-    void updateEntityFromDto(UserUpdateDto updateDto, @MappingTarget User user);
+    default UserStatus mapStatus(AuthUsuario authUsuario) {
+        if (authUsuario.estaBloqueado()) {
+            return UserStatus.SUSPENDED;
+        }
+        if (!authUsuario.estaActivo()) {
+            return UserStatus.INACTIVE;
+        }
+        return UserStatus.ACTIVE;
+    }
 }

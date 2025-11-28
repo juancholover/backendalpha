@@ -30,4 +30,11 @@ public class Category extends AuditableEntity {
     @Column(length = 255)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String description;
+
+    public static Category crear(String name, String description) {
+        Category category = new Category();
+        category.setName(name);
+        category.setDescription(description);
+        return category;
+    }
 }

@@ -1,82 +1,29 @@
 package upeu.edu.pe.academic.domain.repositories;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
-import jakarta.enterprise.context.ApplicationScoped;
 import upeu.edu.pe.academic.domain.entities.Universidad;
-
 import java.util.List;
 import java.util.Optional;
 
-@ApplicationScoped
-public class UniversidadRepository implements PanacheRepositoryBase<Universidad, Long> {
+public interface UniversidadRepository {
+    void persist(Universidad universidad);
 
-    /**
-     * Buscar universidad por código
-     */
-    public Optional<Universidad> findByCodigo(String codigo) {
-        return find("codigo = ?1 and active = true", codigo).firstResultOptional();
-    }
+    Optional<Universidad> findByIdOptional(Long id);
 
-    /**
-     * Buscar universidad por dominio
-     */
-    public Optional<Universidad> findByDominio(String dominio) {
-        return find("dominio = ?1 and active = true", dominio).firstResultOptional();
-    }
+    Optional<Universidad> findByCodigo(String codigo);
 
-    /**
-     * Listar todas las universidades activas
-     */
-    public List<Universidad> findAllActive() {
-        return find("active = true").list();
-    }
+    Optional<Universidad> findByDominio(String dominio);
 
-    /**
-     * Verificar si existe código (para validaciones)
-     */
-    public boolean existsByCodigo(String codigo) {
-        return count("codigo = ?1 and active = true", codigo) > 0;
-    }
+    Optional<Universidad> findByRuc(String ruc);
 
-    /**
-     * Verificar si existe código excluyendo un ID específico
-     */
-    public boolean existsByCodigoAndIdNot(String codigo, Long id) {
-        return count("codigo = ?1 and id != ?2 and active = true", codigo, id) > 0;
-    }
+    List<Universidad> findAllActive();
 
-    /**
-     * Verificar si existe dominio (para validaciones)
-     */
-    public boolean existsByDominio(String dominio) {
-        return count("dominio = ?1 and active = true", dominio) > 0;
-    }
+    List<Universidad> listAll();
 
-    /**
-     * Verificar si existe dominio excluyendo un ID específico
-     */
-    public boolean existsByDominioAndIdNot(String dominio, Long id) {
-        return count("dominio = ?1 and id != ?2 and active = true", dominio, id) > 0;
-    }
+    List<Universidad> search(String query);
 
-    /**
-     * Buscar universidad por RUC
-     */
-    public Optional<Universidad> findByRuc(String ruc) {
-        return find("ruc = ?1 and active = true", ruc).firstResultOptional();
-    }
+    boolean existsByCodigo(String codigo);
 
-    /**
-     * Verificar si existe RUC (para validaciones)
-     */
-    public boolean existsByRuc(String ruc) {
-        return count("ruc = ?1 and active = true", ruc) > 0;
-    }
+    boolean existsByDominio(String dominio);
 
-    /**
-     * Verificar si existe RUC excluyendo un ID específico
-     */
-    public boolean existsByRucAndIdNot(String ruc, Long id) {
-        return count("ruc = ?1 and id != ?2 and active = true", ruc, id) > 0;
-    }
+    boolean existsByRuc(String ruc);
 }
