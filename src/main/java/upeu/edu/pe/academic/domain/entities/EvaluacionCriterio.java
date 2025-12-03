@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "evaluacion_criterio", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_ofertado_id", "nombre", "universidad_id"})
+    @UniqueConstraint(columnNames = {"curso_ofertado_id", "nombre"})
 })
 @Data
 @NoArgsConstructor

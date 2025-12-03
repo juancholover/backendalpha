@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "plan_academico", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo", "universidad_id"})
+    @UniqueConstraint(columnNames = {"codigo"})
 })
 @Data
 @NoArgsConstructor

@@ -17,6 +17,7 @@ public interface UserMapper {
     List<UserResponseDto> toResponseDtoList(List<User> users);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "passwordHash", source = "password") // Map password from DTO to passwordHash in entity
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
     @Mapping(target = "fechaBloqueo", ignore = true)
@@ -33,7 +34,7 @@ public interface UserMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "username", ignore = true) // Username should not be updatable
-    @Mapping(target = "password", ignore = true) // Password updated separately
+    @Mapping(target = "passwordHash", ignore = true) // Password updated separately
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
     @Mapping(target = "fechaBloqueo", ignore = true)

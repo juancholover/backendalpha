@@ -11,10 +11,10 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "unidad_organizativa", uniqueConstraints = {
-    // Código debe ser único por universidad
-    @UniqueConstraint(columnNames = {"codigo", "universidad_id"}), 
+    // Código debe ser único
+    @UniqueConstraint(columnNames = {"codigo"}), 
     // Añadimos el nombre para evitar duplicidad de nombres de Facultades/Escuelas
-    @UniqueConstraint(columnNames = {"nombre", "universidad_id"})
+    @UniqueConstraint(columnNames = {"nombre"})
 })
 @Data
 @NoArgsConstructor

@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "curso_ofertado", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_seccion", "periodo_academico_id", "universidad_id"})
+    @UniqueConstraint(columnNames = {"codigo_seccion", "periodo_academico_id"})
 })
 @Data
 @NoArgsConstructor
@@ -54,13 +54,16 @@ public class CursoOfertado extends AuditableEntity {
     @Column(name = "vacantes_disponibles", nullable = false)
     private Integer vacantesDisponibles;
 
-    @Column(name = "modalidad", length = 50)
-    @Normalize(Normalize.NormalizeType.UPPERCASE)
-    private String modalidad; // PRESENCIAL, VIRTUAL, HIBRIDA
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modalidad_id", nullable = false)
+    private Modalidad modalidad; // Define cómo se dicta: PRESENCIAL, VIRTUAL, SEMIPRESENCIAL, HÍBRIDA
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localizacion_id")
-    private Localizacion localizacion; // Aula asignada
+    private Localizacion localizacion; // Aula asignada (solo si requiere presencialidad)
+
+    @Column(name = "url_plataforma", length = 500)
+    private String urlPlataforma; // URL de plataforma virtual (solo si requiere plataforma digital)
 
     @Column(name = "estado", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
@@ -79,7 +82,7 @@ public class CursoOfertado extends AuditableEntity {
 
     public CursoOfertado(Universidad universidad, PlanCurso planCurso, 
                   PeriodoAcademico periodoAcademico, String codigoSeccion, 
-                  Integer capacidadMaxima) {
+                  Integer capacidadMaxima, Modalidad modalidad) {
         this.universidad = universidad;
         this.planCurso = planCurso;
         this.periodoAcademico = periodoAcademico;
@@ -87,20 +90,77 @@ public class CursoOfertado extends AuditableEntity {
         this.capacidadMaxima = capacidadMaxima;
         this.vacantesDisponibles = capacidadMaxima;
         this.estado = "ABIERTA";
-        this.modalidad = "PRESENCIAL";
+        this.modalidad = modalidad;
     }
 
     @PrePersist
-    public void prePersist() {
+    @PreUpdate
+    public void validarCoherencia() {
         if (this.estado == null) {
             this.estado = "ABIERTA";
         }
         if (this.vacantesDisponibles == null && this.capacidadMaxima != null) {
             this.vacantesDisponibles = this.capacidadMaxima;
         }
-        if (this.modalidad == null) {
-            this.modalidad = "PRESENCIAL";
+
+        // Validar que si requiere aula física, tenga localización asignada
+        if (modalidad != null && modalidad.necesitaInfraestructuraFisica() && localizacion == null) {
+            throw new IllegalStateException(
+                "Curso con modalidad " + modalidad.getNombre() + " requiere asignación de aula física"
+            );
         }
+
+        // Validar que si requiere plataforma digital, tenga URL
+        if (modalidad != null && modalidad.necesitaPlataformaDigital() && 
+            (urlPlataforma == null || urlPlataforma.isBlank())) {
+            throw new IllegalStateException(
+                "Curso con modalidad " + modalidad.getNombre() + " requiere URL de plataforma virtual"
+            );
+        }
+    }
+
+    // Métodos de negocio relacionados con modalidad
+
+    /**
+     * Verifica si el curso es 100% presencial
+     */
+    public boolean esPresencial() {
+        return modalidad != null && modalidad.esPresencial();
+    }
+
+    /**
+     * Verifica si el curso es 100% virtual
+     */
+    public boolean esVirtual() {
+        return modalidad != null && modalidad.esVirtual();
+    }
+
+    /**
+     * Verifica si el curso es semipresencial
+     */
+    public boolean esSemipresencial() {
+        return modalidad != null && modalidad.esSemipresencial();
+    }
+
+    /**
+     * Verifica si el curso es híbrido
+     */
+    public boolean esHibrido() {
+        return modalidad != null && modalidad.esHibrida();
+    }
+
+    /**
+     * Indica si requiere aula física
+     */
+    public boolean requiereAulaFisica() {
+        return modalidad != null && modalidad.necesitaInfraestructuraFisica();
+    }
+
+    /**
+     * Indica si requiere plataforma virtual
+     */
+    public boolean requierePlataformaVirtual() {
+        return modalidad != null && modalidad.necesitaPlataformaDigital();
     }
 
     /**

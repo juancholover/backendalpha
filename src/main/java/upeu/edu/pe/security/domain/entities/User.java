@@ -36,8 +36,8 @@ public class User extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.LOWERCASE) // emails en minúsculas
     private String email;
 
-    @Column(nullable = false)
-    private String password; // No normalizar - mantener como está
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @Column(name = "first_name", nullable = false, length = 50)
     @Normalize(Normalize.NormalizeType.TITLE_CASE) // Primera letra mayúscula

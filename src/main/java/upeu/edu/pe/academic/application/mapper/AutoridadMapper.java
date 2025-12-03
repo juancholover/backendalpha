@@ -22,7 +22,7 @@ public interface AutoridadMapper {
     @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "tipoAutoridad", ignore = true)
-    @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "esVigente", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

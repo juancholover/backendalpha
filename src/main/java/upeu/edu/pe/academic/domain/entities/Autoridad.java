@@ -45,16 +45,16 @@ public class Autoridad extends AuditableEntity {
     @Column(name = "fecha_fin")
     private LocalDate fechaFin; // Si es NULL, sigue en el cargo actualmente
 
-    @Column(name = "activo")
-    private Boolean activo; // TRUE si es la autoridad vigente para visualización rápida
+    @Column(name = "es_vigente")
+    private Boolean esVigente; // TRUE si es la autoridad vigente para visualización rápida
     
 
     public Autoridad(Universidad universidad, Persona persona, TipoAutoridad tipoAutoridad, 
-                     LocalDate fechaInicio, Boolean activo) {
+                     LocalDate fechaInicio, Boolean esVigente) {
         this.universidad = universidad;
         this.persona = persona;
         this.tipoAutoridad = tipoAutoridad;
         this.fechaInicio = fechaInicio;
-        this.activo = activo;
+        this.esVigente = esVigente;
     }
 }

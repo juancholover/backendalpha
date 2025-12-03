@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_curso", "universidad_id"})
+    @UniqueConstraint(columnNames = {"codigo_curso"})
 })
 @Data
 @NoArgsConstructor
@@ -57,9 +57,6 @@ public class Curso extends AuditableEntity {
     @Column(name = "area_curricular", length = 100)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String areaCurricular; // FORMACION_GENERAL, FORMACION_PROFESIONAL, ESPECIALIDAD
-
-    @Column(name = "silabo_url", length = 255)
-    private String silaboUrl;
 
     public Curso(Universidad universidad, String codigoCurso, String nombre) {
         this.universidad = universidad;

@@ -31,7 +31,6 @@ public class JwtTokenGenerator {
                             "\"aud\":\"upeu-sis\"," +
                             "\"sub\":\"%s\"," +
                             "\"userId\":%d," +
-                            "\"universidadId\":%d," +
                             "\"email\":\"%s\"," +
                             "\"personaNombre\":\"%s\"," +
                             "\"rolNombre\":\"%s\"," +
@@ -39,7 +38,6 @@ public class JwtTokenGenerator {
                             "\"iat\":%d}",
                     authUsuario.getUsername(),
                     authUsuario.getId(),
-                    authUsuario.getUniversidad().getId(),
                     authUsuario.getEmail(),
                     authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() + " " + authUsuario.getPersona().getApellidoPaterno() : "",
                     authUsuario.getRol() != null ? authUsuario.getRol().getNombre() : "",
@@ -73,13 +71,11 @@ public class JwtTokenGenerator {
                             "\"aud\":\"upeu-sis\"," +
                             "\"sub\":\"%s\"," +
                             "\"userId\":%d," +
-                            "\"universidadId\":%d," +
                             "\"type\":\"refresh\"," +
                             "\"exp\":%d," +
                             "\"iat\":%d}",
                     authUsuario.getUsername(),
                     authUsuario.getId(),
-                    authUsuario.getUniversidad().getId(),
                     expirationTime,
                     Instant.now().getEpochSecond()
             );

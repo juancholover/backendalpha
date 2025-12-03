@@ -119,7 +119,7 @@ public class AutoridadService {
                     .orElseThrow(() -> new ResourceNotFoundException("Tipo de autoridad no encontrado con ID: " + dto.getTipoAutoridadId()));
             
             // Validar que no haya otra autoridad activa del nuevo tipo
-            if (dto.getActivo() != null && dto.getActivo()) {
+            if (dto.getEsVigente() != null && dto.getEsVigente()) {
                 var autoridadExistente = autoridadRepository.findActivaByTipoAutoridadId(
                     dto.getTipoAutoridadId(), entity.getUniversidad().getId());
                 
@@ -151,7 +151,7 @@ public class AutoridadService {
                 .orElseThrow(() -> new ResourceNotFoundException("Autoridad no encontrada con ID: " + id));
         
         entity.setFechaFin(fechaFin);
-        entity.setActivo(false);
+        entity.setEsVigente(false);
         
         return mapper.toDTO(entity);
     }
@@ -161,7 +161,7 @@ public class AutoridadService {
         var autoridadActual = autoridadRepository.findActivaByTipoAutoridadId(tipoAutoridadId, universidadId);
         autoridadActual.ifPresent(autoridad -> {
             autoridad.setFechaFin(LocalDate.now());
-            autoridad.setActivo(false);
+            autoridad.setEsVigente(false);
         });
     }
 }

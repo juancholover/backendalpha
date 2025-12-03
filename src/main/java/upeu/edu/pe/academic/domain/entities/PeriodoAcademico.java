@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "periodo_academico", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_periodo", "universidad_id"})
+    @UniqueConstraint(columnNames = {"codigo_periodo"})
 })
 @Data
 @NoArgsConstructor

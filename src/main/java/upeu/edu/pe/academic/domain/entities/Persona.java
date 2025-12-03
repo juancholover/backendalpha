@@ -13,8 +13,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "persona", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"numero_documento", "universidad_id"}),
-    @UniqueConstraint(columnNames = {"email", "universidad_id"})
+    @UniqueConstraint(columnNames = {"numero_documento"}),
+    @UniqueConstraint(columnNames = {"email"})
 })
 @Data
 @NoArgsConstructor

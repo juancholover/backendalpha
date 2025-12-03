@@ -14,8 +14,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "empleado", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"codigo_empleado", "universidad_id"}),
-    @UniqueConstraint(columnNames = {"persona_id", "universidad_id"}) // Una persona solo puede ser empleado una vez por uni
+    @UniqueConstraint(columnNames = {"codigo_empleado"}),
+    @UniqueConstraint(columnNames = {"persona_id"})
 })
 @Data
 @NoArgsConstructor

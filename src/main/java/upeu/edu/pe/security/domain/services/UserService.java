@@ -90,7 +90,7 @@ public class UserService {
         User user = userMapper.toEntity(requestDto);
         
         // Hashear contraseña con PasswordEncoder
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         
         userRepository.persist(user);
         return userMapper.toResponseDto(user);
@@ -135,14 +135,14 @@ public class UserService {
         }
 
         // Validar contraseña actual con PasswordEncoder
-        if (!passwordEncoder.matches(passwordChangeDto.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(passwordChangeDto.getCurrentPassword(), user.getPasswordHash())) {
             throw new NotAuthorizedException("La contraseña actual es incorrecta");
         }
 
         // Hash de nueva contraseña con PasswordEncoder
         String hashedPassword = passwordEncoder.encode(passwordChangeDto.getNewPassword());
         
-        user.setPassword(hashedPassword);
+        user.setPasswordHash(hashedPassword);
         userRepository.persist(user);
     }
 

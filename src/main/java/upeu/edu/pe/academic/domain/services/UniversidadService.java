@@ -6,10 +6,13 @@ import jakarta.transaction.Transactional;
 import upeu.edu.pe.academic.application.dto.UniversidadRequestDTO;
 import upeu.edu.pe.academic.application.dto.UniversidadResponseDTO;
 import upeu.edu.pe.academic.application.mapper.UniversidadMapper;
+import upeu.edu.pe.academic.domain.commands.ActualizarUniversidadCommand;
+import upeu.edu.pe.academic.domain.commands.CrearUniversidadCommand;
 import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
-import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
-import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
+import upeu.edu.pe.academic.domain.usecases.ActualizarUniversidadUseCase;
+import upeu.edu.pe.academic.domain.usecases.BuscarUniversidadUseCase;
+import upeu.edu.pe.academic.domain.usecases.CrearUniversidadUseCase;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,80 +27,82 @@ public class UniversidadService {
     UniversidadMapper universidadMapper;
 
     @Inject
-    upeu.edu.pe.academic.domain.repositories.LocalizacionRepository localizacionRepository;
+    CrearUniversidadUseCase crearUseCase;
+    
+    @Inject
+    ActualizarUniversidadUseCase actualizarUseCase;
+    
+    @Inject
+    BuscarUniversidadUseCase buscarUseCase;
 
-    /**
-     * Crea una nueva universidad
-     */
+    
     @Transactional
     public UniversidadResponseDTO create(UniversidadRequestDTO dto) {
-        // Validar unicidad del código
-        if (universidadRepository.existsByCodigo(dto.getCodigo())) {
-            throw new DuplicateResourceException("Universidad", "codigo", dto.getCodigo());
-        }
-
-        // Validar unicidad del dominio
-        if (universidadRepository.existsByDominio(dto.getDominio())) {
-            throw new DuplicateResourceException("Universidad", "dominio", dto.getDominio());
-        }
-
-        // Validar unicidad del RUC
-        if (universidadRepository.existsByRuc(dto.getRuc())) {
-            throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
-        }
-
-        Universidad universidad = universidadMapper.toEntity(dto);
-        universidadRepository.persist(universidad);
+        // 1. Convertir DTO → Command
+        CrearUniversidadCommand command = new CrearUniversidadCommand(
+            dto.getCodigo(),
+            dto.getNombre(),
+            dto.getRuc(),
+            dto.getTipo(),
+            dto.getPlan(),
+            dto.getDominio(),
+            dto.getWebsite(),
+            dto.getMaxEstudiantes(),
+            dto.getMaxDocentes()
+        );
+        
+        // 2. Ejecutar caso de uso (validaciones + persistencia)
+        Universidad universidad = crearUseCase.execute(command);
+        
+        // 3. Convertir Entity → ResponseDTO
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Lista todas las universidades
+     * Lista todas las universidades.
      */
     public List<UniversidadResponseDTO> findAll() {
-        return universidadRepository.listAll().stream()
+        return buscarUseCase.ejecutarListarTodas().stream()
                 .map(universidadMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Lista solo universidades activas
+     * Lista solo universidades activas.
      */
     public List<UniversidadResponseDTO> findAllActive() {
-        return universidadRepository.find("active", true).list().stream()
+        return buscarUseCase.ejecutarListarActivas().stream()
                 .map(universidadMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Busca universidad por ID
+     * Busca universidad por ID.
      */
     public UniversidadResponseDTO findById(Long id) {
-        Universidad universidad = universidadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + id));
+        Universidad universidad = buscarUseCase.ejecutarPorId(id);
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Busca universidad por código
+     * Busca universidad por código.
      */
     public UniversidadResponseDTO findByCodigo(String codigo) {
-        Universidad universidad = universidadRepository.findByCodigo(codigo)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con código: " + codigo));
+        Universidad universidad = buscarUseCase.ejecutarPorCodigo(codigo);
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Busca universidad por dominio
+     * Busca universidad por dominio.
      */
     public UniversidadResponseDTO findByDominio(String dominio) {
         Universidad universidad = universidadRepository.findByDominio(dominio)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con dominio: " + dominio));
+                .orElseThrow(() -> new RuntimeException("Universidad no encontrada con dominio: " + dominio));
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Búsqueda general por nombre
+     * Búsqueda general por nombre.
      */
     public List<UniversidadResponseDTO> search(String query) {
         return universidadRepository.list("LOWER(nombre) LIKE LOWER(?1)", "%" + query + "%").stream()
@@ -106,43 +111,41 @@ public class UniversidadService {
     }
 
     /**
-     * Actualiza una universidad
+     * Actualiza una universidad.
+     * 
+     * Flujo:
+     * 1. DTO → Command
+     * 2. Use Case (validaciones + actualización)
+     * 3. Entity → ResponseDTO
      */
     @Transactional
     public UniversidadResponseDTO update(Long id, UniversidadRequestDTO dto) {
-        Universidad universidad = universidadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + id));
-
-        // Validar unicidad del código si cambió
-        if (!universidad.getCodigo().equals(dto.getCodigo()) && 
-            universidadRepository.existsByCodigo(dto.getCodigo())) {
-            throw new DuplicateResourceException("Universidad", "codigo", dto.getCodigo());
-        }
-
-        // Validar unicidad del dominio si cambió
-        if (!universidad.getDominio().equals(dto.getDominio()) && 
-            universidadRepository.existsByDominio(dto.getDominio())) {
-            throw new DuplicateResourceException("Universidad", "dominio", dto.getDominio());
-        }
-
-        // Validar unicidad del RUC si cambió
-        if (!universidad.getRuc().equals(dto.getRuc()) && 
-            universidadRepository.existsByRuc(dto.getRuc())) {
-            throw new DuplicateResourceException("Universidad", "ruc", dto.getRuc());
-        }
-
-        universidadMapper.updateEntityFromDto(dto, universidad);
+        // 1. Convertir DTO → Command
+        ActualizarUniversidadCommand command = new ActualizarUniversidadCommand(
+            id,
+            dto.getNombre(),
+            dto.getTipo(),
+            dto.getPlan(),
+            dto.getDominio(),
+            dto.getWebsite(),
+            dto.getEstado(),
+            dto.getMaxEstudiantes(),
+            dto.getMaxDocentes()
+        );
+        
+        // 2. Ejecutar caso de uso
+        Universidad universidad = actualizarUseCase.execute(command);
+        
+        // 3. Convertir Entity → ResponseDTO
         return universidadMapper.toResponseDTO(universidad);
     }
 
     /**
-     * Elimina (lógicamente) una universidad
+     * Elimina (lógicamente) una universidad.
      */
     @Transactional
     public void delete(Long id) {
-        Universidad universidad = universidadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + id));
-        
+        Universidad universidad = buscarUseCase.ejecutarPorId(id);
         universidad.setActive(false);
     }
 }

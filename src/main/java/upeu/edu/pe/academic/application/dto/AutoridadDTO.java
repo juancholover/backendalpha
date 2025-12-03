@@ -19,5 +19,5 @@ public class AutoridadDTO {
     private Integer nivelJerarquia;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private Boolean activo;
+    private Boolean esVigente;
 }

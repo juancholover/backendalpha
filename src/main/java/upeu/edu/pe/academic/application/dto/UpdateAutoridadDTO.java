@@ -13,7 +13,7 @@ public class UpdateAutoridadDTO {
     private Long tipoAutoridadId;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private Boolean activo;
+    private Boolean esVigente;
     private String resolucionDesignacion;
     private String observaciones;
 }

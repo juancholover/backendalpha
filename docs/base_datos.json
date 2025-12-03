@@ -1,0 +1,4728 @@
+{
+  "metadata": {
+    "generado": "2025-11-28T10:12:59.324528",
+    "total_tablas": 33
+  },
+  "tablas": {
+    "AsistenciaAlumno": {
+      "nombre_tabla": "asistencia_alumno",
+      "clase": "AsistenciaAlumno",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Control de asistencia a clases.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "fechaClase",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_clase",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "minutosTardanza",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "minutos_tardanza",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Estudiante",
+          "campo": "estudiante",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "estudiante_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Horario",
+          "campo": "horario",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "horario_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "estudiante_id",
+            "horario_id",
+            "fecha_clase"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "Solo si estado = TARDANZA"
+      ],
+      "ejemplo_datos": {
+        "fecha_clase": "2024-01-15",
+        "estado": "ACTIVO",
+        "observaciones": "Texto de ejemplo",
+        "minutos_tardanza": "1"
+      }
+    },
+    "Autoridad": {
+      "nombre_tabla": "autoridad",
+      "clase": "Autoridad",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Cargos directivos (rector, decano, director).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "fechaInicio",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_inicio",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaFin",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_fin",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "activo",
+          "tipo_java": "Boolean",
+          "tipo_sql": "BOOLEAN",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "activo",
+          "descripcion": "",
+          "ejemplo": "true",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "TipoAutoridad",
+          "campo": "tipoAutoridad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "tipo_autoridad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "fecha_inicio": "2024-01-15",
+        "fecha_fin": "2024-01-15",
+        "activo": "true"
+      }
+    },
+    "Curso": {
+      "nombre_tabla": "curso",
+      "clase": "Curso",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Asignaturas del catálogo académico.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigoCurso",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_curso",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "horasTeoricas",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "horas_teoricas",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "horasPracticas",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "horas_practicas",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "horasSemanales",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "horas_semanales",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoCurso",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_curso",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "areaCurricular",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "area_curricular",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "silaboUrl",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "silabo_url",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo_curso",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo_curso": "UNA001",
+        "nombre": "Universidad Nacional del Altiplano",
+        "descripcion": "Descripción detallada del registro",
+        "horas_teoricas": "1",
+        "horas_practicas": "1",
+        "horas_semanales": "1",
+        "tipo_curso": "Texto de ejemplo",
+        "area_curricular": "Texto de ejemplo",
+        "silabo_url": "Texto de ejemplo"
+      }
+    },
+    "CursoOfertado": {
+      "nombre_tabla": "curso_ofertado",
+      "clase": "CursoOfertado",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Cursos programados para un periodo académico.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigoSeccion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_seccion",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "capacidadMaxima",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "capacidad_maxima",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "vacantesDisponibles",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "vacantes_disponibles",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "modalidad",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "modalidad",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "PlanCurso",
+          "campo": "planCurso",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "plan_curso_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "PeriodoAcademico",
+          "campo": "periodoAcademico",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "periodo_academico_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Profesor",
+          "campo": "profesor",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "profesor_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Localizacion",
+          "campo": "localizacion",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "localizacion_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo_seccion",
+            "periodo_academico_id",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo_seccion": "UNA001",
+        "capacidad_maxima": "1",
+        "vacantes_disponibles": "1",
+        "modalidad": "Texto de ejemplo",
+        "estado": "ACTIVO",
+        "observaciones": "Texto de ejemplo"
+      }
+    },
+    "Empleado": {
+      "nombre_tabla": "empleado",
+      "clase": "Empleado",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Personal administrativo y de servicios.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigoEmpleado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_empleado",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaIngreso",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_ingreso",
+          "descripcion": "",
+          "ejemplo": "2024-03-01",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaCese",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_cese",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "cargo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "cargo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoContrato",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_contrato",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "regimenLaboral",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "regimen_laboral",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "salario",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "salario",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estadoLaboral",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado_laboral",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "UnidadOrganizativa",
+          "campo": "unidadOrganizativa",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "unidad_organizativa_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo_empleado",
+            "universidad_id"
+          ],
+          "nombre": ""
+        },
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "persona_id",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "Una persona solo puede ser empleado una vez por uni"
+      ],
+      "ejemplo_datos": {
+        "codigo_empleado": "UNA001",
+        "fecha_ingreso": "2024-03-01",
+        "fecha_cese": "2024-01-15",
+        "cargo": "Texto de ejemplo",
+        "tipo_contrato": "Texto de ejemplo",
+        "regimen_laboral": "Texto de ejemplo",
+        "salario": "0.00",
+        "estado_laboral": "ACTIVO"
+      }
+    },
+    "Estudiante": {
+      "nombre_tabla": "estudiante",
+      "clase": "Estudiante",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Gestiona datos académicos de estudiantes matriculados.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigoEstudiante",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_estudiante",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaIngreso",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_ingreso",
+          "descripcion": "",
+          "ejemplo": "2024-03-01",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "cicloActual",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "ciclo_actual",
+          "descripcion": "",
+          "ejemplo": "5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosAprobados",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_aprobados",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "modalidadIngreso",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "modalidad_ingreso",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estadoAcademico",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado_academico",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoEstudiante",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_estudiante",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "ProgramaAcademico",
+          "campo": "programaAcademico",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "programa_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo_estudiante",
+            "universidad_id"
+          ],
+          "nombre": ""
+        },
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "persona_id",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo_estudiante": "UNA001",
+        "fecha_ingreso": "2024-03-01",
+        "ciclo_actual": "5",
+        "creditos_aprobados": "4",
+        "modalidad_ingreso": "Texto de ejemplo",
+        "estado_academico": "ACTIVO",
+        "tipo_estudiante": "Texto de ejemplo"
+      }
+    },
+    "EvaluacionCriterio": {
+      "nombre_tabla": "evaluacion_criterio",
+      "clase": "EvaluacionCriterio",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Criterios de evaluación (exámenes, prácticas).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "peso",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "peso",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoEvaluacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_evaluacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "orden",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "orden",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "CursoOfertado",
+          "campo": "cursoOfertado",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_ofertado_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "curso_ofertado_id",
+            "nombre",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "Reglas de calificación del curso ofertado"
+      ],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "descripcion": "Descripción detallada del registro",
+        "peso": "1",
+        "tipo_evaluacion": "Texto de ejemplo",
+        "orden": "1",
+        "estado": "ACTIVO"
+      }
+    },
+    "EvaluacionNota": {
+      "nombre_tabla": "evaluacion_nota",
+      "clase": "EvaluacionNota",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Calificaciones de estudiantes.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nota",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 5,
+          "scale": 2,
+          "column_name": "nota",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "notaRecuperacion",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 5,
+          "scale": 2,
+          "column_name": "nota_recuperacion",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "notaFinal",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 5,
+          "scale": 2,
+          "column_name": "nota_final",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaEvaluacion",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_evaluacion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaCalificacion",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_calificacion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Matricula",
+          "campo": "matricula",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "matricula_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "EvaluacionCriterio",
+          "campo": "criterio",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "criterio_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "matricula_id",
+            "criterio_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nota": "16.5",
+        "nota_recuperacion": "16.5",
+        "nota_final": "16.5",
+        "observacion": "Texto de ejemplo",
+        "fecha_evaluacion": "2024-01-15",
+        "fecha_calificacion": "2024-01-15"
+      }
+    },
+    "Horario": {
+      "nombre_tabla": "horario",
+      "clase": "Horario",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Programación de clases (día, hora, aula).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "diaSemana",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "dia_semana",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "horaInicio",
+          "tipo_java": "LocalTime",
+          "tipo_sql": "TIME",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "hora_inicio",
+          "descripcion": "",
+          "ejemplo": "valor",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "horaFin",
+          "tipo_java": "LocalTime",
+          "tipo_sql": "TIME",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "hora_fin",
+          "descripcion": "",
+          "ejemplo": "valor",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoSesion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_sesion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "CursoOfertado",
+          "campo": "cursoOfertado",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_ofertado_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Localizacion",
+          "campo": "localizacion",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "localizacion_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "curso_ofertado_id",
+            "dia_semana",
+            "hora_inicio"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "dia_semana": "1",
+        "hora_inicio": "valor",
+        "hora_fin": "valor",
+        "tipo_sesion": "Texto de ejemplo",
+        "observaciones": "Texto de ejemplo"
+      }
+    },
+    "Localizacion": {
+      "nombre_tabla": "localizacion",
+      "clase": "Localizacion",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Espacios físicos (aulas, laboratorios).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "direccion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "direccion",
+          "descripcion": "",
+          "ejemplo": "Av. Ejercito 329, Puno",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "telefono",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "telefono",
+          "descripcion": "",
+          "ejemplo": "051-363456",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "email",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "email",
+          "descripcion": "",
+          "ejemplo": "contacto@universidad.edu.pe",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "TipoLocalizacion",
+          "campo": "tipoLocalizacion",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "tipo_localizacion_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Localizacion",
+          "campo": "localizacionPadre",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "localizacion_padre_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "codigo": "UNA001",
+        "direccion": "Av. Ejercito 329, Puno",
+        "telefono": "051-363456",
+        "email": "contacto@universidad.edu.pe"
+      }
+    },
+    "Matricula": {
+      "nombre_tabla": "matricula",
+      "clase": "Matricula",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Inscripción de estudiantes en cursos.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "creditosMatriculados",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_matriculados",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaRetiro",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_retiro",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "notaFinal",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 5,
+          "scale": 2,
+          "column_name": "nota_final",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Estudiante",
+          "campo": "estudiante",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "estudiante_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "CursoOfertado",
+          "campo": "cursoOfertado",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_ofertado_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "estudiante_id",
+            "curso_ofertado_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "Aquí asumimos 11 como base, pero debería venir de una configuración"
+      ],
+      "ejemplo_datos": {
+        "creditos_matriculados": "4",
+        "fecha_retiro": "2024-01-15",
+        "nota_final": "16.5"
+      }
+    },
+    "PeriodoAcademico": {
+      "nombre_tabla": "periodo_academico",
+      "clase": "PeriodoAcademico",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Semestres/ciclos académicos.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigoPeriodo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_periodo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "anio",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "anio",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoPeriodo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_periodo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "numeroPeriodo",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "numero_periodo",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaInicio",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_inicio",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaFin",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_fin",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaInicioMatricula",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_inicio_matricula",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaFinMatricula",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_fin_matricula",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaInicioClases",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_inicio_clases",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaFinClases",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_fin_clases",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo_periodo",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo_periodo": "UNA001",
+        "nombre": "Universidad Nacional del Altiplano",
+        "anio": "1",
+        "tipo_periodo": "Texto de ejemplo",
+        "numero_periodo": "1",
+        "fecha_inicio": "2024-01-15",
+        "fecha_fin": "2024-01-15",
+        "fecha_inicio_matricula": "2024-01-15",
+        "fecha_fin_matricula": "2024-01-15",
+        "fecha_inicio_clases": "2024-01-15"
+      }
+    },
+    "Persona": {
+      "nombre_tabla": "persona",
+      "clase": "Persona",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Registro centralizado de personas (estudiantes, profesores, empleados).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombres",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombres",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "apellidoPaterno",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "apellido_paterno",
+          "descripcion": "",
+          "ejemplo": "Pérez",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "apellidoMaterno",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "apellido_materno",
+          "descripcion": "",
+          "ejemplo": "García",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoDocumento",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_documento",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "numeroDocumento",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "numero_documento",
+          "descripcion": "",
+          "ejemplo": "72345678",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaNacimiento",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_nacimiento",
+          "descripcion": "",
+          "ejemplo": "1995-06-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "genero",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "genero",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estadoCivil",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado_civil",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "direccion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "direccion",
+          "descripcion": "",
+          "ejemplo": "Av. Ejercito 329, Puno",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "telefono",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 15,
+          "precision": null,
+          "scale": null,
+          "column_name": "telefono",
+          "descripcion": "",
+          "ejemplo": "051-363456",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "celular",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 15,
+          "precision": null,
+          "scale": null,
+          "column_name": "celular",
+          "descripcion": "",
+          "ejemplo": "987654321",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "email",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": true,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "email",
+          "descripcion": "",
+          "ejemplo": "contacto@universidad.edu.pe",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fotoUrl",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "foto_url",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "numero_documento",
+            "universidad_id"
+          ],
+          "nombre": ""
+        },
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "email",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombres": "Universidad Nacional del Altiplano",
+        "apellido_paterno": "Pérez",
+        "apellido_materno": "García",
+        "tipo_documento": "Texto de ejemplo",
+        "numero_documento": "72345678",
+        "fecha_nacimiento": "1995-06-15",
+        "genero": "Texto de ejemplo",
+        "estado_civil": "ACTIVO",
+        "direccion": "Av. Ejercito 329, Puno",
+        "telefono": "051-363456"
+      }
+    },
+    "PlanAcademico": {
+      "nombre_tabla": "plan_academico",
+      "clase": "PlanAcademico",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Planes de estudio por programa y versión.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "version",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 10,
+          "precision": null,
+          "scale": null,
+          "column_name": "version",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaAprobacion",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_aprobacion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaVigenciaInicio",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_vigencia_inicio",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaVigenciaFin",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_vigencia_fin",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosTotales",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_totales",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosObligatorios",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_obligatorios",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosElectivos",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_electivos",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "duracionSemestres",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "duracion_semestres",
+          "descripcion": "",
+          "ejemplo": "2024-I",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosMaximosPorCiclo",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_maximos_por_ciclo",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosMinimosTiempoCompleto",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_minimos_tiempo_completo",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "duracionCicloMeses",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "duracion_ciclo_meses",
+          "descripcion": "",
+          "ejemplo": "5",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "ProgramaAcademico",
+          "campo": "programaAcademico",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "programa_academico_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo": "UNA001",
+        "version": "Texto de ejemplo",
+        "nombre": "Universidad Nacional del Altiplano",
+        "fecha_aprobacion": "2024-01-15",
+        "fecha_vigencia_inicio": "2024-01-15",
+        "fecha_vigencia_fin": "2024-01-15",
+        "creditos_totales": "4",
+        "creditos_obligatorios": "4",
+        "creditos_electivos": "4",
+        "duracion_semestres": "2024-I"
+      }
+    },
+    "PlanCurso": {
+      "nombre_tabla": "plan_curso",
+      "clase": "PlanCurso",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Cursos que pertenecen a un plan académico.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "creditos",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "ciclo",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "ciclo",
+          "descripcion": "",
+          "ejemplo": "5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoCurso",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_curso",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "PlanAcademico",
+          "campo": "planAcademico",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "plan_academico_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Curso",
+          "campo": "curso",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "plan_academico_id",
+            "curso_id",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "creditos": "4",
+        "ciclo": "5",
+        "tipo_curso": "Texto de ejemplo"
+      }
+    },
+    "Profesor": {
+      "nombre_tabla": "profesor",
+      "clase": "Profesor",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Información de docentes y sus datos académicos.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "gradoAcademico",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "grado_academico",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "especialidad",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "especialidad",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "categoriaDocente",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "categoria_docente",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "condicionDocente",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "condicion_docente",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "dedicacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "dedicacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigoOrcid",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_orcid",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigoRenacyt",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo_renacyt",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "UnidadOrganizativa",
+          "campo": "unidadOrganizativa",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "unidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "persona_id",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "grado_academico": "Texto de ejemplo",
+        "especialidad": "Texto de ejemplo",
+        "categoria_docente": "Texto de ejemplo",
+        "condicion_docente": "Texto de ejemplo",
+        "dedicacion": "Texto de ejemplo",
+        "codigo_orcid": "UNA001",
+        "codigo_renacyt": "UNA001"
+      }
+    },
+    "ProgramaAcademico": {
+      "nombre_tabla": "programa_academico",
+      "clase": "ProgramaAcademico",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Carreras profesionales ofrecidas por la universidad.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nivelAcademico",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "nivel_academico",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "modalidad",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "modalidad",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "duracionAnios",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "duracion_anios",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "duracionSemestres",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "duracion_semestres",
+          "descripcion": "",
+          "ejemplo": "2024-I",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "creditosTotales",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "creditos_totales",
+          "descripcion": "",
+          "ejemplo": "4",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tituloOtorgado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "titulo_otorgado",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "gradoAcademico",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "grado_academico",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "cupoMaximoAnual",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "cupo_maximo_anual",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "notaMinimaIngreso",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 4,
+          "scale": 2,
+          "column_name": "nota_minima_ingreso",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "programaPadreId",
+          "tipo_java": "Long",
+          "tipo_sql": "BIGINT",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "programa_padre_id",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaCreacionPrograma",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_creacion_programa",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaUltimaModificacionPlan",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_ultima_modificacion_plan",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "UnidadOrganizativa",
+          "campo": "unidadOrganizativa",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "unidad_organizativa_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "codigo": "UNA001",
+        "nivel_academico": "Texto de ejemplo",
+        "modalidad": "Texto de ejemplo",
+        "duracion_anios": "1",
+        "duracion_semestres": "2024-I",
+        "creditos_totales": "4",
+        "titulo_otorgado": "Texto de ejemplo",
+        "grado_academico": "Texto de ejemplo",
+        "cupo_maximo_anual": "1"
+      }
+    },
+    "RequisitoCurso": {
+      "nombre_tabla": "requisito_curso",
+      "clase": "RequisitoCurso",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Prerequisitos entre cursos.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "tipoRequisito",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_requisito",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "notaMinimaRequerida",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "nota_minima_requerida",
+          "descripcion": "",
+          "ejemplo": "16.5",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Curso",
+          "campo": "curso",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Curso",
+          "campo": "cursoRequisito",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "curso_requisito_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "curso_id",
+            "curso_requisito_id",
+            "tipo_requisito",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "tipo_requisito": "Texto de ejemplo",
+        "nota_minima_requerida": "16.5",
+        "observacion": "Texto de ejemplo"
+      }
+    },
+    "TipoAutoridad": {
+      "nombre_tabla": "tipo_autoridad",
+      "clase": "TipoAutoridad",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Catálogo de tipos de autoridades.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nivelJerarquia",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "nivel_jerarquia",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "nombre",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "codigo": "UNA001",
+        "nivel_jerarquia": "1",
+        "descripcion": "Descripción detallada del registro"
+      }
+    },
+    "TipoLocalizacion": {
+      "nombre_tabla": "tipo_localizacion",
+      "clase": "TipoLocalizacion",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Catálogo de tipos de localizaciones.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano"
+      }
+    },
+    "TipoUnidad": {
+      "nombre_tabla": "tipo_unidad",
+      "clase": "TipoUnidad",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Catálogo de tipos de unidades organizativas.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nivel",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "nivel",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "nombre",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "descripcion": "Descripción detallada del registro",
+        "nivel": "1"
+      }
+    },
+    "UnidadOrganizativa": {
+      "nombre_tabla": "unidad_organizativa",
+      "clase": "UnidadOrganizativa",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Estructura organizacional (facultades, escuelas).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 200,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "sigla",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "sigla",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Localizacion",
+          "campo": "localizacion",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "localizacion_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "TipoUnidad",
+          "campo": "tipoUnidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "tipo_unidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "UnidadOrganizativa",
+          "campo": "unidadPadre",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "unidad_padre_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "codigo",
+            "universidad_id"
+          ],
+          "nombre": ""
+        },
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "nombre",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "Código debe ser único por universidad"
+      ],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "codigo": "UNA001",
+        "sigla": "Texto de ejemplo",
+        "descripcion": "Descripción detallada del registro"
+      }
+    },
+    "Universidad": {
+      "nombre_tabla": "universidades",
+      "clase": "Universidad",
+      "modulo": "academic",
+      "descripcion": "",
+      "funcionalidad": "Gestiona información de universidades/instituciones. Central para multitenancy.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "codigo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "codigo",
+          "descripcion": "",
+          "ejemplo": "UNA001",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "dominio",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": true,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "dominio",
+          "descripcion": "",
+          "ejemplo": "unap.edu.pe",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "ruc",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 11,
+          "precision": null,
+          "scale": null,
+          "column_name": "ruc",
+          "descripcion": "",
+          "ejemplo": "20345678901",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "website",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "website",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "logoUrl",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "logo_url",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "zonaHoraria",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "zona_horaria",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "locale",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "locale",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "configuracion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "configuracion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "plan",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "plan",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "maxEstudiantes",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "max_estudiantes",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "maxDocentes",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "max_docentes",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "codigo": "UNA001",
+        "nombre": "Universidad Nacional del Altiplano",
+        "dominio": "unap.edu.pe",
+        "ruc": "20345678901",
+        "tipo": "Texto de ejemplo",
+        "website": "Texto de ejemplo",
+        "logo_url": "Texto de ejemplo",
+        "zona_horaria": "Texto de ejemplo",
+        "locale": "Texto de ejemplo",
+        "configuracion": "Texto de ejemplo"
+      }
+    },
+    "Category": {
+      "nombre_tabla": "categories",
+      "clase": "Category",
+      "modulo": "catalog",
+      "descripcion": "",
+      "funcionalidad": "Categorías del catálogo general.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "name",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "name",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "description",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "description",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "name": "Texto de ejemplo",
+        "description": "Texto de ejemplo"
+      }
+    },
+    "CuentaCorrienteAlumno": {
+      "nombre_tabla": "cuenta_corriente_alumno",
+      "clase": "CuentaCorrienteAlumno",
+      "modulo": "finance",
+      "descripcion": "",
+      "funcionalidad": "Estado de cuenta de estudiantes.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "monto",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "monto",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "montoPendiente",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "monto_pendiente",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "concepto",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "concepto",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tipoCargo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "tipo_cargo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaVencimiento",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_vencimiento",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaEmision",
+          "tipo_java": "LocalDate",
+          "tipo_sql": "DATE",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_emision",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "periodoAcademico",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "periodo_academico",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "numeroCuota",
+          "tipo_java": "Integer",
+          "tipo_sql": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "numero_cuota",
+          "descripcion": "",
+          "ejemplo": "1",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Estudiante",
+          "campo": "estudiante",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "estudiante_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [
+        {
+          "nombre": "idx_cta_cte_universidad_estudiante",
+          "columnas": [
+            "universidad_id",
+            "estudiante_id"
+          ]
+        },
+        {
+          "nombre": "idx_cta_cte_estado_vencimiento",
+          "columnas": [
+            "estado",
+            "fecha_vencimiento"
+          ]
+        },
+        {
+          "nombre": "idx_cta_cte_periodo_tipo",
+          "columnas": [
+            "periodo_academico",
+            "tipo_cargo"
+          ]
+        }
+      ],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "monto": "0.00",
+        "monto_pendiente": "0.00",
+        "concepto": "Texto de ejemplo",
+        "tipo_cargo": "Texto de ejemplo",
+        "fecha_vencimiento": "2024-01-15",
+        "fecha_emision": "2024-01-15",
+        "estado": "ACTIVO",
+        "periodo_academico": "Texto de ejemplo",
+        "numero_cuota": "1",
+        "observaciones": "Texto de ejemplo"
+      }
+    },
+    "Pago": {
+      "nombre_tabla": "pago",
+      "clase": "Pago",
+      "modulo": "finance",
+      "descripcion": "",
+      "funcionalidad": "Registro de pagos realizados.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "numeroRecibo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "numero_recibo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "montoPagado",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "monto_pagado",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "montoPendienteAplicar",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "monto_pendiente_aplicar",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaPago",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_pago",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "metodoPago",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "metodo_pago",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "referenciaPago",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "referencia_pago",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "banco",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "banco",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "cajero",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "cajero",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaAnulacion",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_anulacion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "motivoAnulacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "motivo_anulacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Estudiante",
+          "campo": "estudiante",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "estudiante_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [
+        {
+          "nombre": "idx_pago_universidad_estudiante",
+          "columnas": [
+            "universidad_id",
+            "estudiante_id"
+          ]
+        },
+        {
+          "nombre": "idx_pago_fecha_estado",
+          "columnas": [
+            "fecha_pago",
+            "estado"
+          ]
+        },
+        {
+          "nombre": "idx_pago_numero_recibo",
+          "columnas": [
+            "numero_recibo"
+          ]
+        }
+      ],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "numero_recibo": "Texto de ejemplo",
+        "monto_pagado": "0.00",
+        "monto_pendiente_aplicar": "0.00",
+        "fecha_pago": "2024-01-15",
+        "metodo_pago": "Texto de ejemplo",
+        "referencia_pago": "Texto de ejemplo",
+        "banco": "Texto de ejemplo",
+        "cajero": "Texto de ejemplo",
+        "estado": "ACTIVO",
+        "observaciones": "Texto de ejemplo"
+      }
+    },
+    "PagoDetalleDeuda": {
+      "nombre_tabla": "pago_detalle_deuda",
+      "clase": "PagoDetalleDeuda",
+      "modulo": "finance",
+      "descripcion": "",
+      "funcionalidad": "Detalle de aplicación de pagos a deudas.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "montoAplicado",
+          "tipo_java": "BigDecimal",
+          "tipo_sql": "DECIMAL",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 10,
+          "scale": 2,
+          "column_name": "monto_aplicado",
+          "descripcion": "",
+          "ejemplo": "0.00",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaAplicacion",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_aplicacion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "aplicadoPor",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "aplicado_por",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "observaciones",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "observaciones",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "estado",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 20,
+          "precision": null,
+          "scale": null,
+          "column_name": "estado",
+          "descripcion": "",
+          "ejemplo": "ACTIVO",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaReversion",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_reversion",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "motivoReversion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "motivo_reversion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Pago",
+          "campo": "pago",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "pago_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "CuentaCorrienteAlumno",
+          "campo": "deuda",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "deuda_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [
+        {
+          "nombre": "idx_pago_detalle_pago",
+          "columnas": [
+            "pago_id"
+          ]
+        },
+        {
+          "nombre": "idx_pago_detalle_deuda",
+          "columnas": [
+            "deuda_id"
+          ]
+        },
+        {
+          "nombre": "idx_pago_detalle_estado",
+          "columnas": [
+            "estado",
+            "fecha_aplicacion"
+          ]
+        }
+      ],
+      "reglas_negocio": [
+        "Validar que el estudiante del pago y la deuda sean el mismo",
+        "Validar que el monto sea positivo",
+        "Validar que el monto no exceda la deuda pendiente",
+        "Validar que el pago tenga saldo suficiente",
+        "✅ SEGURIDAD MULTITENANCY: Validar que pago y deuda sean de la misma universidad"
+      ],
+      "ejemplo_datos": {
+        "monto_aplicado": "0.00",
+        "fecha_aplicacion": "2024-01-15",
+        "aplicado_por": "Texto de ejemplo",
+        "observaciones": "Texto de ejemplo",
+        "estado": "ACTIVO",
+        "fecha_reversion": "2024-01-15",
+        "motivo_reversion": "Texto de ejemplo"
+      }
+    },
+    "AuthUsuario": {
+      "nombre_tabla": "auth_usuario",
+      "clase": "AuthUsuario",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "Usuarios del sistema (autenticación).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "passwordHash",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "password_hash",
+          "descripcion": "",
+          "ejemplo": "$2a$10$encrypted...",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "ultimoAcceso",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "ultimo_acceso",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaBloqueo",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_bloqueo",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaUltimoCambioPassword",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_ultimo_cambio_password",
+          "descripcion": "",
+          "ejemplo": "$2a$10$encrypted...",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tokenRecuperacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "token_recuperacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaExpiracionToken",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_expiracion_token",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Rol",
+          "campo": "rol",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "rol_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "OneToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "universidad_id",
+            "persona_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "password_hash": "$2a$10$encrypted...",
+        "ultimo_acceso": "2024-01-15",
+        "fecha_bloqueo": "2024-01-15",
+        "fecha_ultimo_cambio_password": "$2a$10$encrypted...",
+        "token_recuperacion": "Texto de ejemplo",
+        "fecha_expiracion_token": "2024-01-15"
+      }
+    },
+    "Permiso": {
+      "nombre_tabla": "permiso",
+      "clase": "Permiso",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "Permisos granulares del sistema.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombreClave",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre_clave",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "modulo",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "modulo",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "recurso",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "recurso",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "accion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "accion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre_clave": "Universidad Nacional del Altiplano",
+        "descripcion": "Descripción detallada del registro",
+        "modulo": "Texto de ejemplo",
+        "recurso": "Texto de ejemplo",
+        "accion": "Texto de ejemplo"
+      }
+    },
+    "RefreshToken": {
+      "nombre_tabla": "refresh_tokens",
+      "clase": "RefreshToken",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "Tokens de refresco JWT.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "token",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 1000,
+          "precision": null,
+          "scale": null,
+          "column_name": "token",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "expiresAt",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "expires_at",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "AuthUsuario",
+          "campo": "authUsuario",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "auth_usuario_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "token": "Texto de ejemplo",
+        "expires_at": "2024-01-15"
+      }
+    },
+    "Rol": {
+      "nombre_tabla": "rol",
+      "clase": "Rol",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "Roles de acceso (ADMIN, DOCENTE, ESTUDIANTE).",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "nombre",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "nombre",
+          "descripcion": "",
+          "ejemplo": "Universidad Nacional del Altiplano",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "descripcion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "descripcion",
+          "descripcion": "",
+          "ejemplo": "Descripción detallada del registro",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Universidad",
+          "campo": "universidad",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "universidad_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "nombre",
+            "universidad_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [],
+      "ejemplo_datos": {
+        "nombre": "Universidad Nacional del Altiplano",
+        "descripcion": "Descripción detallada del registro"
+      }
+    },
+    "RolPermiso": {
+      "nombre_tabla": "rol_permiso",
+      "clase": "RolPermiso",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "Asignación de permisos a roles.",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "restriccion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 500,
+          "precision": null,
+          "scale": null,
+          "column_name": "restriccion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Rol",
+          "campo": "rol",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "rol_id",
+          "descripcion": ""
+        },
+        {
+          "tipo": "ManyToOne",
+          "entidad_destino": "Permiso",
+          "campo": "permiso",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "permiso_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "campos": [
+            "rol_id",
+            "permiso_id"
+          ],
+          "nombre": ""
+        }
+      ],
+      "indices": [],
+      "reglas_negocio": [
+        "JSON con restricciones adicionales (ej: solo su propia data)"
+      ],
+      "ejemplo_datos": {
+        "restriccion": "Texto de ejemplo"
+      }
+    },
+    "User": {
+      "nombre_tabla": "users",
+      "clase": "User",
+      "modulo": "security",
+      "descripcion": "",
+      "funcionalidad": "",
+      "hereda_de": "AuditableEntity",
+      "campos": [
+        {
+          "nombre": "username",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "username",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "email",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": true,
+          "length": 100,
+          "precision": null,
+          "scale": null,
+          "column_name": "email",
+          "descripcion": "",
+          "ejemplo": "contacto@universidad.edu.pe",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "password",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "password",
+          "descripcion": "",
+          "ejemplo": "$2a$10$encrypted...",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "firstName",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "first_name",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "lastName",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": false,
+          "unique": false,
+          "length": 50,
+          "precision": null,
+          "scale": null,
+          "column_name": "last_name",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "phone",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 15,
+          "precision": null,
+          "scale": null,
+          "column_name": "phone",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "lastLogin",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "last_login",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaBloqueo",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_bloqueo",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "tokenRecuperacion",
+          "tipo_java": "String",
+          "tipo_sql": "VARCHAR",
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "column_name": "token_recuperacion",
+          "descripcion": "",
+          "ejemplo": "Texto de ejemplo",
+          "valores_posibles": []
+        },
+        {
+          "nombre": "fechaExpiracionToken",
+          "tipo_java": "LocalDateTime",
+          "tipo_sql": "TIMESTAMP",
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "column_name": "fecha_expiracion_token",
+          "descripcion": "",
+          "ejemplo": "2024-01-15",
+          "valores_posibles": []
+        }
+      ],
+      "relaciones": [
+        {
+          "tipo": "OneToOne",
+          "entidad_destino": "Persona",
+          "campo": "persona",
+          "cascade": [],
+          "fetch_type": "LAZY",
+          "mapped_by": null,
+          "join_column": "persona_id",
+          "descripcion": ""
+        }
+      ],
+      "constraints": [],
+      "indices": [],
+      "reglas_negocio": [
+        "Solo limpiar espacios"
+      ],
+      "ejemplo_datos": {
+        "username": "Texto de ejemplo",
+        "email": "contacto@universidad.edu.pe",
+        "password": "$2a$10$encrypted...",
+        "first_name": "Texto de ejemplo",
+        "last_name": "Texto de ejemplo",
+        "phone": "Texto de ejemplo",
+        "last_login": "2024-01-15",
+        "fecha_bloqueo": "2024-01-15",
+        "token_recuperacion": "Texto de ejemplo",
+        "fecha_expiracion_token": "2024-01-15"
+      }
+    }
+  }
+}

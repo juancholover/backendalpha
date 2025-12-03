@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "requisito_curso", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"curso_id", "curso_requisito_id", "tipo_requisito", "universidad_id"})
+    @UniqueConstraint(columnNames = {"curso_id", "curso_requisito_id", "tipo_requisito"})
 })
 @Data
 @NoArgsConstructor

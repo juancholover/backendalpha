@@ -10,7 +10,7 @@ import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
-@Table(name = "universidades")
+@Table(name = "universidad")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -81,7 +81,13 @@ public class Universidad extends AuditableEntity {
     @Column(name = "total_docentes")
     private Integer totalDocentes = 0; // Contador actual
 
+    
 
+    /**
+     * Valida si la universidad está activa y su suscripción vigente.
+     * 
+     * @return true si está activa y no ha vencido la suscripción
+     */
     public boolean estaActiva() {
         if (!"ACTIVA".equals(this.estado)) {
             return false;
@@ -93,17 +99,73 @@ public class Universidad extends AuditableEntity {
     }
 
     /**
-     * Verifica si la universidad ha excedido el límite de estudiantes
+     * Verifica si la universidad ha excedido el límite de estudiantes.
+     * 
+     * @return true si alcanzó o superó el límite configurado
      */
     public boolean haExcedidoLimiteEstudiantes() {
         return maxEstudiantes != null && totalEstudiantes != null && totalEstudiantes >= maxEstudiantes;
     }
 
     /**
-     * Verifica si la universidad ha excedido el límite de docentes
+     * Verifica si la universidad ha excedido el límite de docentes.
+     * 
+     * @return true si alcanzó o superó el límite configurado
      */
     public boolean haExcedidoLimiteDocentes() {
         return maxDocentes != null && totalDocentes != null && totalDocentes >= maxDocentes;
+    }
+    
+    /**
+     * Suspende la universidad (cambia estado a SUSPENDIDA).
+     * Puede usarse por falta de pago o violación de términos.
+     */
+    public void suspender() {
+        this.estado = "SUSPENDIDA";
+    }
+    
+    /**
+     * Reactiva la universidad (cambia estado a ACTIVA).
+     * Solo si la suscripción no ha vencido.
+     */
+    public void activar() {
+        if (fechaVencimiento != null && java.time.LocalDate.now().isAfter(fechaVencimiento)) {
+            throw new IllegalStateException("No se puede activar: suscripción vencida el " + fechaVencimiento);
+        }
+        this.estado = "ACTIVA";
+    }
+    
+    /**
+     * Valida el código de universidad según reglas de negocio.
+     * 
+     * @param codigo Código a validar
+     * @throws IllegalArgumentException si el código es inválido
+     */
+    public static void validarCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("Código no puede estar vacío");
+        }
+        if (codigo.length() > 20) {
+            throw new IllegalArgumentException("Código no puede exceder 20 caracteres");
+        }
+        if (!codigo.matches("^[A-Z0-9-]+$")) {
+            throw new IllegalArgumentException("Código solo puede contener letras mayúsculas, números y guiones");
+        }
+    }
+    
+    /**
+     * Valida el RUC según formato peruano (11 dígitos).
+     * 
+     * @param ruc RUC a validar
+     * @throws IllegalArgumentException si el RUC es inválido
+     */
+    public static void validarRuc(String ruc) {
+        if (ruc == null || ruc.isBlank()) {
+            throw new IllegalArgumentException("RUC no puede estar vacío");
+        }
+        if (!ruc.matches("^\\d{11}$")) {
+            throw new IllegalArgumentException("RUC debe contener exactamente 11 dígitos");
+        }
     }
 
     @PrePersist

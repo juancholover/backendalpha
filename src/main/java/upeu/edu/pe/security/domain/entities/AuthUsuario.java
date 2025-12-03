@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Entity
 @Table(name = "auth_usuario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"universidad_id", "persona_id"}),
-    @UniqueConstraint(columnNames = "persona_id")
+    @UniqueConstraint(columnNames = {"persona_id"}),
+    @UniqueConstraint(columnNames = {"username"})
 })
 @EntityListeners(AuditListener.class)
 public class AuthUsuario extends AuditableEntity {
