@@ -20,9 +20,6 @@ public class CursoOfertadoService {
     CursoOfertadoRepository cursoOfertadoRepository;
 
     @Inject
-    UniversidadRepository universidadRepository;
-
-    @Inject
     PlanCursoRepository planCursoRepository;
 
     @Inject
@@ -38,7 +35,7 @@ public class CursoOfertadoService {
     CursoOfertadoMapper cursoOfertadoMapper;
 
     public List<CursoOfertadoResponseDTO> findByUniversidad(Long universidadId) {
-        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findByUniversidad(universidadId);
+        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findAllActive();
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
 
@@ -68,7 +65,7 @@ public class CursoOfertadoService {
     }
 
     public List<CursoOfertadoResponseDTO> findAbiertasByPeriodoAndUniversidad(Long periodoId, Long universidadId) {
-        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findAbiertasByPeriodoAndUniversidad(periodoId, universidadId);
+        List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findAbiertasByPeriodo(periodoId);
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
 
@@ -89,7 +86,7 @@ public class CursoOfertadoService {
     }
 
     public CursoOfertadoResponseDTO findByCodigoAndPeriodoAndUniversidad(String codigoSeccion, Long periodoId, Long universidadId) {
-        CursoOfertado cursoOfertado = cursoOfertadoRepository.findByCodigoAndPeriodoAndUniversidad(codigoSeccion, periodoId, universidadId)
+        CursoOfertado cursoOfertado = cursoOfertadoRepository.findByCodigoAndPeriodo(codigoSeccion, periodoId)
                 .orElseThrow(() -> new NotFoundException("Curso ofertado no encontrado con código: " + codigoSeccion));
         return cursoOfertadoMapper.toResponseDTO(cursoOfertado);
     }
@@ -104,10 +101,6 @@ public class CursoOfertadoService {
             throw new BusinessException("Ya existe un curso ofertado con el código: " + requestDTO.getCodigoSeccion() 
                     + " para este plan-curso y período");
         }
-
-        // Validar universidad
-        Universidad universidad = universidadRepository.findByIdOptional(requestDTO.getUniversidadId())
-                .orElseThrow(() -> new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId()));
 
         // Validar plan-curso (esto valida curso + plan + créditos + ciclo)
         PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
@@ -127,7 +120,6 @@ public class CursoOfertadoService {
 
         // Crear curso ofertado
         CursoOfertado cursoOfertado = cursoOfertadoMapper.toEntity(requestDTO);
-        cursoOfertado.setUniversidad(universidad);
         cursoOfertado.setPlanCurso(planCurso);
         cursoOfertado.setPeriodoAcademico(periodoAcademico);
         cursoOfertado.setVacantesDisponibles(vacantesDisponibles);
@@ -156,12 +148,6 @@ public class CursoOfertadoService {
                 .orElseThrow(() -> new NotFoundException("Curso ofertado no encontrado con ID: " + id));
 
         // Validar cambios de relaciones
-        if (!cursoOfertado.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-            Universidad universidad = universidadRepository.findByIdOptional(requestDTO.getUniversidadId())
-                    .orElseThrow(() -> new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId()));
-            cursoOfertado.setUniversidad(universidad);
-        }
-
         if (!cursoOfertado.getPlanCurso().getId().equals(requestDTO.getPlanCursoId())) {
             PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
                     .orElseThrow(() -> new NotFoundException("Plan-Curso no encontrado con ID: " + requestDTO.getPlanCursoId()));

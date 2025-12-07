@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import upeu.edu.pe.academic.domain.entities.Estudiante;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "cuenta_corriente_alumno",
     indexes = {
-        @Index(name = "idx_cta_cte_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
+        @Index(name = "idx_cta_cte_estudiante", columnList = "estudiante_id"),
         @Index(name = "idx_cta_cte_estado_vencimiento", columnList = "estado, fecha_vencimiento"),
         @Index(name = "idx_cta_cte_periodo_tipo", columnList = "periodo_academico, tipo_cargo")
     }
@@ -35,10 +34,6 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estudiante_id", nullable = false)
@@ -88,9 +83,8 @@ public class CuentaCorrienteAlumno extends AuditableEntity {
     /**
      * Constructor de conveniencia
      */
-    public CuentaCorrienteAlumno(Universidad universidad, Estudiante estudiante, 
+    public CuentaCorrienteAlumno(Estudiante estudiante, 
                                  BigDecimal monto, String concepto, LocalDate fechaVencimiento) {
-        this.universidad = universidad;
         this.estudiante = estudiante;
         this.monto = monto;
         this.concepto = concepto;

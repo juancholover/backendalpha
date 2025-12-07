@@ -128,9 +128,9 @@ public class AsistenciaAlumnoRepository implements PanacheRepositoryBase<Asisten
     }
 
     /**
-     * Listar asistencias por universidad
+     * Listar todas las asistencias por fecha
      */
-    public List<AsistenciaAlumno> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<AsistenciaAlumno> findByFecha(LocalDate fechaClase) {
+        return find("fechaClase = ?1 and active = true", fechaClase).list();
     }
 }

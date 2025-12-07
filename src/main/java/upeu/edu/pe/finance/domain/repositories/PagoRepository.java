@@ -22,61 +22,59 @@ public class PagoRepository implements PanacheRepository<Pago> {
     }
 
     /**
-     * Busca pagos por universidad
+     * Busca todos los pagos activos
      */
-    public List<Pago> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY fechaPago DESC", 
-                   universidadId).list();
+    public List<Pago> findAllActivePagos() {
+        return find("active = true ORDER BY fechaPago DESC").list();
     }
 
     /**
      * Busca pago por número de recibo
      */
-    public Optional<Pago> findByNumeroRecibo(String numeroRecibo, Long universidadId) {
-        return find("UPPER(numeroRecibo) = UPPER(?1) and universidad.id = ?2 and active = true", 
-                   numeroRecibo, universidadId).firstResultOptional();
+    public Optional<Pago> findByNumeroRecibo(String numeroRecibo) {
+        return find("UPPER(numeroRecibo) = UPPER(?1) and active = true", 
+                   numeroRecibo).firstResultOptional();
     }
 
     /**
      * Verifica si existe un número de recibo
      */
-    public boolean existsByNumeroRecibo(String numeroRecibo, Long universidadId) {
-        return count("UPPER(numeroRecibo) = UPPER(?1) and universidad.id = ?2", 
-                    numeroRecibo, universidadId) > 0;
+    public boolean existsByNumeroRecibo(String numeroRecibo) {
+        return count("UPPER(numeroRecibo) = UPPER(?1) and active = true", 
+                    numeroRecibo) > 0;
     }
 
     /**
      * Busca pagos pendientes de aplicar
      */
-    public List<Pago> findPendientesAplicarByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and UPPER(estado) = 'PENDIENTE_APLICAR' and montoPendienteAplicar > 0 and active = true ORDER BY fechaPago", 
-                   universidadId).list();
+    public List<Pago> findPendientesAplicar() {
+        return find("UPPER(estado) = 'PENDIENTE_APLICAR' and montoPendienteAplicar > 0 and active = true ORDER BY fechaPago").list();
     }
 
     /**
      * Busca pagos por método de pago
      */
-    public List<Pago> findByMetodoPagoAndUniversidad(String metodoPago, Long universidadId) {
-        return find("UPPER(metodoPago) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY fechaPago DESC", 
-                   metodoPago, universidadId).list();
+    public List<Pago> findByMetodoPagoActive(String metodoPago) {
+        return find("UPPER(metodoPago) = UPPER(?1) and active = true ORDER BY fechaPago DESC", 
+                   metodoPago).list();
     }
 
     /**
-     * Busca pagos por estado
+     * Busca pagos por estado activos
      */
-    public List<Pago> findByEstadoAndUniversidad(String estado, Long universidadId) {
-        return find("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY fechaPago DESC", 
-                   estado, universidadId).list();
+    public List<Pago> findByEstadoActive(String estado) {
+        return find("UPPER(estado) = UPPER(?1) and active = true ORDER BY fechaPago DESC", 
+                   estado).list();
     }
 
     /**
-     * Busca pagos por rango de fechas
+     * Busca pagos por rango de fechas activos
      */
-    public List<Pago> findByFechasAndUniversidad(LocalDate fechaInicio, LocalDate fechaFin, Long universidadId) {
+    public List<Pago> findByFechasActive(LocalDate fechaInicio, LocalDate fechaFin) {
         LocalDateTime inicio = fechaInicio.atStartOfDay();
         LocalDateTime fin = fechaFin.plusDays(1).atStartOfDay();
-        return find("universidad.id = ?1 and fechaPago >= ?2 and fechaPago < ?3 and active = true ORDER BY fechaPago", 
-                   universidadId, inicio, fin).list();
+        return find("fechaPago >= ?1 and fechaPago < ?2 and active = true ORDER BY fechaPago", 
+                   inicio, fin).list();
     }
 
     /**
@@ -92,21 +90,21 @@ public class PagoRepository implements PanacheRepository<Pago> {
     /**
      * Calcula total de pagos por fecha
      */
-    public BigDecimal calcularTotalPagosByFecha(LocalDate fecha, Long universidadId) {
+    public BigDecimal calcularTotalPagosByFecha(LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.plusDays(1).atStartOfDay();
         Object result = find("SELECT COALESCE(SUM(montoPagado), 0) FROM Pago " +
-                            "WHERE universidad.id = ?1 and fechaPago >= ?2 and fechaPago < ?3 and UPPER(estado) != 'ANULADO' and active = true", 
-                            universidadId, inicio, fin).project(BigDecimal.class).firstResult();
+                            "WHERE fechaPago >= ?1 and fechaPago < ?2 and UPPER(estado) != 'ANULADO' and active = true", 
+                            inicio, fin).project(BigDecimal.class).firstResult();
         return result != null ? (BigDecimal) result : BigDecimal.ZERO;
     }
 
     /**
      * Busca pagos por referencia
      */
-    public List<Pago> findByReferencia(String referenciaPago, Long universidadId) {
-        return find("UPPER(referenciaPago) LIKE UPPER(?1) and universidad.id = ?2 and active = true", 
-                   "%" + referenciaPago + "%", universidadId).list();
+    public List<Pago> findByReferenciaActive(String referenciaPago) {
+        return find("UPPER(referenciaPago) LIKE UPPER(?1) and active = true", 
+                   "%" + referenciaPago + "%").list();
     }
 
     /**
@@ -119,9 +117,8 @@ public class PagoRepository implements PanacheRepository<Pago> {
     /**
      * Busca pagos anulados
      */
-    public List<Pago> findAnuladosByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and UPPER(estado) = 'ANULADO' and active = true ORDER BY fechaAnulacion DESC", 
-                   universidadId).list();
+    public List<Pago> findAnulados() {
+        return find("UPPER(estado) = 'ANULADO' and active = true ORDER BY fechaAnulacion DESC").list();
     }
 
     /**
@@ -184,9 +181,9 @@ public class PagoRepository implements PanacheRepository<Pago> {
     }
 
     /**
-     * Cuenta pagos por estado y universidad
+     * Cuenta pagos por estado
      */
-    public long countByEstadoAndUniversidad(String estado, Long universidadId) {
-        return count("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true", estado, universidadId);
+    public long countByEstadoActive(String estado) {
+        return count("UPPER(estado) = UPPER(?1) and active = true", estado);
     }
 }

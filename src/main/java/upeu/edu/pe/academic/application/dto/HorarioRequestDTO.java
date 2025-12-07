@@ -7,9 +7,6 @@ import java.time.LocalTime;
 @Data
 public class HorarioRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotNull(message = "El ID del curso ofertado es obligatorio")
     private Long cursoOfertadoId;
 

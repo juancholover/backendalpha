@@ -21,7 +21,6 @@ public interface ProfesorMapper {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidadOrganizativa", ignore = true)
     @Mapping(target = "condicionDocente", ignore = true)
     @Mapping(target = "active", constant = "true")
@@ -59,7 +58,6 @@ public interface ProfesorMapper {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidadOrganizativa", ignore = true)
     @Mapping(target = "condicionDocente", ignore = true)
     @Mapping(target = "active", ignore = true)

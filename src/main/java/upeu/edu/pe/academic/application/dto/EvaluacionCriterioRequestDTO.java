@@ -8,9 +8,6 @@ import jakarta.validation.constraints.Size;
 
 public class EvaluacionCriterioRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotNull(message = "El ID de la sección es obligatorio")
     private Long seccionId;
 
@@ -46,14 +43,6 @@ public class EvaluacionCriterioRequestDTO {
     private String descripcion;
 
     public EvaluacionCriterioRequestDTO() {
-    }
-
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
     }
 
     public Long getSeccionId() {

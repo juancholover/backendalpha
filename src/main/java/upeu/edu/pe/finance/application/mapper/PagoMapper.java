@@ -17,7 +17,6 @@ import java.util.List;
 public interface PagoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "montoAplicado", constant = "0")
     @Mapping(target = "montoPendienteAplicar", ignore = true)
@@ -32,8 +31,6 @@ public interface PagoMapper {
     @Mapping(target = "active", ignore = true)
     Pago toEntity(PagoRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "estudianteId", source = "estudiante.id")
     @Mapping(target = "estudianteNombre", expression = "java(getNombreEstudiante(entity))")
     @Mapping(target = "estudianteCodigo", source = "estudiante.codigoEstudiante")
@@ -43,7 +40,6 @@ public interface PagoMapper {
     List<PagoResponseDTO> toResponseDTOList(List<Pago> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "montoAplicado", ignore = true)
     @Mapping(target = "montoPendienteAplicar", ignore = true)

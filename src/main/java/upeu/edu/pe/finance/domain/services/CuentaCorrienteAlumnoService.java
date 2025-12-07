@@ -24,7 +24,7 @@ public class CuentaCorrienteAlumnoService {
     CuentaCorrienteAlumnoMapper cuentaMapper;
 
     public List<CuentaCorrienteAlumnoResponseDTO> findByUniversidad(Long universidadId) {
-        List<CuentaCorrienteAlumno> cuentas = cuentaRepository.findByUniversidad(universidadId);
+        List<CuentaCorrienteAlumno> cuentas = cuentaRepository.findAllActive();
         return cuentaMapper.toResponseDTOList(cuentas);
     }
 
@@ -88,9 +88,6 @@ public class CuentaCorrienteAlumnoService {
         }
 
         CuentaCorrienteAlumno cuenta = cuentaMapper.toEntity(requestDTO);
-        upeu.edu.pe.academic.domain.entities.Universidad universidad = new upeu.edu.pe.academic.domain.entities.Universidad();
-        universidad.setId(requestDTO.getUniversidadId());
-        cuenta.setUniversidad(universidad);
         
         upeu.edu.pe.academic.domain.entities.Estudiante estudiante = new upeu.edu.pe.academic.domain.entities.Estudiante();
         estudiante.setId(requestDTO.getEstudianteId());
@@ -182,6 +179,6 @@ public class CuentaCorrienteAlumnoService {
     }
 
     public long countByEstadoAndUniversidad(String estado, Long universidadId) {
-        return cuentaRepository.countByEstadoAndUniversidad(estado, universidadId);
+        return cuentaRepository.countByEstadoActive(estado);
     }
 }

@@ -7,7 +7,6 @@ import java.util.Objects;
 
 public record CrearEstudianteCommand(
     Long personaId,
-    Long universidadId,
     Long programaAcademicoId,
     String codigoEstudiante,
     LocalDate fechaIngreso,
@@ -18,7 +17,6 @@ public record CrearEstudianteCommand(
    
     public CrearEstudianteCommand {
         Objects.requireNonNull(personaId, "ID de persona es requerido");
-        Objects.requireNonNull(universidadId, "ID de universidad es requerido");
         Objects.requireNonNull(programaAcademicoId, "ID de programa académico es requerido");
         Objects.requireNonNull(codigoEstudiante, "Código de estudiante es requerido");
         Objects.requireNonNull(fechaIngreso, "Fecha de ingreso es requerida");

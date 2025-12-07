@@ -106,7 +106,6 @@ public class MatriculaService {
         Integer creditosCurso = cursoOfertado.getPlanCurso().getCreditos();
         
         // 2. Validar límite de créditos por ciclo (desde PlanAcademico de la carrera)
-        Universidad universidad = estudiante.getUniversidad();
         PlanAcademico planAcademico = cursoOfertado.getPlanCurso().getPlanAcademico();
         Integer creditosActuales = estudiante.getCreditosCursando() != null ? estudiante.getCreditosCursando() : 0;
         Integer nuevoTotalCreditos = creditosActuales + creditosCurso;
@@ -120,23 +119,6 @@ public class MatriculaService {
             );
         }
         
-        // 3. Validar límite de estudiantes de la universidad (Plan SaaS)
-        if (universidad.haExcedidoLimiteEstudiantes()) {
-            throw new BusinessException(
-                "La universidad ha excedido su límite de estudiantes activos según su plan SaaS (" + 
-                universidad.getPlan() + ")"
-            );
-        }
-        
-        // 4. Validar que la universidad esté activa
-        if (!universidad.estaActiva()) {
-            throw new BusinessException(
-                "La universidad no está activa. Estado: " + universidad.getEstado() + 
-                (universidad.getFechaVencimiento() != null ? 
-                    ", Fecha vencimiento: " + universidad.getFechaVencimiento() : "")
-            );
-        }
-
         // Crear matrícula
         Matricula matricula = matriculaMapper.toEntity(requestDTO);
         matricula.setEstudiante(estudiante);

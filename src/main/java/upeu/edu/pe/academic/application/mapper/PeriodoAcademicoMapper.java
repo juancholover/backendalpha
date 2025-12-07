@@ -17,7 +17,6 @@ import java.util.List;
 public interface PeriodoAcademicoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "cursosOfertados", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -26,8 +25,6 @@ public interface PeriodoAcademicoMapper {
     @Mapping(target = "active", ignore = true)
     PeriodoAcademico toEntity(PeriodoAcademicoRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "cantidadSecciones", ignore = true)
     @Mapping(target = "cantidadMatriculas", ignore = true)
     PeriodoAcademicoResponseDTO toResponseDTO(PeriodoAcademico entity);
@@ -35,7 +32,6 @@ public interface PeriodoAcademicoMapper {
     List<PeriodoAcademicoResponseDTO> toResponseDTOList(List<PeriodoAcademico> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "cursosOfertados", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

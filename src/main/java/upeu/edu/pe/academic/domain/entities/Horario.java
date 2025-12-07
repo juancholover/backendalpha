@@ -28,10 +28,6 @@ public class Horario extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_ofertado_id", nullable = false)
     private CursoOfertado cursoOfertado;
 

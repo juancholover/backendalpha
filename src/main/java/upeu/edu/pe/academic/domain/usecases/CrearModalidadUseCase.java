@@ -4,9 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import upeu.edu.pe.academic.domain.commands.CrearModalidadCommand;
 import upeu.edu.pe.academic.domain.entities.Modalidad;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.ModalidadRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 
 /**
  * Caso de uso: Crear una nueva modalidad de dictado de cursos
@@ -23,18 +21,9 @@ public class CrearModalidadUseCase {
     @Inject
     ModalidadRepository modalidadRepository;
     
-    @Inject
-    UniversidadRepository universidadRepository;
-    
     public Modalidad execute(CrearModalidadCommand command) {
-        // Validar que la universidad exista
-        Universidad universidad = universidadRepository.findByIdOptional(command.universidadId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                    "Universidad no encontrada con ID: " + command.universidadId()
-                ));
-        
         // Validar que el código no esté duplicado
-        if (modalidadRepository.existsByCodigo(command.codigo(), command.universidadId())) {
+        if (modalidadRepository.existsByCodigo(command.codigo())) {
             throw new IllegalArgumentException(
                 "Ya existe una modalidad con el código: " + command.codigo()
             );
@@ -42,7 +31,6 @@ public class CrearModalidadUseCase {
         
         // Crear la entidad
         Modalidad modalidad = new Modalidad();
-        modalidad.setUniversidad(universidad);
         modalidad.setCodigo(command.codigo());
         modalidad.setNombre(command.nombre());
         modalidad.setDescripcion(command.descripcion());

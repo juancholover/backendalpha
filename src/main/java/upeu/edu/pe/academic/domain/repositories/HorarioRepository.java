@@ -11,11 +11,10 @@ import java.util.Optional;
 public class HorarioRepository implements PanacheRepository<Horario> {
 
     /**
-     * Busca todos los horarios de una universidad
+     * Busca todos los horarios activos
      */
-    public List<Horario> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY diaSemana, horaInicio", 
-                   universidadId).list();
+    public List<Horario> findAllActive() {
+        return find("active = true ORDER BY diaSemana, horaInicio").list();
     }
 
     /**
@@ -48,9 +47,9 @@ public class HorarioRepository implements PanacheRepository<Horario> {
     /**
      * Busca horarios por día de la semana
      */
-    public List<Horario> findByDiaSemanaAndUniversidad(Integer diaSemana, Long universidadId) {
-        return find("diaSemana = ?1 and universidad.id = ?2 and active = true ORDER BY horaInicio", 
-                   diaSemana, universidadId).list();
+    public List<Horario> findByDiaSemana(Integer diaSemana) {
+        return find("diaSemana = ?1 and active = true ORDER BY horaInicio", 
+                   diaSemana).list();
     }
 
     /**
@@ -112,9 +111,9 @@ public class HorarioRepository implements PanacheRepository<Horario> {
     /**
      * Busca horarios por tipo de sesión
      */
-    public List<Horario> findByTipoSesionAndUniversidad(String tipoSesion, Long universidadId) {
-        return find("UPPER(tipoSesion) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY diaSemana, horaInicio", 
-                   tipoSesion, universidadId).list();
+    public List<Horario> findByTipoSesion(String tipoSesion) {
+        return find("UPPER(tipoSesion) = UPPER(?1) and active = true ORDER BY diaSemana, horaInicio", 
+                   tipoSesion).list();
     }
 
     /**
@@ -137,7 +136,6 @@ public class HorarioRepository implements PanacheRepository<Horario> {
      */
     public Optional<Horario> findByIdWithRelations(Long id) {
         return find("SELECT h FROM Horario h " +
-                   "LEFT JOIN FETCH h.universidad " +
                    "LEFT JOIN FETCH h.cursoOfertado co " +
                    "LEFT JOIN FETCH co.planCurso pc " +
                    "LEFT JOIN FETCH pc.curso " +

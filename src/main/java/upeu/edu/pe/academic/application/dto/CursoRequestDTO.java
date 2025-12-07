@@ -6,10 +6,6 @@ import lombok.Data;
 @Data
 public class CursoRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
-
     @NotBlank(message = "El código del curso es obligatorio")
     @Size(max = 20, message = "El código del curso no puede exceder 20 caracteres")
     private String codigoCurso;

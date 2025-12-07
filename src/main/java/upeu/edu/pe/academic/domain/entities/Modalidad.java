@@ -30,10 +30,6 @@ public class Modalidad extends AuditableEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "codigo", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigo; // PRES, VIRT, SEMI, HIBR
@@ -60,10 +56,9 @@ public class Modalidad extends AuditableEntity {
     /**
      * Constructor para crear modalidad con datos básicos
      */
-    public Modalidad(Universidad universidad, String codigo, String nombre, 
+    public Modalidad(String codigo, String nombre, 
                      String descripcion, Boolean requiereAula, 
                      Boolean requierePlataforma, Integer porcentajePresencialidad) {
-        this.universidad = universidad;
         this.codigo = codigo;
         this.nombre = nombre;
         this.descripcion = descripcion;

@@ -11,40 +11,40 @@ import java.util.Optional;
 public class TipoAutoridadRepository implements PanacheRepository<TipoAutoridad> {
 
     /**
-     * Busca todos los tipos de autoridad de una universidad ordenados por nivel jerárquico
+     * Busca todos los tipos de autoridad ordenados por nivel jerárquico
      */
-    public List<TipoAutoridad> findByUniversidadIdOrderByNivel(Long universidadId) {
-        return list("universidadId = ?1 order by nivelJerarquia asc", universidadId);
+    public List<TipoAutoridad> findAllOrderByNivel() {
+        return list("order by nivelJerarquia asc");
     }
 
     /**
-     * Busca un tipo de autoridad por nombre y universidad
+     * Busca un tipo de autoridad por nombre
      */
-    public Optional<TipoAutoridad> findByNombreAndUniversidadId(String nombre, Long universidadId) {
-        return find("UPPER(nombre) = UPPER(?1) and universidadId = ?2", nombre, universidadId)
+    public Optional<TipoAutoridad> findByNombre(String nombre) {
+        return find("UPPER(nombre) = UPPER(?1)", nombre)
                 .firstResultOptional();
     }
 
     /**
-     * Verifica si existe un tipo de autoridad con ese nombre en la universidad
+     * Verifica si existe un tipo de autoridad con ese nombre
      */
-    public boolean existsByNombreAndUniversidadId(String nombre, Long universidadId) {
-        return count("UPPER(nombre) = UPPER(?1) and universidadId = ?2", nombre, universidadId) > 0;
+    public boolean existsByNombre(String nombre) {
+        return count("UPPER(nombre) = UPPER(?1)", nombre) > 0;
     }
 
     /**
      * Verifica si existe un tipo de autoridad con ese nombre, excluyendo un ID específico
      */
-    public boolean existsByNombreAndUniversidadIdAndIdNot(String nombre, Long universidadId, Long id) {
-        return count("UPPER(nombre) = UPPER(?1) and universidadId = ?2 and id != ?3", 
-                     nombre, universidadId, id) > 0;
+    public boolean existsByNombreAndIdNot(String nombre, Long id) {
+        return count("UPPER(nombre) = UPPER(?1) and id != ?2", 
+                     nombre, id) > 0;
     }
 
     /**
-     * Obtiene el tipo de autoridad con mayor jerarquía (nivel 1) de una universidad
+     * Obtiene el tipo de autoridad con mayor jerarquía (nivel 1)
      */
-    public Optional<TipoAutoridad> findMaximaAutoridadByUniversidadId(Long universidadId) {
-        return find("universidadId = ?1 order by nivelJerarquia asc", universidadId)
+    public Optional<TipoAutoridad> findMaximaAutoridad() {
+        return find("order by nivelJerarquia asc")
                 .firstResultOptional();
     }
 }

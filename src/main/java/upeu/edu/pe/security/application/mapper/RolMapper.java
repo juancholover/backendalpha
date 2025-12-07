@@ -17,7 +17,6 @@ import java.util.List;
 public interface RolMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "rolPermisos", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -26,8 +25,6 @@ public interface RolMapper {
     @Mapping(target = "active", ignore = true)
     Rol toEntity(RolRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "cantidadPermisos", ignore = true)
     @Mapping(target = "cantidadUsuarios", ignore = true)
     RolResponseDTO toResponseDTO(Rol entity);
@@ -35,7 +32,6 @@ public interface RolMapper {
     List<RolResponseDTO> toResponseDTOList(List<Rol> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "rolPermisos", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

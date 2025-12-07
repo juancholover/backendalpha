@@ -26,10 +26,6 @@ public class PlanCurso extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_academico_id", nullable = false)
     private PlanAcademico planAcademico;
 
@@ -51,9 +47,8 @@ public class PlanCurso extends AuditableEntity {
     private Boolean esObligatorio = true;
 
     
-    public PlanCurso(Universidad universidad, PlanAcademico planAcademico, Curso curso, 
+    public PlanCurso(PlanAcademico planAcademico, Curso curso, 
                      Integer creditos, Integer ciclo, String tipoCurso) {
-        this.universidad = universidad;
         this.planAcademico = planAcademico;
         this.curso = curso;
         this.creditos = creditos;

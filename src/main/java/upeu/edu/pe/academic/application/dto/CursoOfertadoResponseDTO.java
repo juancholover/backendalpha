@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 public class CursoOfertadoResponseDTO {
 
     private Long id;
-    private Long universidadId;
-    private String universidadNombre;
     private Long planCursoId; // ID de PlanCurso
     private Long planAcademicoId; // Denormalizado desde PlanCurso
     private String planAcademicoCodigo; // Denormalizado
@@ -44,22 +42,6 @@ public class CursoOfertadoResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
-    public String getUniversidadNombre() {
-        return universidadNombre;
-    }
-
-    public void setUniversidadNombre(String universidadNombre) {
-        this.universidadNombre = universidadNombre;
     }
 
     public Long getPlanAcademicoId() {

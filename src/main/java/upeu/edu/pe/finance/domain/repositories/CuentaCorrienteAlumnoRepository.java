@@ -21,11 +21,10 @@ public class CuentaCorrienteAlumnoRepository implements PanacheRepository<Cuenta
     }
 
     /**
-     * Busca cuentas por universidad
+     * Busca todas las cuentas activas
      */
-    public List<CuentaCorrienteAlumno> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY fechaEmision DESC", 
-                   universidadId).list();
+    public List<CuentaCorrienteAlumno> findAllActive() {
+        return find("active = true ORDER BY fechaEmision DESC").list();
     }
 
     /**
@@ -54,11 +53,11 @@ public class CuentaCorrienteAlumnoRepository implements PanacheRepository<Cuenta
     }
 
     /**
-     * Busca cuentas por estado
+     * Busca cuentas por estado activas
      */
-    public List<CuentaCorrienteAlumno> findByEstadoAndUniversidad(String estado, Long universidadId) {
-        return find("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY fechaEmision DESC", 
-                   estado, universidadId).list();
+    public List<CuentaCorrienteAlumno> findByEstadoActive(String estado) {
+        return find("UPPER(estado) = UPPER(?1) and active = true ORDER BY fechaEmision DESC", 
+                   estado).list();
     }
 
     /**
@@ -74,25 +73,25 @@ public class CuentaCorrienteAlumnoRepository implements PanacheRepository<Cuenta
     /**
      * Busca cuenta por número de documento
      */
-    public Optional<CuentaCorrienteAlumno> findByNumeroDocumento(String numeroDocumento, Long universidadId) {
-        return find("UPPER(numeroDocumento) = UPPER(?1) and universidad.id = ?2 and active = true", 
-                   numeroDocumento, universidadId).firstResultOptional();
+    public Optional<CuentaCorrienteAlumno> findByNumeroDocumento(String numeroDocumento) {
+        return find("UPPER(numeroDocumento) = UPPER(?1) and active = true", 
+                   numeroDocumento).firstResultOptional();
     }
 
     /**
      * Verifica si existe un documento
      */
-    public boolean existsByNumeroDocumento(String numeroDocumento, Long universidadId) {
-        return count("UPPER(numeroDocumento) = UPPER(?1) and universidad.id = ?2", 
-                    numeroDocumento, universidadId) > 0;
+    public boolean existsByNumeroDocumento(String numeroDocumento) {
+        return count("UPPER(numeroDocumento) = UPPER(?1) and active = true", 
+                    numeroDocumento) > 0;
     }
 
     /**
      * Busca cuentas por rango de fechas
      */
-    public List<CuentaCorrienteAlumno> findByFechasAndUniversidad(LocalDate fechaInicio, LocalDate fechaFin, Long universidadId) {
-        return find("universidad.id = ?1 and fechaEmision BETWEEN ?2 and ?3 and active = true ORDER BY fechaEmision", 
-                   universidadId, fechaInicio, fechaFin).list();
+    public List<CuentaCorrienteAlumno> findByFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        return find("fechaEmision BETWEEN ?1 and ?2 and active = true ORDER BY fechaEmision", 
+                   fechaInicio, fechaFin).list();
     }
 
     /**
@@ -126,10 +125,10 @@ public class CuentaCorrienteAlumnoRepository implements PanacheRepository<Cuenta
     }
 
     /**
-     * Cuenta cuentas por estado y universidad
+     * Cuenta cuentas por estado
      */
-    public long countByEstadoAndUniversidad(String estado, Long universidadId) {
-        return count("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true", estado, universidadId);
+    public long countByEstadoActive(String estado) {
+        return count("UPPER(estado) = UPPER(?1) and active = true", estado);
     }
 
     /**

@@ -6,9 +6,6 @@ import lombok.Data;
 @Data
 public class PlanCursoRequestDTO {
 
-    @NotNull(message = "La universidad es requerida")
-    private Long universidadId;
-
     @NotNull(message = "El plan académico es requerido")
     private Long planAcademicoId;
 

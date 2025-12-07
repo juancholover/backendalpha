@@ -49,9 +49,7 @@ public class SilaboHistorial {
     @Column(name = "version_nueva")
     private Integer versionNueva;
 
-    /**
-     * Constructor para crear historial con datos básicos
-     */
+   
     public SilaboHistorial(Silabo silabo, String accion, String usuario, String comentarios) {
         this.silabo = silabo;
         this.accion = accion;
@@ -60,9 +58,7 @@ public class SilaboHistorial {
         this.fecha = LocalDateTime.now();
     }
 
-    /**
-     * Constructor para crear historial con versiones
-     */
+
     public SilaboHistorial(Silabo silabo, String accion, String usuario, 
                            String comentarios, Integer versionAnterior, Integer versionNueva) {
         this.silabo = silabo;

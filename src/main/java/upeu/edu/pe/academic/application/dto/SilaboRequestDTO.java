@@ -12,9 +12,6 @@ public class SilaboRequestDTO {
     @NotNull(message = "El ID del curso es obligatorio")
     private Long cursoId;
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotBlank(message = "El año académico es obligatorio")
     @Pattern(regexp = "^\\d{4}$", message = "El año académico debe tener 4 dígitos (ej: 2025)")
     private String anioAcademico;

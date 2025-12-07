@@ -8,11 +8,6 @@ public class CursoResponseDTO {
 
     private Long id;
 
-    // Información de universidad
-    private Long universidadId;
-    private String universidadNombre;
-
-
     // Información del curso
     private String codigoCurso;
     private String nombre;

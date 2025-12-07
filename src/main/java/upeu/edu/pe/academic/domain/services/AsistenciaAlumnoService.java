@@ -7,7 +7,6 @@ import upeu.edu.pe.academic.application.dto.AsistenciaAlumnoRequestDTO;
 import upeu.edu.pe.academic.application.dto.AsistenciaAlumnoResponseDTO;
 import upeu.edu.pe.academic.application.mapper.AsistenciaAlumnoMapper;
 import upeu.edu.pe.academic.domain.entities.AsistenciaAlumno;
-import upeu.edu.pe.academic.domain.entities.Estudiante;
 import upeu.edu.pe.academic.domain.entities.Horario;
 import upeu.edu.pe.academic.domain.repositories.*;
 import upeu.edu.pe.shared.exceptions.BusinessException;
@@ -29,9 +28,6 @@ public class AsistenciaAlumnoService {
 
     @Inject
     HorarioRepository horarioRepository;
-
-    @Inject
-    UniversidadRepository universidadRepository;
 
     @Inject
     AsistenciaAlumnoMapper asistenciaMapper;
@@ -86,28 +82,13 @@ public class AsistenciaAlumnoService {
 
     @Transactional
     public AsistenciaAlumnoResponseDTO create(AsistenciaAlumnoRequestDTO requestDTO) {
-        // Validar que la universidad existe
-        if (!universidadRepository.findByIdOptional(requestDTO.getUniversidadId()).isPresent()) {
-            throw new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId());
-        }
-
         // Validar que el estudiante existe
-        Estudiante estudiante = estudianteRepository.findByIdOptional(requestDTO.getEstudianteId())
+        estudianteRepository.findByIdOptional(requestDTO.getEstudianteId())
                 .orElseThrow(() -> new NotFoundException("Estudiante no encontrado con ID: " + requestDTO.getEstudianteId()));
-
-        // Validar que el estudiante pertenece a la universidad
-        if (!estudiante.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-            throw new BusinessException("El estudiante no pertenece a la universidad especificada");
-        }
 
         // Validar que el horario existe
         Horario horario = horarioRepository.findByIdOptional(requestDTO.getHorarioId())
                 .orElseThrow(() -> new NotFoundException("Horario no encontrado con ID: " + requestDTO.getHorarioId()));
-
-        // Validar que el horario pertenece a la universidad
-        if (!horario.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-            throw new BusinessException("El horario no pertenece a la universidad especificada");
-        }
 
         // Validar que no existe ya un registro de asistencia para este estudiante, horario y fecha
         if (asistenciaRepository.existsByEstudianteHorarioFecha(
@@ -141,26 +122,13 @@ public class AsistenciaAlumnoService {
         AsistenciaAlumno asistencia = asistenciaRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Asistencia no encontrada con ID: " + id));
 
-        // Validar que la universidad existe
-        if (!universidadRepository.findByIdOptional(requestDTO.getUniversidadId()).isPresent()) {
-            throw new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId());
-        }
-
-        // Validar que el estudiante existe y pertenece a la universidad
-        Estudiante estudiante = estudianteRepository.findByIdOptional(requestDTO.getEstudianteId())
+        // Validar que el estudiante existe
+        estudianteRepository.findByIdOptional(requestDTO.getEstudianteId())
                 .orElseThrow(() -> new NotFoundException("Estudiante no encontrado con ID: " + requestDTO.getEstudianteId()));
 
-        if (!estudiante.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-            throw new BusinessException("El estudiante no pertenece a la universidad especificada");
-        }
-
-        // Validar que el horario existe y pertenece a la universidad
-        Horario horario = horarioRepository.findByIdOptional(requestDTO.getHorarioId())
+        // Validar que el horario existe
+        horarioRepository.findByIdOptional(requestDTO.getHorarioId())
                 .orElseThrow(() -> new NotFoundException("Horario no encontrado con ID: " + requestDTO.getHorarioId()));
-
-        if (!horario.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-            throw new BusinessException("El horario no pertenece a la universidad especificada");
-        }
 
         // Validar que si el estado es TARDANZA, debe tener minutos de tardanza
         if ("TARDANZA".equals(requestDTO.getEstado()) && 

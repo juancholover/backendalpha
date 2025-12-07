@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import upeu.edu.pe.academic.domain.entities.Estudiante;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "pago",
     indexes = {
-        @Index(name = "idx_pago_universidad_estudiante", columnList = "universidad_id, estudiante_id"),
+        @Index(name = "idx_pago_estudiante", columnList = "estudiante_id"),
         @Index(name = "idx_pago_fecha_estado", columnList = "fecha_pago, estado"),
         @Index(name = "idx_pago_numero_recibo", columnList = "numero_recibo")
     }
@@ -35,10 +34,6 @@ public class Pago extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estudiante_id", nullable = false)
@@ -96,9 +91,8 @@ public class Pago extends AuditableEntity {
     /**
      * Constructor de conveniencia
      */
-    public Pago(Universidad universidad, Estudiante estudiante, String numeroRecibo,
+    public Pago(Estudiante estudiante, String numeroRecibo,
                        BigDecimal montoPagado, String metodoPago) {
-        this.universidad = universidad;
         this.estudiante = estudiante;
         this.numeroRecibo = numeroRecibo;
         this.montoPagado = montoPagado;

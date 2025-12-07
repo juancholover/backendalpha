@@ -18,10 +18,10 @@ public class LocalizacionRepository implements PanacheRepositoryBase<Localizacio
     }
 
     /**
-     * Listar localizaciones por universidad
+     * Listar todas las localizaciones activas
      */
-    public List<Localizacion> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<Localizacion> findAllActiveLocations() {
+        return find("active = true").list();
     }
 
     /**

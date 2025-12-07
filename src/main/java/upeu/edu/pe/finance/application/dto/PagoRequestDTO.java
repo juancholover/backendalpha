@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 
 public class PagoRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotNull(message = "El ID del estudiante es obligatorio")
     private Long estudianteId;
 
@@ -47,14 +44,6 @@ public class PagoRequestDTO {
     }
 
     // Getters and Setters
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
     public Long getEstudianteId() {
         return estudianteId;
     }

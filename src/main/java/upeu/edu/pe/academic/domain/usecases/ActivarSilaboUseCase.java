@@ -42,8 +42,7 @@ public class ActivarSilaboUseCase {
         
         // Buscar otros sílabos VIGENTES del mismo curso
         List<Silabo> silabosVigentes = silaboRepository.findVigenteByCurso(
-            silabo.getCurso().getId(),
-            silabo.getUniversidad().getId()
+            silabo.getCurso().getId()
         );
         
         // Marcar como obsoletos

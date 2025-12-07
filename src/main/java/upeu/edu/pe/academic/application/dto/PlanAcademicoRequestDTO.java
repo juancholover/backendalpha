@@ -7,9 +7,6 @@ import java.time.LocalDate;
 @Data
 public class PlanAcademicoRequestDTO {
 
-    @NotNull(message = "La universidad es requerida")
-    private Long universidadId;
-
     @NotNull(message = "El programa académico es requerido")
     private Long programaAcademicoId;
 

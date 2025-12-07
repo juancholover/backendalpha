@@ -21,9 +21,6 @@ public class HorarioService {
     HorarioRepository horarioRepository;
 
     @Inject
-    UniversidadRepository universidadRepository;
-
-    @Inject
     CursoOfertadoRepository cursoOfertadoRepository;
 
     @Inject
@@ -36,7 +33,7 @@ public class HorarioService {
      * Busca todos los horarios de una universidad
      */
     public List<HorarioResponseDTO> findByUniversidad(Long universidadId) {
-        return horarioRepository.findByUniversidad(universidadId)
+        return horarioRepository.findAllActive()
                 .stream()
                 .map(horarioMapper::toResponseDTO)
                 .toList();
@@ -85,7 +82,7 @@ public class HorarioService {
      * Busca horarios por día de la semana
      */
     public List<HorarioResponseDTO> findByDiaSemana(Integer diaSemana, Long universidadId) {
-        return horarioRepository.findByDiaSemanaAndUniversidad(diaSemana, universidadId)
+        return horarioRepository.findByDiaSemana(diaSemana)
                 .stream()
                 .map(horarioMapper::toResponseDTO)
                 .toList();
@@ -106,18 +103,9 @@ public class HorarioService {
      */
     @Transactional
     public HorarioResponseDTO create(@Valid HorarioRequestDTO dto) {
-        // Validar universidad
-        Universidad universidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada"));
-
         // Validar curso ofertado
         CursoOfertado cursoOfertado = cursoOfertadoRepository.findByIdOptional(dto.getCursoOfertadoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso ofertado no encontrado"));
-
-        // Validar que el curso pertenece a la universidad
-        if (!cursoOfertado.getUniversidad().getId().equals(dto.getUniversidadId())) {
-            throw new BusinessException("El curso ofertado no pertenece a la universidad especificada");
-        }
 
         // Validar horas
         if (!dto.getHoraInicio().isBefore(dto.getHoraFin())) {
@@ -167,7 +155,6 @@ public class HorarioService {
 
         // Crear entidad
         Horario horario = horarioMapper.toEntity(dto);
-        horario.setUniversidad(universidad);
         horario.setCursoOfertado(cursoOfertado);
 
         if (dto.getLocalizacionId() != null) {

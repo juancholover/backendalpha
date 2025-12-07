@@ -81,16 +81,16 @@ public class EstudianteRepository implements PanacheRepositoryBase<Estudiante, L
     }
 
     /**
-     * Verificar si una persona ya es estudiante en una universidad específica
+     * Verificar si una persona ya es estudiante
      */
-    public boolean existsByPersonaAndUniversidad(Long personaId, Long universidadId) {
-        return count("persona.id = ?1 and universidad.id = ?2 and active = true", personaId, universidadId) > 0;
+    public boolean existsByPersonaId(Long personaId) {
+        return count("persona.id = ?1 and active = true", personaId) > 0;
     }
 
     /**
-     * Contar estudiantes activos por universidad
+     * Contar estudiantes activos totales
      */
-    public long countByUniversidad(Long universidadId) {
-        return count("universidad.id = ?1 and active = true", universidadId);
+    public long countAllActive() {
+        return count("active = true");
     }
 }

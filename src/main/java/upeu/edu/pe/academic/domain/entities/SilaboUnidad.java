@@ -57,9 +57,7 @@ public class SilaboUnidad extends AuditableEntity {
     @OneToMany(mappedBy = "unidad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SilaboActividad> actividades = new ArrayList<>();
 
-    /**
-     * Constructor para crear unidad con datos básicos
-     */
+    
     public SilaboUnidad(Silabo silabo, Integer numeroUnidad, String titulo, 
                         Integer semanaInicio, Integer semanaFin) {
         this.silabo = silabo;
@@ -69,7 +67,6 @@ public class SilaboUnidad extends AuditableEntity {
         this.semanaFin = semanaFin;
     }
 
-    // Métodos de negocio
 
     /**
      * Calcula la duración de la unidad en semanas

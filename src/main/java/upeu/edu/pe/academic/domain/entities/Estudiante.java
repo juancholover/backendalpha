@@ -33,10 +33,6 @@ public class Estudiante extends AuditableEntity {
     private Persona persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; 
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "programa_id", nullable = false)
     private ProgramaAcademico programaAcademico;
 

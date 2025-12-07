@@ -25,10 +25,6 @@ public class Autoridad extends AuditableEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; 
-
     // Conectamos con la persona (que ya tiene nombre, foto, DNI)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "persona_id", nullable = false)
@@ -38,6 +34,16 @@ public class Autoridad extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_autoridad_id", nullable = false)
     private TipoAutoridad tipoAutoridad;
+
+    // Unidad organizativa (Facultad, Escuela) - NULL para autoridades universitarias (Rector)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unidad_organizativa_id")
+    private UnidadOrganizativa unidadOrganizativa;
+
+    // Programa académico - Para directores de programa
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "programa_academico_id")
+    private ProgramaAcademico programaAcademico;
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
@@ -49,11 +55,21 @@ public class Autoridad extends AuditableEntity {
     private Boolean esVigente; // TRUE si es la autoridad vigente para visualización rápida
     
 
-    public Autoridad(Universidad universidad, Persona persona, TipoAutoridad tipoAutoridad, 
+    public Autoridad(Persona persona, TipoAutoridad tipoAutoridad, 
                      LocalDate fechaInicio, Boolean esVigente) {
-        this.universidad = universidad;
         this.persona = persona;
         this.tipoAutoridad = tipoAutoridad;
+        this.fechaInicio = fechaInicio;
+        this.esVigente = esVigente;
+    }
+
+    public Autoridad(Persona persona, TipoAutoridad tipoAutoridad, 
+                     UnidadOrganizativa unidadOrganizativa, ProgramaAcademico programaAcademico,
+                     LocalDate fechaInicio, Boolean esVigente) {
+        this.persona = persona;
+        this.tipoAutoridad = tipoAutoridad;
+        this.unidadOrganizativa = unidadOrganizativa;
+        this.programaAcademico = programaAcademico;
         this.fechaInicio = fechaInicio;
         this.esVigente = esVigente;
     }

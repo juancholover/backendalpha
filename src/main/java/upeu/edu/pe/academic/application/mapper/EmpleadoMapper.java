@@ -19,7 +19,6 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
     Empleado toEntity(EmpleadoRequestDTO dto);
@@ -37,7 +36,6 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);

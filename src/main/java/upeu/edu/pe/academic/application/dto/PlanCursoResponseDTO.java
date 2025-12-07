@@ -8,10 +8,6 @@ public class PlanCursoResponseDTO {
 
     private Long id;
 
-    // Información de la universidad
-    private Long universidadId;
-    private String universidadNombre;
-
     // Información del plan académico
     private Long planAcademicoId;
     private String planAcademicoCodigo;

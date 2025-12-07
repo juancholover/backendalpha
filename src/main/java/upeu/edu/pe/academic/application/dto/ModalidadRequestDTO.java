@@ -6,9 +6,6 @@ import lombok.Data;
 @Data
 public class ModalidadRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotBlank(message = "El código de la modalidad es obligatorio")
     @Size(max = 20, message = "El código no puede exceder 20 caracteres")
     @Pattern(regexp = "PRES|VIRT|SEMI|HIBR|[A-Z]{3,5}", message = "Código debe ser mayúsculas (ej: PRES, VIRT, SEMI, HIBR)")

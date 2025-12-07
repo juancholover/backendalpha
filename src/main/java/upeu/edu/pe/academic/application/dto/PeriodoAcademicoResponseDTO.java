@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 public class PeriodoAcademicoResponseDTO {
 
     private Long id;
-    private Long universidadId;
-    private String universidadNombre;
     private String codigoPeriodo;
     private String nombre;
     private Integer anio;
@@ -39,22 +37,6 @@ public class PeriodoAcademicoResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
-    public String getUniversidadNombre() {
-        return universidadNombre;
-    }
-
-    public void setUniversidadNombre(String universidadNombre) {
-        this.universidadNombre = universidadNombre;
     }
 
     public String getCodigoPeriodo() {

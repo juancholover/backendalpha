@@ -11,54 +11,52 @@ import java.util.Optional;
 public class ModalidadRepository implements PanacheRepositoryBase<Modalidad, Long> {
 
     /**
-     * Busca una modalidad por su código en una universidad
+     * Busca una modalidad por su código
      */
-    public Optional<Modalidad> findByCodigo(String codigo, Long universidadId) {
-        return find("codigo = ?1 and universidad.id = ?2 and active = true", 
-                    codigo, universidadId)
+    public Optional<Modalidad> findByCodigo(String codigo) {
+        return find("codigo = ?1 and active = true", 
+                    codigo)
                 .firstResultOptional();
     }
 
     /**
-     * Obtiene todas las modalidades activas de una universidad
+     * Obtiene todas las modalidades activas
      */
-    public List<Modalidad> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId)
+    public List<Modalidad> findAllActive() {
+        return find("active = true")
                 .list();
     }
 
     /**
-     * Verifica si existe una modalidad con el código dado en la universidad
+     * Verifica si existe una modalidad con el código dado
      */
-    public boolean existsByCodigo(String codigo, Long universidadId) {
-        return count("codigo = ?1 and universidad.id = ?2 and active = true", 
-                     codigo, universidadId) > 0;
+    public boolean existsByCodigo(String codigo) {
+        return count("codigo = ?1 and active = true", 
+                     codigo) > 0;
     }
 
     /**
      * Busca modalidades por nombre (búsqueda parcial)
      */
-    public List<Modalidad> findByNombreLike(String nombre, Long universidadId) {
-        return find("lower(nombre) like ?1 and universidad.id = ?2 and active = true", 
-                    "%" + nombre.toLowerCase() + "%", universidadId)
+    public List<Modalidad> findByNombreLike(String nombre) {
+        return find("lower(nombre) like ?1 and active = true", 
+                    "%" + nombre.toLowerCase() + "%")
                 .list();
     }
 
     /**
      * Obtiene modalidades que requieren aula física
      */
-    public List<Modalidad> findRequiereAula(Long universidadId) {
-        return find("requiereAula = true and universidad.id = ?1 and active = true", 
-                    universidadId)
+    public List<Modalidad> findRequiereAula() {
+        return find("requiereAula = true and active = true")
                 .list();
     }
 
     /**
      * Obtiene modalidades que requieren plataforma digital
      */
-    public List<Modalidad> findRequierePlataforma(Long universidadId) {
-        return find("requierePlataforma = true and universidad.id = ?1 and active = true", 
-                    universidadId)
+    public List<Modalidad> findRequierePlataforma() {
+        return find("requierePlataforma = true and active = true")
                 .list();
     }
 }

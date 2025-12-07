@@ -13,7 +13,6 @@ public class SilaboResponseDTO {
     private Long cursoId;
     private String cursoNombre;
     private String cursoCodigo;
-    private Long universidadId;
     private String anioAcademico;
     private Integer version;
     private String estado;

@@ -27,14 +27,7 @@ public class ActualizarModalidadUseCase {
                     "Modalidad no encontrada con ID: " + command.id()
                 ));
         
-        // Si el código cambió, validar que no esté duplicado
-        if (!modalidad.getCodigo().equals(command.codigo())) {
-            if (modalidadRepository.existsByCodigo(command.codigo(), modalidad.getUniversidad().getId())) {
-                throw new IllegalArgumentException(
-                    "Ya existe una modalidad con el código: " + command.codigo()
-                );
-            }
-        }
+
         
         // Actualizar campos
         modalidad.setCodigo(command.codigo());

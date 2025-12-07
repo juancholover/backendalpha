@@ -17,7 +17,6 @@ public interface CursoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     Curso toEntity(CursoRequestDTO dto);
 
     @Mapping(target = "id", ignore = true)
@@ -26,10 +25,7 @@ public interface CursoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     void updateEntityFromDto(CursoRequestDTO dto, @MappingTarget Curso entity);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     CursoResponseDTO toResponseDTO(Curso entity);
 }

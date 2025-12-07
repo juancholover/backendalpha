@@ -24,10 +24,6 @@ public class TipoAutoridad extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; 
-
     @Column(name = "nombre", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre; // Ej: "Rector", "Decano", "Director General"

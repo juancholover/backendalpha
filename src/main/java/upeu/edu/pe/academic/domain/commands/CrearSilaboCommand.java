@@ -5,7 +5,6 @@ package upeu.edu.pe.academic.domain.commands;
  */
 public record CrearSilaboCommand(
     Long cursoId,
-    Long universidadId,
     String anioAcademico,
     String competencias,
     String sumilla,

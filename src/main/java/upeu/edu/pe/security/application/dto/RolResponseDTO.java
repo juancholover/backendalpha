@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 public class RolResponseDTO {
 
     private Long id;
-    private Long universidadId;
-    private String universidadNombre;
     private String nombre;
     private String descripcion;
     private Boolean esSistema;
@@ -29,22 +27,6 @@ public class RolResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
-    public String getUniversidadNombre() {
-        return universidadNombre;
-    }
-
-    public void setUniversidadNombre(String universidadNombre) {
-        this.universidadNombre = universidadNombre;
     }
 
     public String getNombre() {

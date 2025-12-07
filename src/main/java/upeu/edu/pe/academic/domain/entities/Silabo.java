@@ -38,10 +38,6 @@ public class Silabo extends AuditableEntity {
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "anio_academico", nullable = false, length = 10)
     private String anioAcademico; // 2025, 2026
 
@@ -84,19 +80,15 @@ public class Silabo extends AuditableEntity {
     @OneToMany(mappedBy = "silabo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SilaboHistorial> historial = new ArrayList<>();
 
-    /**
-     * Constructor para crear sílabo nuevo
-     */
-    public Silabo(Universidad universidad, Curso curso, String anioAcademico) {
-        this.universidad = universidad;
+  
+    public Silabo(Curso curso, String anioAcademico) {
         this.curso = curso;
         this.anioAcademico = anioAcademico;
         this.version = 1;
         this.estado = "BORRADOR";
     }
 
-    // Métodos de negocio
-
+  
     /**
      * Verifica si el sílabo está aprobado
      */

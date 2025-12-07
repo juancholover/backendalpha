@@ -17,7 +17,6 @@ public interface ModalidadMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     Modalidad toEntity(ModalidadRequestDTO dto);
 
     /**
@@ -29,12 +28,10 @@ public interface ModalidadMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     void updateEntityFromDto(ModalidadRequestDTO dto, @MappingTarget Modalidad entity);
 
     /**
      * Convierte Modalidad a ModalidadResponseDTO
      */
-    @Mapping(target = "universidadId", source = "universidad.id")
     ModalidadResponseDTO toResponseDTO(Modalidad entity);
 }

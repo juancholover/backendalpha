@@ -9,11 +9,9 @@ import upeu.edu.pe.academic.application.mapper.PlanCursoMapper;
 import upeu.edu.pe.academic.domain.entities.Curso;
 import upeu.edu.pe.academic.domain.entities.PlanAcademico;
 import upeu.edu.pe.academic.domain.entities.PlanCurso;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.CursoRepository;
 import upeu.edu.pe.academic.domain.repositories.PlanAcademicoRepository;
 import upeu.edu.pe.academic.domain.repositories.PlanCursoRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
 import upeu.edu.pe.shared.exceptions.BusinessException;
 
@@ -27,9 +25,6 @@ public class PlanCursoService {
 
     @Inject
     PlanCursoMapper planCursoMapper;
-
-    @Inject
-    UniversidadRepository universidadRepository;
 
     @Inject
     PlanAcademicoRepository planAcademicoRepository;
@@ -99,9 +94,6 @@ public class PlanCursoService {
         }
 
         // Cargar entidades relacionadas
-        Universidad universidad = universidadRepository.findByIdOptional(requestDTO.getUniversidadId())
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", requestDTO.getUniversidadId()));
-
         PlanAcademico planAcademico = planAcademicoRepository.findByIdOptional(requestDTO.getPlanAcademicoId())
                 .filter(PlanAcademico::getActive)
                 .orElseThrow(() -> new ResourceNotFoundException("PlanAcademico", "id", requestDTO.getPlanAcademicoId()));
@@ -112,7 +104,6 @@ public class PlanCursoService {
 
         // Crear entidad
         PlanCurso planCurso = planCursoMapper.toEntity(requestDTO);
-        planCurso.setUniversidad(universidad);
         planCurso.setPlanAcademico(planAcademico);
         planCurso.setCurso(curso);
 

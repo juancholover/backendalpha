@@ -9,7 +9,6 @@ import upeu.edu.pe.academic.domain.entities.Autoridad;
 @Mapper(componentModel = "cdi")
 public interface AutoridadMapper {
 
-    @Mapping(target = "universidadId", source = "universidad.id")
     @Mapping(target = "personaId", source = "persona.id")
     @Mapping(target = "personaNombre", expression = "java(getPersonaNombreCompleto(entity))")
     @Mapping(target = "personaFotoUrl", source = "persona.fotoUrl")
@@ -19,7 +18,6 @@ public interface AutoridadMapper {
     AutoridadDTO toDTO(Autoridad entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "tipoAutoridad", ignore = true)
     @Mapping(target = "esVigente", ignore = true)
@@ -32,7 +30,6 @@ public interface AutoridadMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "tipoAutoridad", ignore = true)
     @Mapping(target = "active", ignore = true)

@@ -10,9 +10,6 @@ import java.time.LocalDate;
 @Data
 public class AsistenciaAlumnoRequestDTO {
     
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-    
     @NotNull(message = "El ID del estudiante es obligatorio")
     private Long estudianteId;
     

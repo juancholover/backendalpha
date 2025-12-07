@@ -25,10 +25,6 @@ public class Curso extends AuditableEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "codigo_curso", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigoCurso;
@@ -58,8 +54,7 @@ public class Curso extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String areaCurricular; // FORMACION_GENERAL, FORMACION_PROFESIONAL, ESPECIALIDAD
 
-    public Curso(Universidad universidad, String codigoCurso, String nombre) {
-        this.universidad = universidad;
+    public Curso(String codigoCurso, String nombre) {
         this.codigoCurso = codigoCurso;
         this.nombre = nombre;
     }

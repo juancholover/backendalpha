@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 @Data
 public class ModalidadResponseDTO {
     private Long id;
-    private Long universidadId;
     private String codigo;
     private String nombre;
     private String descripcion;

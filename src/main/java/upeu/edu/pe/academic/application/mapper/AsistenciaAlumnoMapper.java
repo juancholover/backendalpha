@@ -11,13 +11,11 @@ import java.util.List;
 public interface AsistenciaAlumnoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad.id", source = "universidadId")
     @Mapping(target = "estudiante.id", source = "estudianteId")
     @Mapping(target = "horario.id", source = "horarioId")
     @Mapping(target = "active", constant = "true")
     AsistenciaAlumno toEntity(AsistenciaAlumnoRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
     @Mapping(target = "estudianteId", source = "estudiante.id")
     @Mapping(target = "estudianteNombre", expression = "java(getNombreEstudiante(entity))")
     @Mapping(target = "estudianteCodigo", source = "estudiante.codigoEstudiante")
@@ -35,7 +33,6 @@ public interface AsistenciaAlumnoMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad.id", source = "universidadId")
     @Mapping(target = "estudiante.id", source = "estudianteId")
     @Mapping(target = "horario.id", source = "horarioId")
     void updateEntityFromDTO(AsistenciaAlumnoRequestDTO dto, @MappingTarget AsistenciaAlumno entity);

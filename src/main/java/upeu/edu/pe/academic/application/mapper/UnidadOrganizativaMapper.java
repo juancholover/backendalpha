@@ -11,15 +11,12 @@ import java.util.List;
 public interface UnidadOrganizativaMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad.id", source = "universidadId")
     @Mapping(target = "localizacion.id", source = "localizacionId")
     @Mapping(target = "tipoUnidad.id", source = "tipoUnidadId")
     @Mapping(target = "unidadPadre.id", source = "unidadPadreId")
     @Mapping(target = "active", constant = "true")
     UnidadOrganizativa toEntity(UnidadOrganizativaRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "localizacionId", source = "localizacion.id")
     @Mapping(target = "localizacionNombre", source = "localizacion.nombre")
     @Mapping(target = "tipoUnidadId", source = "tipoUnidad.id")
@@ -33,7 +30,6 @@ public interface UnidadOrganizativaMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad.id", source = "universidadId")
     @Mapping(target = "localizacion.id", source = "localizacionId")
     @Mapping(target = "tipoUnidad.id", source = "tipoUnidadId")
     @Mapping(target = "unidadPadre.id", source = "unidadPadreId")

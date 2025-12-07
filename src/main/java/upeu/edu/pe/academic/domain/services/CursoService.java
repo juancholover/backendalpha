@@ -8,9 +8,7 @@ import upeu.edu.pe.academic.application.dto.CursoRequestDTO;
 import upeu.edu.pe.academic.application.dto.CursoResponseDTO;
 import upeu.edu.pe.academic.application.mapper.CursoMapper;
 import upeu.edu.pe.academic.domain.entities.Curso;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.CursoRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 import upeu.edu.pe.shared.exceptions.BusinessRuleException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
@@ -23,9 +21,6 @@ public class CursoService {
 
     @Inject
     CursoRepository cursoRepository;
-
-    @Inject
-    UniversidadRepository universidadRepository;
 
     @Inject
     CursoMapper cursoMapper;
@@ -66,7 +61,7 @@ public class CursoService {
      * NOTA: Para buscar cursos por plan académico, usar PlanCursoService.findByPlanAcademico()
      */
     public List<CursoResponseDTO> findByUniversidad(Long universidadId) {
-        return cursoRepository.findByUniversidad(universidadId)
+        return cursoRepository.findAllActiveCursos()
                 .stream()
                 .map(cursoMapper::toResponseDTO)
                 .collect(Collectors.toList());
@@ -77,11 +72,6 @@ public class CursoService {
      */
     @Transactional
     public CursoResponseDTO create(@Valid CursoRequestDTO dto) {
-        // Validar que exista la universidad
-        Universidad universidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
-                .filter(u -> u.getActive())
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", dto.getUniversidadId()));
-
         // Validar que no exista el código del curso
         if (cursoRepository.existsByCodigoCurso(dto.getCodigoCurso())) {
             throw new DuplicateResourceException("Curso", "codigoCurso", dto.getCodigoCurso());
@@ -103,7 +93,6 @@ public class CursoService {
 
         // Crear la entidad curso
         Curso curso = cursoMapper.toEntity(dto);
-        curso.setUniversidad(universidad);
 
         // Establecer valores por defecto
         if (curso.getTipoCurso() == null) {
@@ -133,14 +122,6 @@ public class CursoService {
         Curso curso = cursoRepository.findByIdOptional(id)
                 .filter(c -> c.getActive())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso", "id", id));
-
-        // Validar universidad si cambió
-        if (!curso.getUniversidad().getId().equals(dto.getUniversidadId())) {
-            Universidad nuevaUniversidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
-                    .filter(u -> u.getActive())
-                    .orElseThrow(() -> new ResourceNotFoundException("Universidad", "id", dto.getUniversidadId()));
-            curso.setUniversidad(nuevaUniversidad);
-        }
 
         // NOTA: Los créditos, ciclo y tipo del curso se definen en PlanCurso (no aquí)
 

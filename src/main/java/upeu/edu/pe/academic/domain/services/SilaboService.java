@@ -65,7 +65,6 @@ public class SilaboService {
      
         CrearSilaboCommand command = new CrearSilaboCommand(
             dto.getCursoId(),
-            dto.getUniversidadId(),
             dto.getAnioAcademico(),
             dto.getCompetencias(),
             dto.getSumilla(),

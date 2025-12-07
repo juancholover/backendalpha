@@ -8,9 +8,6 @@ import lombok.Data;
 @Data
 public class UnidadOrganizativaRequestDTO {
     
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-    
     private Long localizacionId; // Opcional: ubicación física de la unidad
     
     @NotNull(message = "El tipo de unidad es obligatorio")

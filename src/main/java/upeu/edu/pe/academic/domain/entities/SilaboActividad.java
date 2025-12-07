@@ -59,9 +59,7 @@ public class SilaboActividad extends AuditableEntity {
     @Column(name = "criterios_evaluacion", columnDefinition = "TEXT")
     private String criteriosEvaluacion; // Criterios detallados de evaluación
 
-    /**
-     * Constructor para crear actividad con datos básicos
-     */
+   
     public SilaboActividad(SilaboUnidad unidad, String tipo, String nombre, Integer semanaProgramada) {
         this.unidad = unidad;
         this.tipo = tipo;

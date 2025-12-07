@@ -27,10 +27,6 @@ public class Persona extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "nombres", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombres;

@@ -8,7 +8,6 @@ import java.time.LocalTime;
 public class AsistenciaAlumnoResponseDTO {
     
     private Long id;
-    private Long universidadId;
     
     private Long estudianteId;
     private String estudianteNombre; // Denormalizado

@@ -32,10 +32,10 @@ public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario,
     }
 
     /**
-     * Listar usuarios por universidad
+     * Listar todos los usuarios activos
      */
-    public List<AuthUsuario> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<AuthUsuario> findAllActiveUsers() {
+        return find("active = true").list();
     }
 
     /**

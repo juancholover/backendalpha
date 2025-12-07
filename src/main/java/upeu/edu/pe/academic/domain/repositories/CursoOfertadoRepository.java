@@ -11,11 +11,10 @@ import java.util.Optional;
 public class CursoOfertadoRepository implements PanacheRepository<CursoOfertado> {
 
     /**
-     * Busca cursos ofertados por universidad
+     * Busca todos los cursos ofertados activos
      */
-    public List<CursoOfertado> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY codigoSeccion", 
-                   universidadId).list();
+    public List<CursoOfertado> findAllActive() {
+        return find("active = true ORDER BY codigoSeccion").list();
     }
 
     /**
@@ -61,17 +60,17 @@ public class CursoOfertadoRepository implements PanacheRepository<CursoOfertado>
     /**
      * Busca un curso ofertado específico
      */
-    public Optional<CursoOfertado> findByCodigoAndPeriodoAndUniversidad(String codigoSeccion, Long periodoId, Long universidadId) {
-        return find("UPPER(codigoSeccion) = UPPER(?1) and periodoAcademico.id = ?2 and universidad.id = ?3 and active = true", 
-                   codigoSeccion, periodoId, universidadId).firstResultOptional();
+    public Optional<CursoOfertado> findByCodigoAndPeriodo(String codigoSeccion, Long periodoId) {
+        return find("UPPER(codigoSeccion) = UPPER(?1) and periodoAcademico.id = ?2 and active = true", 
+                   codigoSeccion, periodoId).firstResultOptional();
     }
 
     /**
      * Busca cursos ofertados abiertos (disponibles para matrícula)
      */
-    public List<CursoOfertado> findAbiertasByPeriodoAndUniversidad(Long periodoId, Long universidadId) {
-        return find("periodoAcademico.id = ?1 and universidad.id = ?2 and UPPER(estado) = 'ABIERTA' and vacantesDisponibles > 0 and active = true", 
-                   periodoId, universidadId).list();
+    public List<CursoOfertado> findAbiertasByPeriodo(Long periodoId) {
+        return find("periodoAcademico.id = ?1 and UPPER(estado) = 'ABIERTA' and vacantesDisponibles > 0 and active = true", 
+                   periodoId).list();
     }
 
     /**

@@ -6,8 +6,6 @@ import lombok.Data;
 public class UnidadOrganizativaResponseDTO {
     
     private Long id;
-    private Long universidadId;
-    private String universidadNombre; // Denormalizado
     
     private Long localizacionId;
     private String localizacionNombre; // Denormalizado

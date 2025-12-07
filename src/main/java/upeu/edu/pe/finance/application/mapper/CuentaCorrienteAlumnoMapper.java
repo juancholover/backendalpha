@@ -17,7 +17,6 @@ import java.util.List;
 public interface CuentaCorrienteAlumnoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "periodoAcademico", ignore = true)
     @Mapping(target = "numeroCuota", ignore = true)
@@ -32,8 +31,6 @@ public interface CuentaCorrienteAlumnoMapper {
     @Mapping(target = "active", ignore = true)
     CuentaCorrienteAlumno toEntity(CuentaCorrienteAlumnoRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "estudianteId", source = "estudiante.id")
     @Mapping(target = "estudianteNombre", expression = "java(getNombreEstudiante(entity))")
     @Mapping(target = "estudianteCodigo", source = "estudiante.codigoEstudiante")
@@ -45,7 +42,6 @@ public interface CuentaCorrienteAlumnoMapper {
     List<CuentaCorrienteAlumnoResponseDTO> toResponseDTOList(List<CuentaCorrienteAlumno> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "periodoAcademico", ignore = true)
     @Mapping(target = "numeroCuota", ignore = true)

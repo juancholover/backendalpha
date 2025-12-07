@@ -17,7 +17,6 @@ import java.util.List;
 public interface EvaluacionCriterioMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -27,8 +26,6 @@ public interface EvaluacionCriterioMapper {
     @Mapping(target = "active", ignore = true)
     EvaluacionCriterio toEntity(EvaluacionCriterioRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "seccionId", source = "cursoOfertado.id")
     @Mapping(target = "seccionCodigo", source = "cursoOfertado.codigoSeccion")
     @Mapping(target = "cursoNombre", ignore = true)
@@ -39,7 +36,6 @@ public interface EvaluacionCriterioMapper {
     List<EvaluacionCriterioResponseDTO> toResponseDTOList(List<EvaluacionCriterio> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

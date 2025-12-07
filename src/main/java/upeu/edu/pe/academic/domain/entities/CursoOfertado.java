@@ -29,10 +29,6 @@ public class CursoOfertado extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_curso_id", nullable = false)
     private PlanCurso planCurso; // La relación curso-plan que se está ofertando (incluye créditos, ciclo, tipo)
 
@@ -80,10 +76,9 @@ public class CursoOfertado extends AuditableEntity {
     private Set<EvaluacionCriterio> evaluacionCriterios = new HashSet<>();
 
 
-    public CursoOfertado(Universidad universidad, PlanCurso planCurso, 
+    public CursoOfertado(PlanCurso planCurso, 
                   PeriodoAcademico periodoAcademico, String codigoSeccion, 
                   Integer capacidadMaxima, Modalidad modalidad) {
-        this.universidad = universidad;
         this.planCurso = planCurso;
         this.periodoAcademico = periodoAcademico;
         this.codigoSeccion = codigoSeccion;

@@ -9,9 +9,6 @@ import java.time.LocalDate;
 
 public class CuentaCorrienteAlumnoRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotNull(message = "El ID del estudiante es obligatorio")
     private Long estudianteId;
 
@@ -44,14 +41,6 @@ public class CuentaCorrienteAlumnoRequestDTO {
     }
 
     // Getters and Setters
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
     public Long getEstudianteId() {
         return estudianteId;
     }

@@ -9,10 +9,6 @@ public class HorarioResponseDTO {
 
     private Long id;
     
-    // Universidad
-    private Long universidadId;
-    private String universidadNombre;
-    
     // Curso Ofertado
     private Long cursoOfertadoId;
     private String cursoOfertadoCodigoSeccion;

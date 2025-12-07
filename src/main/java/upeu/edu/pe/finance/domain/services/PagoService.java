@@ -25,7 +25,7 @@ public class PagoService {
     PagoMapper pagoMapper;
 
     public List<PagoResponseDTO> findByUniversidad(Long universidadId) {
-        List<Pago> pagos = pagoRepository.findByUniversidad(universidadId);
+        List<Pago> pagos = pagoRepository.findAllActivePagos();
         return pagoMapper.toResponseDTOList(pagos);
     }
 
@@ -35,7 +35,7 @@ public class PagoService {
     }
 
     public PagoResponseDTO findByNumeroRecibo(String numeroRecibo, Long universidadId) {
-        Pago pago = pagoRepository.findByNumeroRecibo(numeroRecibo, universidadId)
+        Pago pago = pagoRepository.findByNumeroRecibo(numeroRecibo)
                 .orElseThrow(() -> new NotFoundException("Pago no encontrado con número de recibo: " + numeroRecibo));
         return pagoMapper.toResponseDTO(pago);
     }
@@ -78,7 +78,7 @@ public class PagoService {
     @Transactional
     public PagoResponseDTO create(PagoRequestDTO requestDTO) {
         // Validar número de recibo único
-        if (pagoRepository.existsByNumeroRecibo(requestDTO.getNumeroRecibo(), requestDTO.getUniversidadId())) {
+        if (pagoRepository.existsByNumeroRecibo(requestDTO.getNumeroRecibo())) {
             throw new BusinessException("Ya existe un pago con el número de recibo: " + requestDTO.getNumeroRecibo());
         }
 
@@ -88,9 +88,6 @@ public class PagoService {
         }
 
         Pago pago = pagoMapper.toEntity(requestDTO);
-        upeu.edu.pe.academic.domain.entities.Universidad universidad = new upeu.edu.pe.academic.domain.entities.Universidad();
-        universidad.setId(requestDTO.getUniversidadId());
-        pago.setUniversidad(universidad);
         
         upeu.edu.pe.academic.domain.entities.Estudiante estudiante = new upeu.edu.pe.academic.domain.entities.Estudiante();
         estudiante.setId(requestDTO.getEstudianteId());
@@ -119,7 +116,7 @@ public class PagoService {
         }
 
         // Validar número de recibo único
-        pagoRepository.findByNumeroRecibo(requestDTO.getNumeroRecibo(), requestDTO.getUniversidadId())
+        pagoRepository.findByNumeroRecibo(requestDTO.getNumeroRecibo())
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new BusinessException("Ya existe un pago con el número de recibo: " + requestDTO.getNumeroRecibo());
@@ -181,6 +178,6 @@ public class PagoService {
     }
 
     public long countByEstadoAndUniversidad(String estado, Long universidadId) {
-        return pagoRepository.countByEstadoAndUniversidad(estado, universidadId);
+        return pagoRepository.countByEstadoActive(estado);
     }
 }

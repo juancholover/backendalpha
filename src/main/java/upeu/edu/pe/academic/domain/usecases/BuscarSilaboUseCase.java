@@ -37,62 +37,62 @@ public class BuscarSilaboUseCase {
      * Buscar sílabo vigente de un curso
      */
     public List<Silabo> findVigenteByCurso(Long cursoId, Long universidadId) {
-        return silaboRepository.findVigenteByCurso(cursoId, universidadId);
+        return silaboRepository.findVigenteByCurso(cursoId);
     }
     
     /**
      * Buscar todos los sílabos de un curso (todas las versiones)
      */
     public List<Silabo> findByCurso(Long cursoId, Long universidadId) {
-        return silaboRepository.findByCurso(cursoId, universidadId);
+        return silaboRepository.findByCurso(cursoId);
     }
     
     /**
      * Buscar sílabos de un curso en un año específico
      */
     public Optional<Silabo> findByCursoAndAnio(Long cursoId, String anioAcademico, Long universidadId) {
-        return silaboRepository.findByCursoAndAnio(cursoId, anioAcademico, universidadId);
+        return silaboRepository.findByCursoAndAnio(cursoId, anioAcademico);
     }
     
     /**
      * Buscar sílabos por año académico
      */
     public List<Silabo> findByAnioAcademico(String anioAcademico, Long universidadId) {
-        return silaboRepository.findByAnioAcademico(anioAcademico, universidadId);
+        return silaboRepository.findByAnioAcademico(anioAcademico);
     }
     
     /**
      * Buscar sílabos por estado
      */
     public List<Silabo> findByEstado(String estado, Long universidadId) {
-        return silaboRepository.findByEstado(estado, universidadId);
+        return silaboRepository.findByEstado(estado);
     }
     
     /**
      * Buscar sílabos pendientes de aprobación (EN_REVISION)
      */
     public List<Silabo> findPendientesAprobacion(Long universidadId) {
-        return silaboRepository.findPendientesAprobacion(universidadId);
+        return silaboRepository.findPendientesAprobacion();
     }
     
     /**
      * Buscar sílabos aprobados en un año
      */
     public List<Silabo> findAprobadosByAnio(String anioAcademico, Long universidadId) {
-        return silaboRepository.findAprobadosByAnio(anioAcademico, universidadId);
+        return silaboRepository.findAprobadosByAnio(anioAcademico);
     }
     
     /**
      * Buscar última versión de sílabo de un curso
      */
     public Optional<Silabo> findUltimaVersion(Long cursoId, Long universidadId) {
-        return silaboRepository.findUltimaVersion(cursoId, universidadId);
+        return silaboRepository.findUltimaVersion(cursoId);
     }
     
     /**
      * Contar sílabos por estado
      */
     public long countByEstado(String estado, Long universidadId) {
-        return silaboRepository.countByEstado(estado, universidadId);
+        return silaboRepository.countByEstado(estado);
     }
 }

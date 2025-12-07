@@ -28,10 +28,6 @@ public class UnidadOrganizativa extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localizacion_id")
     private Localizacion localizacion;
 

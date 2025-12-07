@@ -7,10 +7,8 @@ import upeu.edu.pe.academic.domain.commands.CrearSilaboCommand;
 import upeu.edu.pe.academic.domain.entities.Curso;
 import upeu.edu.pe.academic.domain.entities.Silabo;
 import upeu.edu.pe.academic.domain.entities.SilaboHistorial;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.repositories.CursoRepository;
 import upeu.edu.pe.academic.domain.repositories.SilaboRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 
 /**
  * Caso de uso: Crear un nuevo sílabo para un curso
@@ -31,17 +29,8 @@ public class CrearSilaboUseCase {
     @Inject
     CursoRepository cursoRepository;
     
-    @Inject
-    UniversidadRepository universidadRepository;
-    
     @Transactional
     public Silabo execute(CrearSilaboCommand command, String usuarioCreador) {
-        // Validar que la universidad exista
-        Universidad universidad = universidadRepository.findByIdOptional(command.universidadId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                    "Universidad no encontrada con ID: " + command.universidadId()
-                ));
-        
         // Validar que el curso exista
         Curso curso = cursoRepository.findByIdOptional(command.cursoId())
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -49,14 +38,16 @@ public class CrearSilaboUseCase {
                 ));
         
         // Validar que no exista ya un sílabo para ese curso/año
-        if (silaboRepository.existsByCursoAndAnio(command.cursoId(), command.anioAcademico(), command.universidadId())) {
+        if (silaboRepository.existsByCursoAndAnio(command.cursoId(), command.anioAcademico())) {
             throw new IllegalArgumentException(
                 "Ya existe un sílabo para el curso " + curso.getNombre() + " del año " + command.anioAcademico()
             );
         }
         
         // Crear el sílabo
-        Silabo silabo = new Silabo(universidad, curso, command.anioAcademico());
+        Silabo silabo = new Silabo();
+        silabo.setCurso(curso);
+        silabo.setAnioAcademico(command.anioAcademico());
         silabo.setCompetencias(command.competencias());
         silabo.setSumilla(command.sumilla());
         silabo.setBibliografia(command.bibliografia());

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateTipoAutoridadDTO {
-    private Long universidadId;
     private String nombre;
     private String codigo; // Código único para consultas (RECTOR, DECANO, etc.)
     private Integer nivelJerarquia;

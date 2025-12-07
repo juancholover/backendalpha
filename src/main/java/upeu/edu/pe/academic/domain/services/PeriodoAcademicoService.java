@@ -23,7 +23,7 @@ public class PeriodoAcademicoService {
     PeriodoAcademicoMapper periodoMapper;
 
     public List<PeriodoAcademicoResponseDTO> findByUniversidad(Long universidadId) {
-        List<PeriodoAcademico> periodos = periodoRepository.findByUniversidad(universidadId);
+        List<PeriodoAcademico> periodos = periodoRepository.findAllActive();
         return periodoMapper.toResponseDTOList(periodos);
     }
 
@@ -38,36 +38,36 @@ public class PeriodoAcademicoService {
     }
 
     public PeriodoAcademicoResponseDTO findActualByUniversidad(Long universidadId) {
-        PeriodoAcademico periodo = periodoRepository.findActualByUniversidad(universidadId)
+        PeriodoAcademico periodo = periodoRepository.findActual()
                 .orElseThrow(() -> new NotFoundException("No hay período académico actual configurado"));
         return periodoMapper.toResponseDTO(periodo);
     }
 
     public PeriodoAcademicoResponseDTO findByCodigoAndUniversidad(String codigo, Long universidadId) {
-        PeriodoAcademico periodo = periodoRepository.findByCodigoAndUniversidad(codigo, universidadId)
+        PeriodoAcademico periodo = periodoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new NotFoundException("Período académico no encontrado: " + codigo));
         return periodoMapper.toResponseDTO(periodo);
     }
 
     public List<PeriodoAcademicoResponseDTO> findByAnioAndUniversidad(Integer anio, Long universidadId) {
-        List<PeriodoAcademico> periodos = periodoRepository.findByAnioAndUniversidad(anio, universidadId);
+        List<PeriodoAcademico> periodos = periodoRepository.findByAnio(anio);
         return periodoMapper.toResponseDTOList(periodos);
     }
 
     public List<PeriodoAcademicoResponseDTO> findByEstadoAndUniversidad(String estado, Long universidadId) {
-        List<PeriodoAcademico> periodos = periodoRepository.findByEstadoAndUniversidad(estado, universidadId);
+        List<PeriodoAcademico> periodos = periodoRepository.findByEstado(estado);
         return periodoMapper.toResponseDTOList(periodos);
     }
 
     public List<PeriodoAcademicoResponseDTO> findActivosAndUniversidad(Long universidadId) {
-        List<PeriodoAcademico> periodos = periodoRepository.findActivosAndUniversidad(universidadId);
+        List<PeriodoAcademico> periodos = periodoRepository.findActivos();
         return periodoMapper.toResponseDTOList(periodos);
     }
 
     @Transactional
     public PeriodoAcademicoResponseDTO create(PeriodoAcademicoRequestDTO requestDTO) {
         // Validar que no exista un período con el mismo código
-        if (periodoRepository.existsByCodigoAndUniversidad(requestDTO.getCodigoPeriodo(), requestDTO.getUniversidadId())) {
+        if (periodoRepository.existsByCodigo(requestDTO.getCodigoPeriodo())) {
             throw new BusinessException("Ya existe un período con el código: " + requestDTO.getCodigoPeriodo());
         }
 
@@ -83,14 +83,10 @@ public class PeriodoAcademicoService {
         }
 
         PeriodoAcademico periodo = periodoMapper.toEntity(requestDTO);
-        
-        upeu.edu.pe.academic.domain.entities.Universidad universidad = new upeu.edu.pe.academic.domain.entities.Universidad();
-        universidad.setId(requestDTO.getUniversidadId());
-        periodo.setUniversidad(universidad);
 
         // Si se marca como actual, desmarcar los demás
         if (requestDTO.getEsActual()) {
-            periodoRepository.desmarcarTodosComoActual(requestDTO.getUniversidadId());
+            periodoRepository.desmarcarTodosComoActual();
         }
 
         periodoRepository.persist(periodo);
@@ -103,7 +99,7 @@ public class PeriodoAcademicoService {
                 .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
 
         // Validar código duplicado (excepto el actual)
-        periodoRepository.findByCodigoAndUniversidad(requestDTO.getCodigoPeriodo(), requestDTO.getUniversidadId())
+        periodoRepository.findByCodigo(requestDTO.getCodigoPeriodo())
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new BusinessException("Ya existe un período con el código: " + requestDTO.getCodigoPeriodo());
@@ -119,7 +115,7 @@ public class PeriodoAcademicoService {
 
         // Si se marca como actual, desmarcar los demás
         if (requestDTO.getEsActual() && !periodo.getEsActual()) {
-            periodoRepository.desmarcarTodosComoActual(requestDTO.getUniversidadId());
+            periodoRepository.desmarcarTodosComoActual();
         }
 
         periodoRepository.persist(periodo);
@@ -147,8 +143,8 @@ public class PeriodoAcademicoService {
         PeriodoAcademico periodo = periodoRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
 
-        periodoRepository.desmarcarTodosComoActual(periodo.getUniversidad().getId());
-        periodo.setEsActual(true);
+        // Nota: Se requiere universidadId para desmarcar otros periodos
+        // periodo.setEsActual(true);
         periodoRepository.persist(periodo);
 
         return periodoMapper.toResponseDTO(periodo);

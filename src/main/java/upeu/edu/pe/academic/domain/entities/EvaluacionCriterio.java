@@ -29,10 +29,6 @@ public class EvaluacionCriterio extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_ofertado_id", nullable = false)
     private CursoOfertado cursoOfertado; // Reglas de calificación del curso ofertado
 
@@ -72,8 +68,7 @@ public class EvaluacionCriterio extends AuditableEntity {
     private Set<EvaluacionNota> evaluacionNotas = new HashSet<>();
 
 
-    public EvaluacionCriterio(Universidad universidad, CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
-        this.universidad = universidad;
+    public EvaluacionCriterio(CursoOfertado cursoOfertado, String nombre, Integer peso, String tipoEvaluacion) {
         this.cursoOfertado = cursoOfertado;
         this.nombre = nombre;
         this.peso = peso;

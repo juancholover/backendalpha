@@ -36,7 +36,7 @@ public class BuscarModalidadUseCase {
      * Busca una modalidad por código en una universidad
      */
     public Modalidad findByCodigo(String codigo, Long universidadId) {
-        return modalidadRepository.findByCodigo(codigo, universidadId)
+        return modalidadRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new IllegalArgumentException(
                     "Modalidad no encontrada con código: " + codigo
                 ));
@@ -46,27 +46,27 @@ public class BuscarModalidadUseCase {
      * Lista todas las modalidades de una universidad
      */
     public List<Modalidad> findByUniversidad(Long universidadId) {
-        return modalidadRepository.findByUniversidad(universidadId);
+        return modalidadRepository.findAllActive();
     }
     
     /**
      * Lista modalidades que requieren aula física
      */
     public List<Modalidad> findRequiereAula(Long universidadId) {
-        return modalidadRepository.findRequiereAula(universidadId);
+        return modalidadRepository.findRequiereAula();
     }
     
     /**
      * Lista modalidades que requieren plataforma digital
      */
     public List<Modalidad> findRequierePlataforma(Long universidadId) {
-        return modalidadRepository.findRequierePlataforma(universidadId);
+        return modalidadRepository.findRequierePlataforma();
     }
     
     /**
      * Busca modalidades por nombre (búsqueda parcial)
      */
     public List<Modalidad> findByNombre(String nombre, Long universidadId) {
-        return modalidadRepository.findByNombreLike(nombre, universidadId);
+        return modalidadRepository.findByNombreLike(nombre);
     }
 }

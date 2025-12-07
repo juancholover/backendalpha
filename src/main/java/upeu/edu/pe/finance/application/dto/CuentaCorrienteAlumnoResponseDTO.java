@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 public class CuentaCorrienteAlumnoResponseDTO {
 
     private Long id;
-    private Long universidadId;
-    private String universidadNombre;
     private Long estudianteId;
     private String estudianteNombre;
     private String estudianteCodigo;
@@ -39,22 +37,6 @@ public class CuentaCorrienteAlumnoResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
-    public String getUniversidadNombre() {
-        return universidadNombre;
-    }
-
-    public void setUniversidadNombre(String universidadNombre) {
-        this.universidadNombre = universidadNombre;
     }
 
     public Long getEstudianteId() {

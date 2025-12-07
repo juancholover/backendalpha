@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import upeu.edu.pe.academic.domain.entities.Persona;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 
@@ -35,10 +34,6 @@ public class AuthUsuario extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
 
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;

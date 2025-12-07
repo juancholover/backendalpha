@@ -26,10 +26,6 @@ public class RequisitoCurso extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso; // Curso destino (ej: Cálculo II)
 
@@ -51,8 +47,7 @@ public class RequisitoCurso extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.SPACES_ONLY)
     private String observacion; // Ej: "Se puede llevar en paralelo con autorización"
 
-    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito) {
-        this.universidad = universidad;
+    public RequisitoCurso(Curso curso, Curso cursoRequisito, String tipoRequisito) {
         this.curso = curso;
         this.cursoRequisito = cursoRequisito;
         this.tipoRequisito = tipoRequisito;
@@ -60,9 +55,8 @@ public class RequisitoCurso extends AuditableEntity {
     }
 
     
-    public RequisitoCurso(Universidad universidad, Curso curso, Curso cursoRequisito, String tipoRequisito, 
+    public RequisitoCurso(Curso curso, Curso cursoRequisito, String tipoRequisito, 
                          Boolean esObligatorio, Integer notaMinimaRequerida) {
-        this.universidad = universidad;
         this.curso = curso;
         this.cursoRequisito = cursoRequisito;
         this.tipoRequisito = tipoRequisito;

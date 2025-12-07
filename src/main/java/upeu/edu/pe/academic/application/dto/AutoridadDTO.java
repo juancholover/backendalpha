@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class AutoridadDTO {
     private Long id;
-    private Long universidadId;
     private Long personaId;
     private String personaNombre; // Nombre completo para mostrar
     private String personaFotoUrl;

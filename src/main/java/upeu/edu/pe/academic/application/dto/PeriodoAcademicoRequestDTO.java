@@ -7,9 +7,6 @@ import java.time.LocalDate;
 
 public class PeriodoAcademicoRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotBlank(message = "El código del período es obligatorio")
     @Size(max = 20, message = "El código no puede exceder 20 caracteres")
     private String codigoPeriodo;
@@ -51,14 +48,6 @@ public class PeriodoAcademicoRequestDTO {
     }
 
     // Getters and Setters
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
     public String getCodigoPeriodo() {
         return codigoPeriodo;
     }

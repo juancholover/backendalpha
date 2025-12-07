@@ -11,18 +11,18 @@ import java.util.Optional;
 public class RolRepository implements PanacheRepository<Rol> {
 
     /**
-     * Busca roles por universidad
+     * Busca roles activos
      */
-    public List<Rol> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<Rol> findAllActive() {
+        return find("active = true").list();
     }
 
     /**
-     * Busca un rol por nombre y universidad
+     * Busca un rol por nombre
      */
-    public Optional<Rol> findByNombreAndUniversidad(String nombre, Long universidadId) {
-        return find("UPPER(nombre) = UPPER(?1) and universidad.id = ?2 and active = true", 
-                    nombre, universidadId).firstResultOptional();
+    public Optional<Rol> findByNombre(String nombre) {
+        return find("UPPER(nombre) = UPPER(?1) and active = true", 
+                    nombre).firstResultOptional();
     }
 
     /**
@@ -33,17 +33,17 @@ public class RolRepository implements PanacheRepository<Rol> {
     }
 
     /**
-     * Busca roles activos por universidad
+     * Busca roles activos
      */
-    public List<Rol> findActiveByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<Rol> findActive() {
+        return find("active = true").list();
     }
 
     /**
-     * Verifica si existe un rol con ese nombre en la universidad
+     * Verifica si existe un rol con ese nombre
      */
-    public boolean existsByNombreAndUniversidad(String nombre, Long universidadId) {
-        return count("UPPER(nombre) = UPPER(?1) and universidad.id = ?2", nombre, universidadId) > 0;
+    public boolean existsByNombre(String nombre) {
+        return count("UPPER(nombre) = UPPER(?1) and active = true", nombre) > 0;
     }
 
     /**
@@ -60,12 +60,11 @@ public class RolRepository implements PanacheRepository<Rol> {
     /**
      * Busca roles con permisos específicos
      */
-    public List<Rol> findByPermisoNombre(String permisoNombre, Long universidadId) {
+    public List<Rol> findByPermisoNombre(String permisoNombre) {
         return find("SELECT DISTINCT r FROM Rol r " +
                    "JOIN r.rolPermisos rp " +
                    "JOIN rp.permiso p " +
                    "WHERE UPPER(p.nombreClave) = UPPER(?1) " +
-                   "AND r.universidad.id = ?2 " +
-                   "AND r.active = true", permisoNombre, universidadId).list();
+                   "AND r.active = true", permisoNombre).list();
     }
 }

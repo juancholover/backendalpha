@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAutoridadDTO {
-    private Long universidadId;
     private Long personaId;
     private Long tipoAutoridadId;
     private LocalDate fechaInicio;

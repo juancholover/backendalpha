@@ -18,10 +18,10 @@ public class CursoRepository implements PanacheRepositoryBase<Curso, Long> {
     }
 
     /**
-     * Listar cursos por universidad
+     * Listar todos los cursos activos
      */
-    public List<Curso> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true", universidadId).list();
+    public List<Curso> findAllActiveCursos() {
+        return find("active = true").list();
     }
 
     /**

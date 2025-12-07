@@ -17,7 +17,6 @@ import java.util.List;
 public interface CursoOfertadoMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "planCurso", ignore = true)
     @Mapping(target = "periodoAcademico", ignore = true)
     @Mapping(target = "profesor", ignore = true)
@@ -32,8 +31,6 @@ public interface CursoOfertadoMapper {
     @Mapping(target = "active", ignore = true)
     CursoOfertado toEntity(CursoOfertadoRequestDTO dto);
 
-    @Mapping(target = "universidadId", source = "universidad.id")
-    @Mapping(target = "universidadNombre", source = "universidad.nombre")
     @Mapping(target = "planCursoId", source = "planCurso.id")
     @Mapping(target = "planAcademicoId", source = "planCurso.planAcademico.id")
     @Mapping(target = "planAcademicoCodigo", source = "planCurso.planAcademico.codigo")
@@ -57,7 +54,6 @@ public interface CursoOfertadoMapper {
     List<CursoOfertadoResponseDTO> toResponseDTOList(List<CursoOfertado> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "planCurso", ignore = true)
     @Mapping(target = "periodoAcademico", ignore = true)
     @Mapping(target = "profesor", ignore = true)

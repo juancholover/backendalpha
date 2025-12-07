@@ -18,7 +18,6 @@ public interface SilaboMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "curso", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidades", ignore = true)
     @Mapping(target = "historial", ignore = true)
     Silabo toEntity(SilaboRequestDTO dto);
@@ -33,7 +32,6 @@ public interface SilaboMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "curso", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "unidades", ignore = true)
     @Mapping(target = "historial", ignore = true)
     void updateEntityFromDto(SilaboRequestDTO dto, @MappingTarget Silabo entity);
@@ -44,7 +42,6 @@ public interface SilaboMapper {
     @Mapping(target = "cursoId", source = "curso.id")
     @Mapping(target = "cursoNombre", source = "curso.nombre")
     @Mapping(target = "cursoCodigo", source = "curso.codigoCurso")
-    @Mapping(target = "universidadId", source = "universidad.id")
     @Mapping(target = "totalSemanas", expression = "java(entity.getTotalSemanas())")
     @Mapping(target = "porcentajeEvaluacionTotal", expression = "java(entity.getPorcentajeEvaluacionTotal())")
     @Mapping(target = "cantidadUnidades", expression = "java(entity.getUnidades() != null ? entity.getUnidades().size() : 0)")
@@ -57,7 +54,6 @@ public interface SilaboMapper {
     @Mapping(target = "cursoId", source = "curso.id")
     @Mapping(target = "cursoNombre", source = "curso.nombre")
     @Mapping(target = "cursoCodigo", source = "curso.codigoCurso")
-    @Mapping(target = "universidadId", source = "universidad.id")
     @Mapping(target = "totalSemanas", expression = "java(entity.getTotalSemanas())")
     @Mapping(target = "porcentajeEvaluacionTotal", expression = "java(entity.getPorcentajeEvaluacionTotal())")
     @Mapping(target = "cantidadUnidades", expression = "java(entity.getUnidades() != null ? entity.getUnidades().size() : 0)")

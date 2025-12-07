@@ -24,14 +24,14 @@ public class Profesor extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Relación con Empleado (un profesor ES un empleado)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empleado_id", nullable = false)
+    private Empleado empleado;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad; // Aislamiento multi-tenant
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_id") // Departamento Académico

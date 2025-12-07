@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Min;
 
 public class RequisitoCursoRequestDTO {
 
-    @NotNull(message = "El ID de la universidad es obligatorio")
-    private Long universidadId;
-
     @NotNull(message = "El ID del curso es obligatorio")
     private Long cursoId;
 
@@ -30,8 +27,7 @@ public class RequisitoCursoRequestDTO {
     public RequisitoCursoRequestDTO() {
     }
 
-    public RequisitoCursoRequestDTO(Long universidadId, Long cursoId, Long cursoRequisitoId, String tipoRequisito, Boolean esObligatorio) {
-        this.universidadId = universidadId;
+    public RequisitoCursoRequestDTO(Long cursoId, Long cursoRequisitoId, String tipoRequisito, Boolean esObligatorio) {
         this.cursoId = cursoId;
         this.cursoRequisitoId = cursoRequisitoId;
         this.tipoRequisito = tipoRequisito;
@@ -39,14 +35,6 @@ public class RequisitoCursoRequestDTO {
     }
 
     
-    public Long getUniversidadId() {
-        return universidadId;
-    }
-
-    public void setUniversidadId(Long universidadId) {
-        this.universidadId = universidadId;
-    }
-
     public Long getCursoId() {
         return cursoId;
     }

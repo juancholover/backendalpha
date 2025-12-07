@@ -60,9 +60,6 @@ public class PagoDetalleDeuda extends AuditableEntity {
     @Column(name = "motivo_reversion", length = 500)
     private String motivoReversion;
 
-    /**
-     * Constructor de conveniencia
-     */
     public PagoDetalleDeuda(Pago pago, CuentaCorrienteAlumno deuda, BigDecimal montoAplicado) {
         this.pago = pago;
         this.deuda = deuda;
@@ -71,9 +68,7 @@ public class PagoDetalleDeuda extends AuditableEntity {
         this.estado = "APLICADO";
     }
 
-    /**
-     * Constructor completo
-     */
+  
     public PagoDetalleDeuda(Pago pago, CuentaCorrienteAlumno deuda, 
                            BigDecimal montoAplicado, String aplicadoPor) {
         this.pago = pago;
@@ -99,21 +94,8 @@ public class PagoDetalleDeuda extends AuditableEntity {
      * Validaciones de negocio antes de persistir
      */
     private void validarAplicacion() {
-        // ✅ SEGURIDAD MULTITENANCY: Validar que pago y deuda sean de la misma universidad
+        // Validar que el estudiante del pago y la deuda sean el mismo
         if (pago != null && deuda != null) {
-            Long universidadPago = pago.getUniversidad().getId();
-            Long universidadDeuda = deuda.getUniversidad().getId();
-            
-            if (!universidadPago.equals(universidadDeuda)) {
-                throw new IllegalStateException(
-                    String.format(
-                        "Violación de seguridad multitenancy: No se puede aplicar un pago de universidad %d a una deuda de universidad %d",
-                        universidadPago, universidadDeuda
-                    )
-                );
-            }
-            
-            // Validar que el estudiante del pago y la deuda sean el mismo
             Long estudiantePago = pago.getEstudiante().getId();
             Long estudianteDeuda = deuda.getEstudiante().getId();
             

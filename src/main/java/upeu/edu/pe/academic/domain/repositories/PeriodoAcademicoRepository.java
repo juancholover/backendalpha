@@ -12,73 +12,70 @@ import java.util.Optional;
 public class PeriodoAcademicoRepository implements PanacheRepository<PeriodoAcademico> {
 
     /**
-     * Busca períodos por universidad
+     * Busca todos los períodos activos
      */
-    public List<PeriodoAcademico> findByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and active = true ORDER BY fechaInicio DESC", 
-                   universidadId).list();
+    public List<PeriodoAcademico> findAllActive() {
+        return find("active = true ORDER BY fechaInicio DESC").list();
     }
 
     /**
-     * Busca el período actual de una universidad
+     * Busca el período actual
      */
-    public Optional<PeriodoAcademico> findActualByUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and esActual = true and active = true", 
-                   universidadId).firstResultOptional();
+    public Optional<PeriodoAcademico> findActual() {
+        return find("esActual = true and active = true").firstResultOptional();
     }
 
     /**
-     * Busca período por código y universidad
+     * Busca período por código
      */
-    public Optional<PeriodoAcademico> findByCodigoAndUniversidad(String codigoPeriodo, Long universidadId) {
-        return find("UPPER(codigoPeriodo) = UPPER(?1) and universidad.id = ?2 and active = true", 
-                   codigoPeriodo, universidadId).firstResultOptional();
+    public Optional<PeriodoAcademico> findByCodigo(String codigoPeriodo) {
+        return find("UPPER(codigoPeriodo) = UPPER(?1) and active = true", 
+                   codigoPeriodo).firstResultOptional();
     }
 
     /**
-     * Busca períodos por año y universidad
+     * Busca períodos por año
      */
-    public List<PeriodoAcademico> findByAnioAndUniversidad(Integer anio, Long universidadId) {
-        return find("anio = ?1 and universidad.id = ?2 and active = true ORDER BY numeroPeriodo", 
-                   anio, universidadId).list();
+    public List<PeriodoAcademico> findByAnio(Integer anio) {
+        return find("anio = ?1 and active = true ORDER BY numeroPeriodo", 
+                   anio).list();
     }
 
     /**
      * Busca períodos por estado
      */
-    public List<PeriodoAcademico> findByEstadoAndUniversidad(String estado, Long universidadId) {
-        return find("UPPER(estado) = UPPER(?1) and universidad.id = ?2 and active = true ORDER BY fechaInicio DESC", 
-                   estado, universidadId).list();
+    public List<PeriodoAcademico> findByEstado(String estado) {
+        return find("UPPER(estado) = UPPER(?1) and active = true ORDER BY fechaInicio DESC", 
+                   estado).list();
     }
 
     /**
      * Busca períodos en un rango de fechas
      */
-    public List<PeriodoAcademico> findByFechasAndUniversidad(LocalDate fechaInicio, LocalDate fechaFin, Long universidadId) {
-        return find("universidad.id = ?1 and fechaInicio >= ?2 and fechaFin <= ?3 and active = true ORDER BY fechaInicio", 
-                   universidadId, fechaInicio, fechaFin).list();
+    public List<PeriodoAcademico> findByFechas(LocalDate fechaInicio, LocalDate fechaFin) {
+        return find("fechaInicio >= ?1 and fechaFin <= ?2 and active = true ORDER BY fechaInicio", 
+                   fechaInicio, fechaFin).list();
     }
 
     /**
-     * Verifica si existe un período con ese código en la universidad
+     * Verifica si existe un período con ese código
      */
-    public boolean existsByCodigoAndUniversidad(String codigoPeriodo, Long universidadId) {
-        return count("UPPER(codigoPeriodo) = UPPER(?1) and universidad.id = ?2", 
-                    codigoPeriodo, universidadId) > 0;
+    public boolean existsByCodigo(String codigoPeriodo) {
+        return count("UPPER(codigoPeriodo) = UPPER(?1) and active = true", 
+                    codigoPeriodo) > 0;
     }
 
     /**
      * Busca períodos activos (en curso o matrícula abierta)
      */
-    public List<PeriodoAcademico> findActivosAndUniversidad(Long universidadId) {
-        return find("universidad.id = ?1 and estado IN ('EN_CURSO', 'MATRICULA_ABIERTA') and active = true ORDER BY fechaInicio DESC", 
-                   universidadId).list();
+    public List<PeriodoAcademico> findActivos() {
+        return find("estado IN ('EN_CURSO', 'MATRICULA_ABIERTA') and active = true ORDER BY fechaInicio DESC").list();
     }
 
     /**
-     * Desmarca todos los períodos como actual en una universidad
+     * Desmarca todos los períodos como actual
      */
-    public void desmarcarTodosComoActual(Long universidadId) {
-        update("esActual = false WHERE universidad.id = ?1", universidadId);
+    public void desmarcarTodosComoActual() {
+        update("esActual = false");
     }
 }

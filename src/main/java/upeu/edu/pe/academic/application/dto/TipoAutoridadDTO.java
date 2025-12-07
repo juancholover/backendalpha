@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TipoAutoridadDTO {
     private Long id;
-    private Long universidadId;
-    private String universidadNombre; // Denormalizado
     private String nombre;
     private String codigo;
     private Integer nivelJerarquia;

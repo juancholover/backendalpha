@@ -20,9 +20,6 @@ public class UnidadOrganizativaService {
     UnidadOrganizativaRepository unidadRepository;
 
     @Inject
-    UniversidadRepository universidadRepository;
-
-    @Inject
     TipoUnidadRepository tipoUnidadRepository;
 
     @Inject
@@ -42,7 +39,7 @@ public class UnidadOrganizativaService {
     }
 
     public List<UnidadOrganizativaResponseDTO> findByUniversidad(Long universidadId) {
-        return unidadMapper.toResponseDTOList(unidadRepository.findByUniversidad(universidadId));
+        return unidadMapper.toResponseDTOList(unidadRepository.findAllActiveUnits());
     }
 
     public List<UnidadOrganizativaResponseDTO> findByTipoUnidad(Long tipoUnidadId) {
@@ -50,7 +47,7 @@ public class UnidadOrganizativaService {
     }
 
     public List<UnidadOrganizativaResponseDTO> findRootUnidades(Long universidadId) {
-        return unidadMapper.toResponseDTOList(unidadRepository.findRootUnidades(universidadId));
+        return unidadMapper.toResponseDTOList(unidadRepository.findRootUnidades());
     }
 
     public List<UnidadOrganizativaResponseDTO> findByUnidadPadre(Long unidadPadreId) {
@@ -59,11 +56,6 @@ public class UnidadOrganizativaService {
 
     @Transactional
     public UnidadOrganizativaResponseDTO create(UnidadOrganizativaRequestDTO requestDTO) {
-        // Validar que la universidad existe
-        if (!universidadRepository.findByIdOptional(requestDTO.getUniversidadId()).isPresent()) {
-            throw new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId());
-        }
-
         // Validar que el tipo de unidad existe
         if (!tipoUnidadRepository.findByIdOptional(requestDTO.getTipoUnidadId()).isPresent()) {
             throw new NotFoundException("Tipo de unidad no encontrado con ID: " + requestDTO.getTipoUnidadId());
@@ -71,33 +63,25 @@ public class UnidadOrganizativaService {
 
         // Validar código único por universidad (si se proporciona)
         if (requestDTO.getCodigo() != null && 
-            unidadRepository.existsByCodigoAndUniversidad(requestDTO.getCodigo(), requestDTO.getUniversidadId())) {
+            unidadRepository.existsByCodigo(requestDTO.getCodigo())) {
             throw new BusinessException("Ya existe una unidad organizativa con el código: " + requestDTO.getCodigo());
         }
 
         // Validar nombre único por universidad
-        if (unidadRepository.existsByNombreAndUniversidad(requestDTO.getNombre(), requestDTO.getUniversidadId())) {
+        if (unidadRepository.existsByNombre(requestDTO.getNombre())) {
             throw new BusinessException("Ya existe una unidad organizativa con el nombre: " + requestDTO.getNombre());
         }
 
-        // Validar que la unidad padre existe y pertenece a la misma universidad (si se especifica)
+        // Validar que la unidad padre existe (si se especifica)
         if (requestDTO.getUnidadPadreId() != null) {
-            UnidadOrganizativa unidadPadre = unidadRepository.findByIdOptional(requestDTO.getUnidadPadreId())
+            unidadRepository.findByIdOptional(requestDTO.getUnidadPadreId())
                     .orElseThrow(() -> new NotFoundException("Unidad padre no encontrada con ID: " + requestDTO.getUnidadPadreId()));
-            
-            if (!unidadPadre.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-                throw new BusinessException("La unidad padre debe pertenecer a la misma universidad");
-            }
         }
 
-        // Validar que la localización existe y pertenece a la misma universidad (si se especifica)
+        // Validar que la localización existe (si se especifica)
         if (requestDTO.getLocalizacionId() != null) {
-            var localizacion = localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
+            localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
                     .orElseThrow(() -> new NotFoundException("Localización no encontrada con ID: " + requestDTO.getLocalizacionId()));
-            
-            if (!localizacion.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-                throw new BusinessException("La localización debe pertenecer a la misma universidad");
-            }
         }
 
         UnidadOrganizativa unidad = unidadMapper.toEntity(requestDTO);
@@ -110,11 +94,6 @@ public class UnidadOrganizativaService {
         UnidadOrganizativa unidad = unidadRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Unidad organizativa no encontrada con ID: " + id));
 
-        // Validar que la universidad existe
-        if (!universidadRepository.findByIdOptional(requestDTO.getUniversidadId()).isPresent()) {
-            throw new NotFoundException("Universidad no encontrada con ID: " + requestDTO.getUniversidadId());
-        }
-
         // Validar que el tipo de unidad existe
         if (!tipoUnidadRepository.findByIdOptional(requestDTO.getTipoUnidadId()).isPresent()) {
             throw new NotFoundException("Tipo de unidad no encontrado con ID: " + requestDTO.getTipoUnidadId());
@@ -122,14 +101,14 @@ public class UnidadOrganizativaService {
 
         // Validar código único por universidad (excluyendo el actual)
         if (requestDTO.getCodigo() != null && 
-            unidadRepository.existsByCodigoAndUniversidadAndIdNot(
-                requestDTO.getCodigo(), requestDTO.getUniversidadId(), id)) {
+            unidadRepository.existsByCodigoAndIdNot(
+                requestDTO.getCodigo(), id)) {
             throw new BusinessException("Ya existe otra unidad organizativa con el código: " + requestDTO.getCodigo());
         }
 
         // Validar nombre único por universidad (excluyendo el actual)
-        if (unidadRepository.existsByNombreAndUniversidadAndIdNot(
-                requestDTO.getNombre(), requestDTO.getUniversidadId(), id)) {
+        if (unidadRepository.existsByNombreAndIdNot(
+                requestDTO.getNombre(), id)) {
             throw new BusinessException("Ya existe otra unidad organizativa con el nombre: " + requestDTO.getNombre());
         }
 
@@ -139,22 +118,14 @@ public class UnidadOrganizativaService {
                 throw new BusinessException("Una unidad no puede ser padre de sí misma");
             }
             
-            UnidadOrganizativa unidadPadre = unidadRepository.findByIdOptional(requestDTO.getUnidadPadreId())
+            unidadRepository.findByIdOptional(requestDTO.getUnidadPadreId())
                     .orElseThrow(() -> new NotFoundException("Unidad padre no encontrada con ID: " + requestDTO.getUnidadPadreId()));
-            
-            if (!unidadPadre.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-                throw new BusinessException("La unidad padre debe pertenecer a la misma universidad");
-            }
         }
 
-        // Validar que la localización existe y pertenece a la misma universidad (si se especifica)
+        // Validar que la localización existe (si se especifica)
         if (requestDTO.getLocalizacionId() != null) {
-            var localizacion = localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
+            localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
                     .orElseThrow(() -> new NotFoundException("Localización no encontrada con ID: " + requestDTO.getLocalizacionId()));
-            
-            if (!localizacion.getUniversidad().getId().equals(requestDTO.getUniversidadId())) {
-                throw new BusinessException("La localización debe pertenecer a la misma universidad");
-            }
         }
 
         unidadMapper.updateEntityFromDTO(requestDTO, unidad);

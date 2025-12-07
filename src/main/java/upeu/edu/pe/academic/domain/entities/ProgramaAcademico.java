@@ -28,10 +28,6 @@ public class ProgramaAcademico extends AuditableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_organizativa_id", nullable = false)
     private UnidadOrganizativa unidadOrganizativa;
 

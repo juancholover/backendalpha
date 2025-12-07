@@ -36,7 +36,6 @@ public class ModalidadService {
     @Transactional
     public ModalidadResponseDTO crear(ModalidadRequestDTO dto) {
         CrearModalidadCommand command = new CrearModalidadCommand(
-            dto.getUniversidadId(),
             dto.getCodigo(),
             dto.getNombre(),
             dto.getDescripcion(),

@@ -29,10 +29,6 @@ public class PeriodoAcademico extends AuditableEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "codigo_periodo", nullable = false, length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigoPeriodo; // Ejemplo: 2025-I, 2025-II, 2025-VERANO
@@ -84,9 +80,8 @@ public class PeriodoAcademico extends AuditableEntity {
     private List<CursoOfertado> cursosOfertados = new ArrayList<>();
 
 
-    public PeriodoAcademico(Universidad universidad, String codigoPeriodo, String nombre, 
+    public PeriodoAcademico(String codigoPeriodo, String nombre, 
                            LocalDate fechaInicio, LocalDate fechaFin) {
-        this.universidad = universidad;
         this.codigoPeriodo = codigoPeriodo;
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;

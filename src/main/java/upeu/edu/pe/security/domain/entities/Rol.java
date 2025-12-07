@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
@@ -29,10 +28,6 @@ public class Rol extends AuditableEntity {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "universidad_id", nullable = false)
-    private Universidad universidad;
-
     @Column(name = "nombre", nullable = false, length = 100)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String nombre; // ADMIN, PROFESOR, ESTUDIANTE, CAJERO, etc.
@@ -48,16 +43,14 @@ public class Rol extends AuditableEntity {
     private Set<RolPermiso> rolPermisos = new HashSet<>();
 
    
-    public Rol(Universidad universidad, String nombre, String descripcion) {
-        this.universidad = universidad;
+    public Rol(String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.esSistema = false;
     }
 
 
-    public Rol(Universidad universidad, String nombre, String descripcion, Boolean esSistema) {
-        this.universidad = universidad;
+    public Rol(String nombre, String descripcion, Boolean esSistema) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.esSistema = esSistema;

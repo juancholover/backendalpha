@@ -17,7 +17,6 @@ import java.util.List;
 public interface MatriculaMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)
@@ -48,7 +47,6 @@ public interface MatriculaMapper {
     List<MatriculaResponseDTO> toResponseDTOList(List<Matricula> entities);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "universidad", ignore = true)
     @Mapping(target = "estudiante", ignore = true)
     @Mapping(target = "cursoOfertado", ignore = true)
     @Mapping(target = "evaluacionNotas", ignore = true)

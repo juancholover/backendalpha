@@ -119,7 +119,6 @@ public class EstudianteService {
         // 1. Convertir DTO → Command
         CrearEstudianteCommand command = new CrearEstudianteCommand(
             dto.getPersonaId(),
-            null, // universidadId se obtiene del contexto o del programa
             dto.getProgramaAcademicoId(),
             dto.getCodigoEstudiante(),
             dto.getFechaIngreso(),

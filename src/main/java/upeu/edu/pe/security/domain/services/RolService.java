@@ -28,7 +28,7 @@ public class RolService {
     }
 
     public List<RolResponseDTO> findByUniversidad(Long universidadId) {
-        List<Rol> roles = rolRepository.findByUniversidad(universidadId);
+        List<Rol> roles = rolRepository.findAllActive();
         return rolMapper.toResponseDTOList(roles);
     }
 
@@ -44,7 +44,7 @@ public class RolService {
     }
 
     public RolResponseDTO findByNombreAndUniversidad(String nombre, Long universidadId) {
-        Rol rol = rolRepository.findByNombreAndUniversidad(nombre, universidadId)
+        Rol rol = rolRepository.findByNombre(nombre)
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado: " + nombre));
         return rolMapper.toResponseDTO(rol);
     }
@@ -55,21 +55,18 @@ public class RolService {
     }
 
     public List<RolResponseDTO> findActiveByUniversidad(Long universidadId) {
-        List<Rol> roles = rolRepository.findActiveByUniversidad(universidadId);
+        List<Rol> roles = rolRepository.findActive();
         return rolMapper.toResponseDTOList(roles);
     }
 
     @Transactional
     public RolResponseDTO create(RolRequestDTO requestDTO) {
         // Validar que no exista un rol con el mismo nombre
-        if (rolRepository.existsByNombreAndUniversidad(requestDTO.getNombre(), requestDTO.getUniversidadId())) {
+        if (rolRepository.existsByNombre(requestDTO.getNombre())) {
             throw new BusinessException("Ya existe un rol con el nombre: " + requestDTO.getNombre());
         }
 
         Rol rol = rolMapper.toEntity(requestDTO);
-        upeu.edu.pe.academic.domain.entities.Universidad universidad = new upeu.edu.pe.academic.domain.entities.Universidad();
-        universidad.setId(requestDTO.getUniversidadId());
-        rol.setUniversidad(universidad);
         
         rolRepository.persist(rol);
         return rolMapper.toResponseDTO(rol);
@@ -86,7 +83,7 @@ public class RolService {
         }
 
         // Validar nombre duplicado (excepto el actual)
-        rolRepository.findByNombreAndUniversidad(requestDTO.getNombre(), requestDTO.getUniversidadId())
+        rolRepository.findByNombre(requestDTO.getNombre())
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new BusinessException("Ya existe un rol con el nombre: " + requestDTO.getNombre());
@@ -120,12 +117,12 @@ public class RolService {
     }
 
     public List<RolResponseDTO> findByPermisoNombre(String permisoNombre, Long universidadId) {
-        List<Rol> roles = rolRepository.findByPermisoNombre(permisoNombre, universidadId);
+        List<Rol> roles = rolRepository.findByPermisoNombre(permisoNombre);
         return rolMapper.toResponseDTOList(roles);
     }
 
     public boolean existsByNombre(String nombre, Long universidadId) {
-        return rolRepository.existsByNombreAndUniversidad(nombre, universidadId);
+        return rolRepository.existsByNombre(nombre);
     }
 
     public long countUsuariosConRol(Long rolId) {

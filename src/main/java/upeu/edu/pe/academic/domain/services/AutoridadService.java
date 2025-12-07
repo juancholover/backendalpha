@@ -11,7 +11,6 @@ import upeu.edu.pe.academic.domain.entities.Autoridad;
 import upeu.edu.pe.academic.domain.repositories.AutoridadRepository;
 import upeu.edu.pe.academic.domain.repositories.PersonaRepository;
 import upeu.edu.pe.academic.domain.repositories.TipoAutoridadRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
@@ -25,9 +24,6 @@ public class AutoridadService {
     AutoridadRepository autoridadRepository;
 
     @Inject
-    UniversidadRepository universidadRepository;
-
-    @Inject
     PersonaRepository personaRepository;
 
     @Inject
@@ -37,21 +33,21 @@ public class AutoridadService {
     AutoridadMapper mapper;
 
     public List<AutoridadDTO> findActivasByUniversidadId(Long universidadId) {
-        return autoridadRepository.findActivasByUniversidadId(universidadId)
+        return autoridadRepository.findActivas()
                 .stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<AutoridadDTO> findVigentesByUniversidadId(Long universidadId) {
-        return autoridadRepository.findVigentesByUniversidadId(universidadId)
+        return autoridadRepository.findVigentes()
                 .stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<AutoridadDTO> findByUniversidadId(Long universidadId) {
-        return autoridadRepository.findByUniversidadId(universidadId)
+        return autoridadRepository.findAllWithDetails()
                 .stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
@@ -72,10 +68,6 @@ public class AutoridadService {
 
     @Transactional
     public AutoridadDTO create(CreateAutoridadDTO dto) {
-        // Validar que la universidad existe
-        var universidad = universidadRepository.findByIdOptional(dto.getUniversidadId())
-                .orElseThrow(() -> new ResourceNotFoundException("Universidad no encontrada con ID: " + dto.getUniversidadId()));
-
         // Validar que la persona existe
         var persona = personaRepository.findByIdOptional(dto.getPersonaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada con ID: " + dto.getPersonaId()));
@@ -85,14 +77,13 @@ public class AutoridadService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de autoridad no encontrado con ID: " + dto.getTipoAutoridadId()));
 
         // Validar que no haya otra autoridad activa del mismo tipo
-        if (autoridadRepository.existsActivaByTipoAutoridadId(dto.getTipoAutoridadId(), dto.getUniversidadId())) {
+        if (autoridadRepository.existsActivaByTipoAutoridadId(dto.getTipoAutoridadId())) {
             throw new IllegalArgumentException(
                 "Ya existe una autoridad activa para el tipo: " + tipoAutoridad.getNombre() + 
                 ". Debe desactivar la anterior antes de crear una nueva.");
         }
 
         Autoridad entity = mapper.toEntity(dto);
-        entity.setUniversidad(universidad);
         entity.setPersona(persona);
         entity.setTipoAutoridad(tipoAutoridad);
         
@@ -121,7 +112,7 @@ public class AutoridadService {
             // Validar que no haya otra autoridad activa del nuevo tipo
             if (dto.getEsVigente() != null && dto.getEsVigente()) {
                 var autoridadExistente = autoridadRepository.findActivaByTipoAutoridadId(
-                    dto.getTipoAutoridadId(), entity.getUniversidad().getId());
+                    dto.getTipoAutoridadId());
                 
                 if (autoridadExistente.isPresent() && !autoridadExistente.get().getId().equals(id)) {
                     throw new IllegalArgumentException(
@@ -158,7 +149,7 @@ public class AutoridadService {
 
     @Transactional
     public void desactivarAutoridadesAnteriores(Long tipoAutoridadId, Long universidadId) {
-        var autoridadActual = autoridadRepository.findActivaByTipoAutoridadId(tipoAutoridadId, universidadId);
+        java.util.Optional<Autoridad> autoridadActual = autoridadRepository.findActivaByTipoAutoridadId(tipoAutoridadId);
         autoridadActual.ifPresent(autoridad -> {
             autoridad.setFechaFin(LocalDate.now());
             autoridad.setEsVigente(false);

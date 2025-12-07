@@ -6,12 +6,10 @@ import upeu.edu.pe.academic.domain.commands.CrearEstudianteCommand;
 import upeu.edu.pe.academic.domain.entities.Estudiante;
 import upeu.edu.pe.academic.domain.entities.Persona;
 import upeu.edu.pe.academic.domain.entities.ProgramaAcademico;
-import upeu.edu.pe.academic.domain.entities.Universidad;
 import upeu.edu.pe.academic.domain.exceptions.*;
 import upeu.edu.pe.academic.domain.repositories.EstudianteRepository;
 import upeu.edu.pe.academic.domain.repositories.PersonaRepository;
 import upeu.edu.pe.academic.domain.repositories.ProgramaAcademicoRepository;
-import upeu.edu.pe.academic.domain.repositories.UniversidadRepository;
 
 /**
  * Caso de uso: Crear un nuevo estudiante.
@@ -38,28 +36,16 @@ public class CrearEstudianteUseCase {
     @Inject
     ProgramaAcademicoRepository programaAcademicoRepository;
     
-    @Inject
-    UniversidadRepository universidadRepository;
-    
-    @Inject
-    ValidarLimitesUniversidadUseCase validarLimitesUseCase;
-    
     /**
      * Ejecuta el caso de uso de creación de estudiante.
      */
     public Estudiante execute(CrearEstudianteCommand command) {
-        //  Validar que exista la universidad y tenga cupo
-        validarLimitesUseCase.validarAgregarEstudiante(command.universidadId());
-        
-        Universidad universidad = universidadRepository.findByIdOptional(command.universidadId())
-            .orElseThrow(() -> new UniversidadNoEncontradaException(command.universidadId()));
-        
         // Validar que exista la persona
         Persona persona = personaRepository.findByIdOptional(command.personaId())
             .orElseThrow(() -> new RuntimeException("Persona no encontrada con ID: " + command.personaId()));
         
         // Validar que la persona no sea ya estudiante en esta universidad
-        if (estudianteRepository.existsByPersonaAndUniversidad(command.personaId(), command.universidadId())) {
+        if (estudianteRepository.existsByPersonaId(command.personaId())) {
             throw new PersonaYaEsEstudianteException(command.personaId());
         }
         
@@ -85,7 +71,6 @@ public class CrearEstudianteUseCase {
         
         Estudiante estudiante = new Estudiante();
         estudiante.setPersona(persona);
-        estudiante.setUniversidad(universidad);
         estudiante.setProgramaAcademico(programa);
         estudiante.setCodigoEstudiante(command.codigoEstudiante().toUpperCase());
         estudiante.setFechaIngreso(command.fechaIngreso());
@@ -106,9 +91,6 @@ public class CrearEstudianteUseCase {
         
         
         estudianteRepository.persist(estudiante);
-        
-
-        validarLimitesUseCase.incrementarEstudiantes(command.universidadId());
         
         return estudiante;
     }

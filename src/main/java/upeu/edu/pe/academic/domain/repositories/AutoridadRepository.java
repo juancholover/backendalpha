@@ -12,43 +12,40 @@ import java.util.Optional;
 public class AutoridadRepository implements PanacheRepository<Autoridad> {
 
     /**
-     * Busca todas las autoridades activas de una universidad ordenadas por jerarquía
+     * Busca todas las autoridades activas ordenadas por jerarquía
      */
-    public List<Autoridad> findActivasByUniversidadId(Long universidadId) {
+    public List<Autoridad> findActivas() {
         return list("""
             select a from Autoridad a 
             join fetch a.persona p
             join fetch a.tipoAutoridad ta
-            where a.universidadId = ?1 
-            and a.activo = true
+            where a.activo = true
             order by ta.nivelJerarquia asc
-            """, universidadId);
+            """);
     }
 
     /**
-     * Busca todas las autoridades de una universidad (activas e inactivas)
+     * Busca todas las autoridades (activas e inactivas)
      */
-    public List<Autoridad> findByUniversidadId(Long universidadId) {
+    public List<Autoridad> findAllWithDetails() {
         return list("""
             select a from Autoridad a 
             join fetch a.persona p
             join fetch a.tipoAutoridad ta
-            where a.universidadId = ?1
             order by ta.nivelJerarquia asc, a.fechaInicio desc
-            """, universidadId);
+            """);
     }
 
     /**
      * Busca la autoridad actual de un tipo específico
      */
-    public Optional<Autoridad> findActivaByTipoAutoridadId(Long tipoAutoridadId, Long universidadId) {
+    public Optional<Autoridad> findActivaByTipoAutoridadId(Long tipoAutoridadId) {
         return find("""
             select a from Autoridad a 
             join fetch a.persona p
             where a.tipoAutoridad.id = ?1 
-            and a.universidadId = ?2
             and a.activo = true
-            """, tipoAutoridadId, universidadId)
+            """, tipoAutoridadId)
                 .firstResultOptional();
     }
 
@@ -67,42 +64,39 @@ public class AutoridadRepository implements PanacheRepository<Autoridad> {
     /**
      * Busca autoridades vigentes (activas y dentro del rango de fechas)
      */
-    public List<Autoridad> findVigentesByUniversidadId(Long universidadId) {
+    public List<Autoridad> findVigentes() {
         LocalDate hoy = LocalDate.now();
         return list("""
             select a from Autoridad a 
             join fetch a.persona p
             join fetch a.tipoAutoridad ta
-            where a.universidadId = ?1 
-            and a.activo = true
-            and (a.fechaInicio is null or a.fechaInicio <= ?2)
-            and (a.fechaFin is null or a.fechaFin >= ?2)
+            where a.activo = true
+            and (a.fechaInicio is null or a.fechaInicio <= ?1)
+            and (a.fechaFin is null or a.fechaFin >= ?1)
             order by ta.nivelJerarquia asc
-            """, universidadId, hoy);
+            """, hoy);
     }
 
     /**
      * Verifica si existe una autoridad activa para un tipo específico
      */
-    public boolean existsActivaByTipoAutoridadId(Long tipoAutoridadId, Long universidadId) {
+    public boolean existsActivaByTipoAutoridadId(Long tipoAutoridadId) {
         return count("""
             tipoAutoridad.id = ?1 
-            and universidadId = ?2 
             and activo = true
-            """, tipoAutoridadId, universidadId) > 0;
+            """, tipoAutoridadId) > 0;
     }
 
     /**
      * Busca autoridades por rango de fechas
      */
-    public List<Autoridad> findByFechaInicioRange(Long universidadId, LocalDate desde, LocalDate hasta) {
+    public List<Autoridad> findByFechaInicioRange(LocalDate desde, LocalDate hasta) {
         return list("""
             select a from Autoridad a 
             join fetch a.persona p
             join fetch a.tipoAutoridad ta
-            where a.universidadId = ?1 
-            and a.fechaInicio between ?2 and ?3
+            where a.fechaInicio between ?1 and ?2
             order by a.fechaInicio desc
-            """, universidadId, desde, hasta);
+            """, desde, hasta);
     }
 }
