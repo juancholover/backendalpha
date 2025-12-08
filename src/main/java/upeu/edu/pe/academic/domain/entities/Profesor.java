@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "profesor", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"persona_id"})
+    @UniqueConstraint(columnNames = {"empleado_id"})
 })
 @Data
 @NoArgsConstructor
@@ -25,13 +25,10 @@ public class Profesor extends AuditableEntity {
     private Long id;
 
     // Relación con Empleado (un profesor ES un empleado)
+    // Acceso a Persona mediante: profesor.getEmpleado().getPersona()
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empleado_id", nullable = false)
+    @JoinColumn(name = "empleado_id", nullable = false, unique = true)
     private Empleado empleado;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "persona_id", nullable = false)
-    private Persona persona;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unidad_id") // Departamento Académico
