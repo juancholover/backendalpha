@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "empleado", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"codigo_empleado"}),
-    @UniqueConstraint(columnNames = {"persona_id"})
+    @UniqueConstraint(columnNames = {"persona_id", "fecha_ingreso"})
 })
 @Data
 @NoArgsConstructor

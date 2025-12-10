@@ -26,7 +26,7 @@ import java.util.List;
  * - Operaciones de ESCRITURA delegadas a Use Cases
  * - Operaciones de LECTURA delegadas al Service
  */
-@Path("/api/matriculas")
+@Path("/api/v1/matriculas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Matrículas", description = "Gestión de matrículas de estudiantes")

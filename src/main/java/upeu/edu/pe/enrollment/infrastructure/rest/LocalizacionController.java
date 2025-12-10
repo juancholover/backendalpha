@@ -12,7 +12,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
 
-@Path("/api/localizaciones")
+@Path("/api/v1/localizaciones")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Localizaciones", description = "Gestión de aulas, laboratorios y espacios virtuales")

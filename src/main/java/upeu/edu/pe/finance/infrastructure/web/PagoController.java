@@ -17,31 +17,24 @@ import upeu.edu.pe.finance.domain.usecases.RegistrarPagoUseCase;
 import upeu.edu.pe.finance.domain.usecases.AnularPagoUseCase;
 import upeu.edu.pe.shared.response.ApiResponse;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Controlador REST para gestión de pagos.
- * 
- * Arquitectura:
- * - Operaciones de ESCRITURA delegadas a Use Cases
- * - Operaciones de LECTURA delegadas al Service
- */
+
 @Path("/api/v1/pagos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Pagos", description = "Gestión de pagos de estudiantes")
 public class PagoController {
 
-    // Use Cases para operaciones de escritura
+
     @Inject
     RegistrarPagoUseCase registrarPagoUseCase;
 
     @Inject
     AnularPagoUseCase anularPagoUseCase;
 
-    // Service para operaciones de lectura
+    
     @Inject
     PagoService pagoService;
 

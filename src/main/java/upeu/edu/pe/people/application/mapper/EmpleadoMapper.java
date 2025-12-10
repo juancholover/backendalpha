@@ -10,7 +10,7 @@ import upeu.edu.pe.core.domain.entities.UnidadOrganizativa;
 import java.time.LocalDate;
 import java.time.Period;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "cdi", imports = {java.math.BigDecimal.class})
 public interface EmpleadoMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -21,6 +21,7 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
+    @Mapping(target = "salario", source = "salario", qualifiedByName = "doubleToBigDecimal")
     Empleado toEntity(EmpleadoRequestDTO dto);
 
     @Mapping(target = "personaId", source = "persona.id")
@@ -28,6 +29,7 @@ public interface EmpleadoMapper {
     @Mapping(target = "unidadOrganizativaId", source = "unidadOrganizativa.id")
     @Mapping(target = "unidadOrganizativaNombre", source = "unidadOrganizativa.nombre")
     @Mapping(target = "aniosServicio", expression = "java(calculateAniosServicio(entity))")
+    @Mapping(target = "salario", source = "salario", qualifiedByName = "bigDecimalToDouble")
     EmpleadoResponseDTO toResponseDTO(Empleado entity);
 
     @Mapping(target = "id", ignore = true)
@@ -38,6 +40,7 @@ public interface EmpleadoMapper {
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "persona", ignore = true)
     @Mapping(target = "unidadOrganizativa", source = "unidadOrganizativaId", qualifiedByName = "mapUnidadOrganizativa")
+    @Mapping(target = "salario", source = "salario", qualifiedByName = "doubleToBigDecimal")
     void updateEntityFromDto(EmpleadoRequestDTO dto, @MappingTarget Empleado entity);
 
     /**
@@ -82,6 +85,28 @@ public interface EmpleadoMapper {
             
         Period period = Period.between(empleado.getFechaIngreso(), fechaFin);
         return period.getYears();
+    }
+
+    /**
+     * Convierte Double a BigDecimal
+     */
+    @Named("doubleToBigDecimal")
+    default java.math.BigDecimal doubleToBigDecimal(Double value) {
+        if (value == null) {
+            return null;
+        }
+        return java.math.BigDecimal.valueOf(value);
+    }
+
+    /**
+     * Convierte BigDecimal a Double
+     */
+    @Named("bigDecimalToDouble")
+    default Double bigDecimalToDouble(java.math.BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        return value.doubleValue();
     }
 }
 

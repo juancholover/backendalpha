@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
-import upeu.edu.pe.core.domain.entities.Universidad;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

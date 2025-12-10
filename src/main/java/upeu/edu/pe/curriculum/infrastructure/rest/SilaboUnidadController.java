@@ -25,12 +25,12 @@ import java.util.List;
  * - POST   /api/v1/silabos/unidades                     - Agregar unidad a sílabo
  * - GET    /api/v1/silabos/unidades/{id}                - Buscar unidad por ID
  * - PUT    /api/v1/silabos/unidades/{id}                - Actualizar unidad
- * - DELETE /api/v1/silabos/unidades/{id}                - Eliminar unidad
- * - GET    /api/v1/silabos/{silaboId}/unidades          - Listar unidades de un sílabo
- * - GET    /api/v1/silabos/{silaboId}/unidades/{numero} - Buscar unidad específica
- * - GET    /api/v1/silabos/{silaboId}/unidades/semana/{semana} - Unidades que incluyen una semana
+ * - DELETE /api/v1/silabos-unidades/{id}                - Eliminar unidad
+ * - GET    /api/v1/silabos-unidades/silabo/{silaboId}          - Listar unidades de un sílabo
+ * - GET    /api/v1/silabos-unidades/silabo/{silaboId}/numero/{numero} - Buscar unidad específica
+ * - GET    /api/v1/silabos-unidades/silabo/{silaboId}/semana/{semana} - Unidades que incluyen una semana
  */
-@Path("/api/v1/silabos")
+@Path("/api/v1/silabos-unidades")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Unidades de Sílabo", description = "Gestión de unidades didácticas dentro de sílabos")
@@ -65,7 +65,7 @@ public class SilaboUnidadController {
     }
 
     @GET
-    @Path("/unidades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Buscar unidad por ID", description = "Obtiene una unidad por su ID con todas sus actividades")
     @APIResponse(responseCode = "200", description = "Unidad encontrada")
     @APIResponse(responseCode = "404", description = "Unidad no encontrada")
@@ -77,7 +77,7 @@ public class SilaboUnidadController {
     }
 
     @PUT
-    @Path("/unidades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Actualizar unidad", 
                description = "Actualiza una unidad existente. El sílabo debe estar en estado modificable.")
     @APIResponse(responseCode = "200", description = "Unidad actualizada exitosamente")
@@ -93,7 +93,7 @@ public class SilaboUnidadController {
     }
 
     @DELETE
-    @Path("/unidades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Eliminar unidad", 
                description = "Elimina (lógicamente) una unidad. El sílabo debe estar en estado modificable.")
     @APIResponse(responseCode = "200", description = "Unidad eliminada exitosamente")
@@ -107,7 +107,7 @@ public class SilaboUnidadController {
     }
 
     @GET
-    @Path("/{silaboId}/unidades")
+    @Path("/silabo/{silaboId}")
     @Operation(summary = "Listar unidades de un sílabo", 
                description = "Obtiene todas las unidades de un sílabo ordenadas por número")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
@@ -119,7 +119,7 @@ public class SilaboUnidadController {
     }
 
     @GET
-    @Path("/{silaboId}/unidades/{numero}")
+    @Path("/silabo/{silaboId}/numero/{numero}")
     @Operation(summary = "Buscar unidad por número", 
                description = "Obtiene una unidad específica de un sílabo por su número")
     @APIResponse(responseCode = "200", description = "Unidad encontrada")
@@ -134,7 +134,7 @@ public class SilaboUnidadController {
     }
 
     @GET
-    @Path("/{silaboId}/unidades/semana/{semana}")
+    @Path("/silabo/{silaboId}/semana/{semana}")
     @Operation(summary = "Buscar unidades por semana", 
                description = "Obtiene las unidades que incluyen una semana específica")
     @APIResponse(responseCode = "200", description = "Unidades encontradas")

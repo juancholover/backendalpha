@@ -13,7 +13,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
 
-@Path("/api/planes-academicos")
+@Path("/api/v1/planes-academicos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Planes Académicos", description = "Gestión de mallas curriculares y planes de estudio")

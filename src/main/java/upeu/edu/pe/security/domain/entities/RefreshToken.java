@@ -31,7 +31,8 @@ public class RefreshToken extends AuditableEntity {
     private LocalDateTime expiresAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "auth_usuario_id", nullable = false)
+    @JoinColumn(name = "auth_usuario_id", nullable = false, 
+                foreignKey = @ForeignKey(name = "fk_refresh_token_auth_usuario"))
     private AuthUsuario authUsuario;
 
     @Column(name = "is_revoked", nullable = false)

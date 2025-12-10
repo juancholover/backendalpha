@@ -28,7 +28,7 @@ import java.util.List;
  * - Operaciones de ESCRITURA delegadas a Use Cases
  * - Operaciones de LECTURA delegadas al Service
  */
-@Path("/api/unidades-organizativas")
+@Path("/api/v1/unidades-organizativas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Unidades Organizativas", description = "Gestión de facultades, escuelas y departamentos")

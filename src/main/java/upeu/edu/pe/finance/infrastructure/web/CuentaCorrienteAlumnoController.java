@@ -20,13 +20,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Controlador REST para gestión de cuentas corrientes de estudiantes.
- * 
- * Arquitectura:
- * - Operaciones de ESCRITURA delegadas a Use Cases
- * - Operaciones de LECTURA delegadas al Service
- */
+
 @Path("/api/v1/cuentas-corrientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

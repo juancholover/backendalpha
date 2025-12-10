@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.security.application.dto.RolPermisoRequestDTO;
 import upeu.edu.pe.security.application.dto.RolPermisoResponseDTO;
 import upeu.edu.pe.security.domain.services.RolPermisoService;
@@ -13,6 +14,7 @@ import java.util.List;
 @Path("/api/v1/roles-permisos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Roles-Permisos", description = "Gestión de permisos asignados a roles")
 public class RolPermisoController {
 
     @Inject

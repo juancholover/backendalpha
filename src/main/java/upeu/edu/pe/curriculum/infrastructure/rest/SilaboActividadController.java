@@ -30,12 +30,12 @@ import java.util.List;
  * - GET    /api/v1/silabos/unidades/{unidadId}/actividades          - Listar actividades de una unidad
  * - GET    /api/v1/silabos/unidades/{unidadId}/actividades/tipo/{tipo} - Filtrar por tipo
  * - GET    /api/v1/silabos/unidades/{unidadId}/actividades/sumativas - Solo sumativas
- * - GET    /api/v1/silabos/unidades/{unidadId}/actividades/formativas - Solo formativas
- * - GET    /api/v1/silabos/{silaboId}/actividades/semana/{semana}   - Actividades por semana
- * - GET    /api/v1/silabos/unidades/{unidadId}/ponderacion-total    - Suma de ponderaciones
- * - GET    /api/v1/silabos/{silaboId}/ponderacion-total             - Ponderación total del sílabo
+ * - GET    /api/v1/silabos-actividades/unidad/{unidadId}/formativas - Solo formativas
+ * - GET    /api/v1/silabos-actividades/silabo/{silaboId}/semana/{semana}   - Actividades por semana
+ * - GET    /api/v1/silabos-actividades/unidad/{unidadId}/ponderacion-total    - Suma de ponderaciones
+ * - GET    /api/v1/silabos-actividades/silabo/{silaboId}/ponderacion-total             - Ponderación total del sílabo
  */
-@Path("/api/v1/silabos")
+@Path("/api/v1/silabos-actividades")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Actividades de Sílabo", description = "Gestión de actividades de aprendizaje y evaluación")
@@ -70,7 +70,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/actividades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Buscar actividad por ID", description = "Obtiene una actividad por su ID")
     @APIResponse(responseCode = "200", description = "Actividad encontrada")
     @APIResponse(responseCode = "404", description = "Actividad no encontrada")
@@ -82,7 +82,7 @@ public class SilaboActividadController {
     }
 
     @PUT
-    @Path("/actividades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Actualizar actividad", 
                description = "Actualiza una actividad existente. El sílabo debe estar en estado modificable.")
     @APIResponse(responseCode = "200", description = "Actividad actualizada exitosamente")
@@ -98,7 +98,7 @@ public class SilaboActividadController {
     }
 
     @DELETE
-    @Path("/actividades/{id}")
+    @Path("/{id}")
     @Operation(summary = "Eliminar actividad", 
                description = "Elimina (lógicamente) una actividad. El sílabo debe estar en estado modificable.")
     @APIResponse(responseCode = "200", description = "Actividad eliminada exitosamente")
@@ -112,7 +112,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/unidades/{unidadId}/actividades")
+    @Path("/unidad/{unidadId}")
     @Operation(summary = "Listar actividades de una unidad", 
                description = "Obtiene todas las actividades de una unidad ordenadas por semana")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
@@ -124,7 +124,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/unidades/{unidadId}/actividades/tipo/{tipo}")
+    @Path("/unidad/{unidadId}/tipo/{tipo}")
     @Operation(summary = "Listar actividades por tipo", 
                description = "Filtra actividades por tipo (FORMATIVA o SUMATIVA)")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
@@ -138,7 +138,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/unidades/{unidadId}/actividades/sumativas")
+    @Path("/unidad/{unidadId}/sumativas")
     @Operation(summary = "Listar actividades sumativas", 
                description = "Obtiene solo las actividades sumativas (con ponderación) de una unidad")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
@@ -150,7 +150,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/unidades/{unidadId}/actividades/formativas")
+    @Path("/unidad/{unidadId}/formativas")
     @Operation(summary = "Listar actividades formativas", 
                description = "Obtiene solo las actividades formativas (sin ponderación) de una unidad")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
@@ -162,7 +162,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/{silaboId}/actividades/semana/{semana}")
+    @Path("/silabo/{silaboId}/semana/{semana}")
     @Operation(summary = "Buscar actividades por semana", 
                description = "Obtiene actividades programadas para una semana específica")
     @APIResponse(responseCode = "200", description = "Actividades encontradas")
@@ -176,7 +176,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/unidades/{unidadId}/ponderacion-total")
+    @Path("/unidad/{unidadId}/ponderacion-total")
     @Operation(summary = "Calcular ponderación total de una unidad", 
                description = "Suma las ponderaciones de todas las actividades sumativas de una unidad")
     @APIResponse(responseCode = "200", description = "Cálculo exitoso")
@@ -191,7 +191,7 @@ public class SilaboActividadController {
     }
 
     @GET
-    @Path("/{silaboId}/ponderacion-total")
+    @Path("/silabo/{silaboId}/ponderacion-total")
     @Operation(summary = "Calcular ponderación total del sílabo", 
                description = "Suma las ponderaciones de todas las actividades sumativas del sílabo (debe ser 100%)")
     @APIResponse(responseCode = "200", description = "Cálculo exitoso")

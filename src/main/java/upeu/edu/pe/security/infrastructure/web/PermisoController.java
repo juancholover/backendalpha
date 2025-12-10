@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.security.application.dto.PermisoRequestDTO;
 import upeu.edu.pe.security.application.dto.PermisoResponseDTO;
 import upeu.edu.pe.security.domain.services.PermisoService;
@@ -14,6 +15,7 @@ import java.util.List;
 @Path("/api/v1/permisos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Permisos", description = "Gestión de permisos del sistema")
 public class PermisoController {
 
     @Inject

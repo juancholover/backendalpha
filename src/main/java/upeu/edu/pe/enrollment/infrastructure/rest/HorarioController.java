@@ -13,7 +13,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
 
-@Path("/api/horarios")
+@Path("/api/v1/horarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Horarios", description = "Gestión de horarios de cursos ofertados")

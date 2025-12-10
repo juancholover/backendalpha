@@ -19,6 +19,8 @@ quarkus:
       format-sql: true
     jdbc:
       statement-batch-size: 20
+    schema-generation:
+      halt-on-error: false
 
   devservices:
     enabled: false

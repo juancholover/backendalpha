@@ -6,7 +6,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -22,13 +21,7 @@ import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
 
-/**
- * Controlador REST para gestión de cursos académicos.
- * 
- * Arquitectura:
- * - Operaciones de ESCRITURA delegadas a Use Cases
- * - Operaciones de LECTURA delegadas al Service
- */
+
 @Path("/api/v1/cursos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

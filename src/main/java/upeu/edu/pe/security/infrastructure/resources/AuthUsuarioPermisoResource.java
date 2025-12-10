@@ -8,6 +8,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import upeu.edu.pe.security.application.dto.AuthUsuarioPermisoRequestDTO;
 import upeu.edu.pe.security.application.dto.AuthUsuarioPermisoResponseDTO;
 import upeu.edu.pe.security.domain.services.AuthUsuarioPermisoService;
@@ -15,9 +19,10 @@ import upeu.edu.pe.security.domain.services.AuthUsuarioPermisoService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Path("/api/permisos-usuario")
+@Path("/api/v1/permisos-usuario")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Permisos de Usuario", description = "Gestión de permisos individuales asignados a usuarios")
 public class AuthUsuarioPermisoResource {
 
     @Inject
@@ -32,6 +37,10 @@ public class AuthUsuarioPermisoResource {
      */
     @POST
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
+    @Operation(summary = "Asignar permiso a usuario", description = "Asigna un permiso individual a un usuario específico")
+    @APIResponse(responseCode = "201", description = "Permiso asignado exitosamente")
+    @APIResponse(responseCode = "400", description = "Datos inválidos")
+    @APIResponse(responseCode = "409", description = "El permiso ya está asignado al usuario")
     public Response asignarPermiso(@Valid AuthUsuarioPermisoRequestDTO dto) {
         // Obtener el username del usuario autenticado desde el SecurityContext
         String username = securityContext.getUserPrincipal().getName();
@@ -50,7 +59,11 @@ public class AuthUsuarioPermisoResource {
     @GET
     @Path("/usuario/{authUsuarioId}")
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
-    public Response obtenerPermisosPorUsuario(@PathParam("authUsuarioId") Long authUsuarioId) {
+    @Operation(summary = "Obtener permisos de usuario", description = "Lista todos los permisos individuales asignados a un usuario")
+    @APIResponse(responseCode = "200", description = "Lista de permisos obtenida")
+    public Response obtenerPermisosPorUsuario(
+            @Parameter(description = "ID del usuario") 
+            @PathParam("authUsuarioId") Long authUsuarioId) {
         List<AuthUsuarioPermisoResponseDTO> permisos = service.obtenerPermisosPorUsuario(authUsuarioId);
         return Response.ok(permisos).build();
     }
