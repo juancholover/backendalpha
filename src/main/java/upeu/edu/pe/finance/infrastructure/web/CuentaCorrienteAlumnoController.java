@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.finance.application.dto.CuentaCorrienteAlumnoRequestDTO;
 import upeu.edu.pe.finance.application.dto.CuentaCorrienteAlumnoResponseDTO;
 import upeu.edu.pe.finance.domain.services.CuentaCorrienteAlumnoService;
@@ -15,6 +16,7 @@ import java.util.List;
 @Path("/api/v1/cuentas-corrientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Cuentas Corrientes", description = "Gestión de cuentas corrientes de estudiantes")
 public class CuentaCorrienteAlumnoController {
 
     @Inject

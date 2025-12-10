@@ -7,12 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import upeu.edu.pe.security.domain.enums.UserRole;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class RegisterRequestDto {
 
     @NotBlank(message = "Username is required")
@@ -40,5 +38,5 @@ public class RegisterRequestDto {
     @Pattern(regexp = "^[+]?[0-9]{10,20}$", message = "Phone number should be valid")
     private String phone;
 
-    private UserRole role = UserRole.USER;
+    private Long rolId; // ID del rol a asignar (será buscado en la tabla 'rol')
 }

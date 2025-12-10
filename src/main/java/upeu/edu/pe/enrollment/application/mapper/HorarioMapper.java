@@ -1,0 +1,49 @@
+package upeu.edu.pe.enrollment.application.mapper;
+
+import org.mapstruct.*;
+import upeu.edu.pe.enrollment.application.dto.HorarioRequestDTO;
+import upeu.edu.pe.enrollment.application.dto.HorarioResponseDTO;
+import upeu.edu.pe.enrollment.domain.entities.Horario;
+
+@Mapper(componentModel = "cdi", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface HorarioMapper {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "cursoOfertado", ignore = true)
+    @Mapping(target = "localizacion", ignore = true)
+    Horario toEntity(HorarioRequestDTO dto);
+
+    @Mapping(target = "cursoOfertadoId", source = "cursoOfertado.id")
+    @Mapping(target = "cursoOfertadoCodigoSeccion", source = "cursoOfertado.codigoSeccion")
+    @Mapping(target = "cursoNombre", source = "cursoOfertado.planCurso.curso.nombre")
+    @Mapping(target = "cursoCodigo", source = "cursoOfertado.planCurso.curso.codigoCurso")
+    @Mapping(target = "profesorId", source = "cursoOfertado.profesor.id")
+    @Mapping(target = "profesorNombre", expression = "java(getNombreProfesor(entity))")
+    @Mapping(target = "nombreDia", expression = "java(entity.getNombreDia())")
+    @Mapping(target = "duracionMinutos", expression = "java(entity.getDuracionMinutos())")
+    @Mapping(target = "localizacionId", source = "localizacion.id")
+    @Mapping(target = "localizacionNombre", source = "localizacion.nombre")
+    @Mapping(target = "localizacionCodigo", source = "localizacion.codigo")
+    HorarioResponseDTO toResponseDTO(Horario entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "cursoOfertado", ignore = true)
+    @Mapping(target = "localizacion", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromDto(HorarioRequestDTO dto, @MappingTarget Horario entity);
+
+    default String getNombreProfesor(Horario horario) {
+        if (horario.getCursoOfertado() != null && 
+            horario.getCursoOfertado().getProfesor() != null && 
+            horario.getCursoOfertado().getProfesor().getEmpleado() != null &&
+            horario.getCursoOfertado().getProfesor().getEmpleado().getPersona() != null) {
+            
+            var persona = horario.getCursoOfertado().getProfesor().getEmpleado().getPersona();
+            return persona.getApellidoPaterno() + " " + 
+                   persona.getApellidoMaterno() + ", " + 
+                   persona.getNombres();
+        }
+        return null;
+    }
+}
+

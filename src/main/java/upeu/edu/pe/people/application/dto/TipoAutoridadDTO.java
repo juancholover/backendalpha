@@ -1,0 +1,16 @@
+package upeu.edu.pe.people.application.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TipoAutoridadDTO {
+    private Long id;
+    private String nombre;
+    private String codigo;
+    private Integer nivelJerarquia;
+    private String descripcion;
+}

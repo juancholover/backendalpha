@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.finance.application.dto.PagoRequestDTO;
 import upeu.edu.pe.finance.application.dto.PagoResponseDTO;
 import upeu.edu.pe.finance.domain.services.PagoService;
@@ -16,6 +17,7 @@ import java.util.List;
 @Path("/api/v1/pagos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Pagos", description = "Gestión de pagos de estudiantes")
 public class PagoController {
 
     @Inject

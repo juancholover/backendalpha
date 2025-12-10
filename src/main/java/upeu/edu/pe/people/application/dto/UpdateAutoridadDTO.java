@@ -1,0 +1,19 @@
+package upeu.edu.pe.people.application.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateAutoridadDTO {
+    private Long personaId;
+    private Long tipoAutoridadId;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private Boolean esVigente;
+    private String resolucionDesignacion;
+    private String observaciones;
+}

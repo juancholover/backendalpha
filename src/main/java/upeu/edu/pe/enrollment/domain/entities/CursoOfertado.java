@@ -1,0 +1,207 @@
+package upeu.edu.pe.enrollment.domain.entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import upeu.edu.pe.shared.entities.AuditableEntity;
+import upeu.edu.pe.shared.listeners.AuditListener;
+import upeu.edu.pe.shared.annotations.Normalize;
+import upeu.edu.pe.curriculum.domain.entities.PlanCurso;
+import upeu.edu.pe.people.domain.entities.Profesor;
+import upeu.edu.pe.curriculum.domain.entities.Silabo;
+import upeu.edu.pe.assessment.domain.entities.EvaluacionCriterio;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "curso_ofertado", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"codigo_seccion", "periodo_academico_id"})
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+@EntityListeners(AuditListener.class)
+public class CursoOfertado extends AuditableEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_curso_id", nullable = false)
+    private PlanCurso planCurso; // La relación curso-plan que se está ofertando (incluye créditos, ciclo, tipo)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "periodo_academico_id", nullable = false)
+    private PeriodoAcademico periodoAcademico; // En qué período se dicta
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profesor_id")
+    private Profesor profesor; // Profesor asignado
+
+    @Column(name = "codigo_seccion", nullable = false, length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String codigoSeccion; // Ej: A, B, C, 01, 02
+
+    @Column(name = "capacidad_maxima", nullable = false)
+    private Integer capacidadMaxima;
+
+    @Column(name = "vacantes_disponibles", nullable = false)
+    private Integer vacantesDisponibles;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modalidad_id", nullable = false)
+    private Modalidad modalidad; // Define cómo se dicta: PRESENCIAL, VIRTUAL, SEMIPRESENCIAL, HÍBRIDA
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "localizacion_id")
+    private Localizacion localizacion; // Aula asignada (solo si requiere presencialidad)
+
+    @Column(name = "url_plataforma", length = 500)
+    private String urlPlataforma; // URL de plataforma virtual (solo si requiere plataforma digital)
+
+    @Column(name = "estado", length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String estado; // ABIERTA, CERRADA, CANCELADA, EN_CURSO, FINALIZADA
+
+    @Column(name = "observaciones", length = 500)
+    @Normalize(Normalize.NormalizeType.SPACES_ONLY)
+    private String observaciones;
+
+    /**
+     * INMUTABILIDAD: Una vez asignado, no se puede cambiar.
+     * Congela la versión exacta del sílabo que se usó en esta oferta.
+     * Si el sílabo cambia en el futuro, las matrículas viejas siguen apuntando a esta versión.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "silabo_id", insertable = false, updatable = false)
+    private Silabo silaboVersionado;
+
+    @Column(name = "silabo_id")
+    private Long silaboId; // ID del sílabo congelado (solo se setea al crear la oferta)
+
+    @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Matricula> matriculas = new HashSet<>();
+
+    @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EvaluacionCriterio> evaluacionCriterios = new HashSet<>();
+
+
+    public CursoOfertado(PlanCurso planCurso, 
+                  PeriodoAcademico periodoAcademico, 
+                  Silabo silaboVersionado,
+                  String codigoSeccion, 
+                  Integer capacidadMaxima, Modalidad modalidad) {
+        this.planCurso = planCurso;
+        this.periodoAcademico = periodoAcademico;
+        this.silaboVersionado = silaboVersionado;
+        this.silaboId = silaboVersionado != null ? silaboVersionado.getId() : null;
+        this.codigoSeccion = codigoSeccion;
+        this.capacidadMaxima = capacidadMaxima;
+        this.vacantesDisponibles = capacidadMaxima;
+        this.estado = "ABIERTA";
+        this.modalidad = modalidad;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void validarCoherencia() {
+        if (this.estado == null) {
+            this.estado = "ABIERTA";
+        }
+        if (this.vacantesDisponibles == null && this.capacidadMaxima != null) {
+            this.vacantesDisponibles = this.capacidadMaxima;
+        }
+
+        // Validar que si requiere aula física, tenga localización asignada
+        if (modalidad != null && modalidad.necesitaInfraestructuraFisica() && localizacion == null) {
+            throw new IllegalStateException(
+                "Curso con modalidad " + modalidad.getNombre() + " requiere asignación de aula física"
+            );
+        }
+
+        // Validar que si requiere plataforma digital, tenga URL
+        if (modalidad != null && modalidad.necesitaPlataformaDigital() && 
+            (urlPlataforma == null || urlPlataforma.isBlank())) {
+            throw new IllegalStateException(
+                "Curso con modalidad " + modalidad.getNombre() + " requiere URL de plataforma virtual"
+            );
+        }
+    }
+
+    // Métodos de negocio relacionados con modalidad
+
+    /**
+     * Verifica si el curso es 100% presencial
+     */
+    public boolean esPresencial() {
+        return modalidad != null && modalidad.esPresencial();
+    }
+
+    /**
+     * Verifica si el curso es 100% virtual
+     */
+    public boolean esVirtual() {
+        return modalidad != null && modalidad.esVirtual();
+    }
+
+    /**
+     * Verifica si el curso es semipresencial
+     */
+    public boolean esSemipresencial() {
+        return modalidad != null && modalidad.esSemipresencial();
+    }
+
+    /**
+     * Verifica si el curso es híbrido
+     */
+    public boolean esHibrido() {
+        return modalidad != null && modalidad.esHibrida();
+    }
+
+    /**
+     * Indica si requiere aula física
+     */
+    public boolean requiereAulaFisica() {
+        return modalidad != null && modalidad.necesitaInfraestructuraFisica();
+    }
+
+    /**
+     * Indica si requiere plataforma virtual
+     */
+    public boolean requierePlataformaVirtual() {
+        return modalidad != null && modalidad.necesitaPlataformaDigital();
+    }
+
+    /**
+     * Método para reducir vacantes al matricular un estudiante
+     */
+    public void reducirVacantes() {
+        if (this.vacantesDisponibles > 0) {
+            this.vacantesDisponibles--;
+        } else {
+            throw new IllegalStateException("No hay vacantes disponibles en esta sección");
+        }
+    }
+
+    /**
+     * Método para aumentar vacantes al desmatricular un estudiante
+     */
+    public void aumentarVacantes() {
+        if (this.vacantesDisponibles < this.capacidadMaxima) {
+            this.vacantesDisponibles++;
+        }
+    }
+
+    /**
+     * Verifica si hay cupo disponible
+     */
+    public boolean hayCupoDisponible() {
+        return this.vacantesDisponibles > 0 && "ABIERTA".equals(this.estado);
+    }
+}

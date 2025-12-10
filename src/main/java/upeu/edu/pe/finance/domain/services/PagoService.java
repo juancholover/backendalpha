@@ -89,7 +89,7 @@ public class PagoService {
 
         Pago pago = pagoMapper.toEntity(requestDTO);
         
-        upeu.edu.pe.academic.domain.entities.Estudiante estudiante = new upeu.edu.pe.academic.domain.entities.Estudiante();
+        upeu.edu.pe.people.domain.entities.Estudiante estudiante = new upeu.edu.pe.people.domain.entities.Estudiante();
         estudiante.setId(requestDTO.getEstudianteId());
         pago.setEstudiante(estudiante);
 

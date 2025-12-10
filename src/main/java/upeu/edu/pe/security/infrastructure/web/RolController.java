@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.security.application.dto.RolRequestDTO;
 import upeu.edu.pe.security.application.dto.RolResponseDTO;
 import upeu.edu.pe.security.domain.services.RolService;
@@ -14,6 +16,7 @@ import java.util.List;
 @Path("/api/v1/roles")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Roles", description = "Gestión de roles de usuario")
 public class RolController {
 
     @Inject

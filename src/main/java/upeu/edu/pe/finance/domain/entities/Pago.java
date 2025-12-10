@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import upeu.edu.pe.academic.domain.entities.Estudiante;
+import upeu.edu.pe.people.domain.entities.Estudiante;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
@@ -186,3 +186,4 @@ public class Pago extends AuditableEntity {
                !"ANULADO".equals(this.estado);
     }
 }
+

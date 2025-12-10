@@ -73,8 +73,8 @@ public class AuthService {
             authUsuario.getEmail(),
             authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
             authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
-            null, // rol enum - AuthUsuario usa Rol entity
-            null, // status enum - AuthUsuario usa String estado
+            authUsuario.getRol() != null ? authUsuario.getRol().getNombre() : "USER",
+            authUsuario.estaActivo() ? "ACTIVE" : "INACTIVE",
             authUsuario.getUltimoAcceso()
         );
 

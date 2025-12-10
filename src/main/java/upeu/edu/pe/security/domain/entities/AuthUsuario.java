@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import upeu.edu.pe.academic.domain.entities.Persona;
+import upeu.edu.pe.core.domain.entities.Persona;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 
@@ -94,3 +94,4 @@ public class AuthUsuario extends AuditableEntity {
         this.intentosFallidos = 0;
     }
 }
+
