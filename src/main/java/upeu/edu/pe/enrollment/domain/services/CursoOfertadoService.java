@@ -2,25 +2,20 @@ package upeu.edu.pe.enrollment.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.enrollment.application.dto.CursoOfertadoRequestDTO;
 import upeu.edu.pe.enrollment.application.dto.CursoOfertadoResponseDTO;
 import upeu.edu.pe.enrollment.application.mapper.CursoOfertadoMapper;
 import upeu.edu.pe.enrollment.domain.entities.CursoOfertado;
-import upeu.edu.pe.curriculum.domain.entities.PlanCurso;
-import upeu.edu.pe.enrollment.domain.entities.PeriodoAcademico;
-import upeu.edu.pe.people.domain.entities.Profesor;
-import upeu.edu.pe.enrollment.domain.entities.Localizacion;
 import upeu.edu.pe.enrollment.domain.repositories.CursoOfertadoRepository;
-import upeu.edu.pe.curriculum.domain.repositories.PlanCursoRepository;
-import upeu.edu.pe.people.domain.repositories.ProfesorRepository;
-import upeu.edu.pe.enrollment.domain.repositories.PeriodoAcademicoRepository;
-import upeu.edu.pe.enrollment.domain.repositories.LocalizacionRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de cursos ofertados.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class CursoOfertadoService {
 
@@ -28,21 +23,13 @@ public class CursoOfertadoService {
     CursoOfertadoRepository cursoOfertadoRepository;
 
     @Inject
-    PlanCursoRepository planCursoRepository;
-
-    @Inject
-    PeriodoAcademicoRepository periodoAcademicoRepository;
-
-    @Inject
-    ProfesorRepository profesorRepository;
-
-    @Inject
-    LocalizacionRepository localizacionRepository;
-
-    @Inject
     CursoOfertadoMapper cursoOfertadoMapper;
 
-    public List<CursoOfertadoResponseDTO> findByUniversidad(Long universidadId) {
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
+
+    public List<CursoOfertadoResponseDTO> findAllActive() {
         List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findAllActive();
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
@@ -72,7 +59,7 @@ public class CursoOfertadoService {
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
 
-    public List<CursoOfertadoResponseDTO> findAbiertasByPeriodoAndUniversidad(Long periodoId, Long universidadId) {
+    public List<CursoOfertadoResponseDTO> findAbiertasByPeriodo(Long periodoId) {
         List<CursoOfertado> cursosOfertados = cursoOfertadoRepository.findAbiertasByPeriodo(periodoId);
         return cursoOfertadoMapper.toResponseDTOList(cursosOfertados);
     }
@@ -93,127 +80,17 @@ public class CursoOfertadoService {
         return cursoOfertadoMapper.toResponseDTO(cursoOfertado);
     }
 
-    public CursoOfertadoResponseDTO findByCodigoAndPeriodoAndUniversidad(String codigoSeccion, Long periodoId, Long universidadId) {
+    public CursoOfertadoResponseDTO findByCodigoAndPeriodo(String codigoSeccion, Long periodoId) {
         CursoOfertado cursoOfertado = cursoOfertadoRepository.findByCodigoAndPeriodo(codigoSeccion, periodoId)
                 .orElseThrow(() -> new NotFoundException("Curso ofertado no encontrado con código: " + codigoSeccion));
         return cursoOfertadoMapper.toResponseDTO(cursoOfertado);
     }
 
-    @Transactional
-    public CursoOfertadoResponseDTO create(CursoOfertadoRequestDTO requestDTO) {
-        // Validar que no exista el curso ofertado
-        if (cursoOfertadoRepository.existsByCodigoAndPeriodoAndPlanCurso(
-                requestDTO.getCodigoSeccion(), 
-                requestDTO.getPeriodoAcademicoId(), 
-                requestDTO.getPlanCursoId())) {
-            throw new BusinessException("Ya existe un curso ofertado con el código: " + requestDTO.getCodigoSeccion() 
-                    + " para este plan-curso y período");
-        }
-
-        // Validar plan-curso (esto valida curso + plan + créditos + ciclo)
-        PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
-                .orElseThrow(() -> new NotFoundException("Plan-Curso no encontrado con ID: " + requestDTO.getPlanCursoId()));
-
-        // Validar período académico
-        PeriodoAcademico periodoAcademico = periodoAcademicoRepository.findByIdOptional(requestDTO.getPeriodoAcademicoId())
-                .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + requestDTO.getPeriodoAcademicoId()));
-
-        // Validar vacantes disponibles
-        Integer vacantesDisponibles = requestDTO.getVacantesDisponibles();
-        if (vacantesDisponibles == null) {
-            vacantesDisponibles = requestDTO.getCapacidadMaxima();
-        } else if (vacantesDisponibles > requestDTO.getCapacidadMaxima()) {
-            throw new BusinessException("Las vacantes disponibles no pueden exceder la capacidad máxima");
-        }
-
-        // Crear curso ofertado
-        CursoOfertado cursoOfertado = cursoOfertadoMapper.toEntity(requestDTO);
-        cursoOfertado.setPlanCurso(planCurso);
-        cursoOfertado.setPeriodoAcademico(periodoAcademico);
-        cursoOfertado.setVacantesDisponibles(vacantesDisponibles);
-
-        // Validar y asignar profesor si existe
-        if (requestDTO.getProfesorId() != null) {
-            Profesor profesor = profesorRepository.findByIdOptional(requestDTO.getProfesorId())
-                    .orElseThrow(() -> new NotFoundException("Profesor no encontrado con ID: " + requestDTO.getProfesorId()));
-            cursoOfertado.setProfesor(profesor);
-        }
-
-        // Validar y asignar localización si existe
-        if (requestDTO.getLocalizacionId() != null) {
-            Localizacion localizacion = localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
-                    .orElseThrow(() -> new NotFoundException("Localización no encontrada con ID: " + requestDTO.getLocalizacionId()));
-            cursoOfertado.setLocalizacion(localizacion);
-        }
-
-        cursoOfertadoRepository.persist(cursoOfertado);
-        return cursoOfertadoMapper.toResponseDTO(cursoOfertado);
-    }
-
-    @Transactional
-    public CursoOfertadoResponseDTO update(Long id, CursoOfertadoRequestDTO requestDTO) {
-        CursoOfertado cursoOfertado = cursoOfertadoRepository.findByIdOptional(id)
+    /**
+     * Obtener entidad por ID (para uso interno)
+     */
+    public CursoOfertado getEntityById(Long id) {
+        return cursoOfertadoRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Curso ofertado no encontrado con ID: " + id));
-
-        // Validar cambios de relaciones
-        if (!cursoOfertado.getPlanCurso().getId().equals(requestDTO.getPlanCursoId())) {
-            PlanCurso planCurso = planCursoRepository.findByIdOptional(requestDTO.getPlanCursoId())
-                    .orElseThrow(() -> new NotFoundException("Plan-Curso no encontrado con ID: " + requestDTO.getPlanCursoId()));
-            cursoOfertado.setPlanCurso(planCurso);
-        }
-
-        if (!cursoOfertado.getPeriodoAcademico().getId().equals(requestDTO.getPeriodoAcademicoId())) {
-            PeriodoAcademico periodoAcademico = periodoAcademicoRepository.findByIdOptional(requestDTO.getPeriodoAcademicoId())
-                    .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + requestDTO.getPeriodoAcademicoId()));
-            cursoOfertado.setPeriodoAcademico(periodoAcademico);
-        }
-
-        // Validar profesor
-        if (requestDTO.getProfesorId() != null) {
-            if (cursoOfertado.getProfesor() == null || !cursoOfertado.getProfesor().getId().equals(requestDTO.getProfesorId())) {
-                Profesor profesor = profesorRepository.findByIdOptional(requestDTO.getProfesorId())
-                        .orElseThrow(() -> new NotFoundException("Profesor no encontrado con ID: " + requestDTO.getProfesorId()));
-                cursoOfertado.setProfesor(profesor);
-            }
-        } else {
-            cursoOfertado.setProfesor(null);
-        }
-
-        // Validar localización
-        if (requestDTO.getLocalizacionId() != null) {
-            if (cursoOfertado.getLocalizacion() == null || !cursoOfertado.getLocalizacion().getId().equals(requestDTO.getLocalizacionId())) {
-                Localizacion localizacion = localizacionRepository.findByIdOptional(requestDTO.getLocalizacionId())
-                        .orElseThrow(() -> new NotFoundException("Localización no encontrada con ID: " + requestDTO.getLocalizacionId()));
-                cursoOfertado.setLocalizacion(localizacion);
-            }
-        } else {
-            cursoOfertado.setLocalizacion(null);
-        }
-
-        // Validar vacantes
-        if (requestDTO.getVacantesDisponibles() != null && 
-            requestDTO.getVacantesDisponibles() > requestDTO.getCapacidadMaxima()) {
-            throw new BusinessException("Las vacantes disponibles no pueden exceder la capacidad máxima");
-        }
-
-        cursoOfertadoMapper.updateEntityFromDTO(requestDTO, cursoOfertado);
-        cursoOfertadoRepository.persist(cursoOfertado);
-        return cursoOfertadoMapper.toResponseDTO(cursoOfertado);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        CursoOfertado cursoOfertado = cursoOfertadoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Curso ofertado no encontrado con ID: " + id));
-
-        // Verificar si tiene matrículas
-        long matriculados = cursoOfertadoRepository.countMatriculados(id);
-        if (matriculados > 0) {
-            throw new BusinessException("No se puede eliminar el curso ofertado porque tiene " + matriculados + " estudiantes matriculados");
-        }
-
-        // Soft delete
-        cursoOfertado.setActive(false);
-        cursoOfertadoRepository.persist(cursoOfertado);
     }
 }

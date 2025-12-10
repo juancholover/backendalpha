@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import upeu.edu.pe.shared.exceptions.BusinessException;
+import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 import upeu.edu.pe.shared.exceptions.ValidationException;
 import upeu.edu.pe.shared.response.ApiResponse;
@@ -14,13 +15,30 @@ import upeu.edu.pe.shared.response.ApiResponse;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Manejador global de excepciones para toda la aplicación.
+ * 
+ * Jerarquía de excepciones:
+ * - NotFoundException: Recurso no encontrado (404)
+ * - BusinessException: Violación de regla de negocio (409)
+ * - DuplicateResourceException: Recurso duplicado (409)
+ * - ValidationException: Error de validación (400)
+ * - ConstraintViolationException: Validaciones de Jakarta (400)
+ * 
+ * Las excepciones específicas de cada módulo (ej:
+ * UniversidadNoEncontradaException)
+ * heredan de estas clases base y son manejadas automáticamente.
+ */
 @Provider
 public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception exception) {
+        // Orden importante: las subclases primero, luego clases base
         if (exception instanceof NotFoundException) {
             return handleNotFoundException((NotFoundException) exception);
+        } else if (exception instanceof DuplicateResourceException) {
+            return handleDuplicateResourceException((DuplicateResourceException) exception);
         } else if (exception instanceof BusinessException) {
             return handleBusinessException((BusinessException) exception);
         } else if (exception instanceof ValidationException) {
@@ -35,6 +53,11 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
     private Response handleNotFoundException(NotFoundException ex) {
         ApiResponse<Object> response = ApiResponse.error(ex.getMessage(), "RESOURCE_NOT_FOUND");
         return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+    }
+
+    private Response handleDuplicateResourceException(DuplicateResourceException ex) {
+        ApiResponse<Object> response = ApiResponse.error(ex.getMessage(), "DUPLICATE_RESOURCE");
+        return Response.status(Response.Status.CONFLICT).entity(response).build();
     }
 
     private Response handleBusinessException(BusinessException ex) {
@@ -54,8 +77,7 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
                 .collect(Collectors.toMap(
                         violation -> getPropertyPath(violation),
                         ConstraintViolation::getMessage,
-                        (existing, replacement) -> existing
-                ));
+                        (existing, replacement) -> existing));
 
         ApiResponse<Map<String, String>> response = ApiResponse.error("Validation failed", "VALIDATION_ERROR");
         response.setData(errors);
@@ -63,6 +85,8 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
     }
 
     private Response handleGenericException(Exception ex) {
+        // Log del error para debugging (en producción usar un logger)
+        ex.printStackTrace();
         ApiResponse<Object> response = ApiResponse.error("An unexpected error occurred", "INTERNAL_SERVER_ERROR");
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).build();
     }

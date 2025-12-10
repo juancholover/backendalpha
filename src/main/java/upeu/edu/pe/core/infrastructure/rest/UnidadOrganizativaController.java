@@ -4,78 +4,166 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.core.application.dto.UnidadOrganizativaRequestDTO;
 import upeu.edu.pe.core.application.dto.UnidadOrganizativaResponseDTO;
+import upeu.edu.pe.core.application.mapper.UnidadOrganizativaMapper;
+import upeu.edu.pe.core.domain.commands.CrearUnidadOrganizativaCommand;
+import upeu.edu.pe.core.domain.commands.ActualizarUnidadOrganizativaCommand;
+import upeu.edu.pe.core.domain.entities.UnidadOrganizativa;
 import upeu.edu.pe.core.domain.services.UnidadOrganizativaService;
+import upeu.edu.pe.core.domain.usecases.CrearUnidadOrganizativaUseCase;
+import upeu.edu.pe.core.domain.usecases.ActualizarUnidadOrganizativaUseCase;
+import upeu.edu.pe.core.domain.usecases.EliminarUnidadOrganizativaUseCase;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestión de unidades organizativas.
+ * 
+ * Arquitectura:
+ * - Operaciones de ESCRITURA delegadas a Use Cases
+ * - Operaciones de LECTURA delegadas al Service
+ */
 @Path("/api/unidades-organizativas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Unidades Organizativas", description = "Gestión de facultades, escuelas y departamentos")
 public class UnidadOrganizativaController {
 
+    // Use Cases para operaciones de escritura
+    @Inject
+    CrearUnidadOrganizativaUseCase crearUnidadUseCase;
+
+    @Inject
+    ActualizarUnidadOrganizativaUseCase actualizarUnidadUseCase;
+
+    @Inject
+    EliminarUnidadOrganizativaUseCase eliminarUnidadUseCase;
+
+    // Service para operaciones de lectura
     @Inject
     UnidadOrganizativaService unidadService;
 
+    @Inject
+    UnidadOrganizativaMapper unidadMapper;
+
+    // =====================================================
+    // OPERACIONES DE LECTURA (Service)
+    // =====================================================
+
     @GET
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getAll() {
-        return ApiResponse.success("Unidades organizativas obtenidas exitosamente", unidadService.findAll());
+    @Operation(summary = "Listar todas las unidades organizativas")
+    public Response getAll() {
+        List<UnidadOrganizativaResponseDTO> unidades = unidadService.findAll();
+        return Response.ok(ApiResponse.success("Unidades organizativas obtenidas exitosamente", unidades)).build();
     }
 
     @GET
     @Path("/{id}")
-    public ApiResponse<UnidadOrganizativaResponseDTO> getById(@PathParam("id") Long id) {
-        return ApiResponse.success("Unidad organizativa obtenida exitosamente", unidadService.findById(id));
+    @Operation(summary = "Obtener unidad organizativa por ID")
+    public Response getById(@PathParam("id") Long id) {
+        UnidadOrganizativaResponseDTO unidad = unidadService.findById(id);
+        return Response.ok(ApiResponse.success("Unidad organizativa obtenida exitosamente", unidad)).build();
     }
 
     @GET
     @Path("/universidad/{universidadId}")
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByUniversidad(@PathParam("universidadId") Long universidadId) {
-        return ApiResponse.success("Unidades organizativas por universidad obtenidas exitosamente", 
-                unidadService.findByUniversidad(universidadId));
+    @Operation(summary = "Listar unidades por universidad")
+    public Response getByUniversidad(@PathParam("universidadId") Long universidadId) {
+        List<UnidadOrganizativaResponseDTO> unidades = unidadService.findByUniversidad(universidadId);
+        return Response.ok(ApiResponse.success("Unidades organizativas por universidad obtenidas", unidades)).build();
     }
 
     @GET
     @Path("/tipo-unidad/{tipoUnidadId}")
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByTipoUnidad(@PathParam("tipoUnidadId") Long tipoUnidadId) {
-        return ApiResponse.success("Unidades organizativas por tipo obtenidas exitosamente", 
-                unidadService.findByTipoUnidad(tipoUnidadId));
+    @Operation(summary = "Listar unidades por tipo")
+    public Response getByTipoUnidad(@PathParam("tipoUnidadId") Long tipoUnidadId) {
+        List<UnidadOrganizativaResponseDTO> unidades = unidadService.findByTipoUnidad(tipoUnidadId);
+        return Response.ok(ApiResponse.success("Unidades organizativas por tipo obtenidas", unidades)).build();
     }
 
     @GET
     @Path("/raiz/universidad/{universidadId}")
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getRootUnidades(@PathParam("universidadId") Long universidadId) {
-        return ApiResponse.success("Unidades raíz obtenidas exitosamente", 
-                unidadService.findRootUnidades(universidadId));
+    @Operation(summary = "Listar unidades raíz")
+    public Response getRootUnidades(@PathParam("universidadId") Long universidadId) {
+        List<UnidadOrganizativaResponseDTO> unidades = unidadService.findRootUnidades(universidadId);
+        return Response.ok(ApiResponse.success("Unidades raíz obtenidas", unidades)).build();
     }
 
     @GET
     @Path("/hijas/{unidadPadreId}")
-    public ApiResponse<List<UnidadOrganizativaResponseDTO>> getByUnidadPadre(@PathParam("unidadPadreId") Long unidadPadreId) {
-        return ApiResponse.success("Unidades hijas obtenidas exitosamente", 
-                unidadService.findByUnidadPadre(unidadPadreId));
+    @Operation(summary = "Listar unidades hijas")
+    public Response getByUnidadPadre(@PathParam("unidadPadreId") Long unidadPadreId) {
+        List<UnidadOrganizativaResponseDTO> unidades = unidadService.findByUnidadPadre(unidadPadreId);
+        return Response.ok(ApiResponse.success("Unidades hijas obtenidas", unidades)).build();
     }
 
+    // =====================================================
+    // OPERACIONES DE ESCRITURA (Use Cases)
+    // =====================================================
+
     @POST
-    public ApiResponse<UnidadOrganizativaResponseDTO> create(@Valid UnidadOrganizativaRequestDTO requestDTO) {
-        return ApiResponse.success("Unidad organizativa creada exitosamente", unidadService.create(requestDTO));
+    @Operation(summary = "Crear unidad organizativa")
+    public Response create(@Valid UnidadOrganizativaRequestDTO requestDTO) {
+
+        // Convertir DTO a Command
+        CrearUnidadOrganizativaCommand command = new CrearUnidadOrganizativaCommand(
+                requestDTO.getTipoUnidadId(),
+                requestDTO.getCodigo(),
+                requestDTO.getNombre(),
+                requestDTO.getSigla(), // DTO usa 'sigla'
+                requestDTO.getDescripcion(),
+                requestDTO.getUnidadPadreId(),
+                requestDTO.getLocalizacionId());
+
+        // Ejecutar Use Case
+        UnidadOrganizativa unidad = crearUnidadUseCase.execute(command);
+
+        // Convertir a DTO de respuesta
+        UnidadOrganizativaResponseDTO response = unidadMapper.toResponseDTO(unidad);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(ApiResponse.success("Unidad organizativa creada exitosamente", response))
+                .build();
     }
 
     @PUT
     @Path("/{id}")
-    public ApiResponse<UnidadOrganizativaResponseDTO> update(@PathParam("id") Long id, @Valid UnidadOrganizativaRequestDTO requestDTO) {
-        return ApiResponse.success("Unidad organizativa actualizada exitosamente", 
-                unidadService.update(id, requestDTO));
+    @Operation(summary = "Actualizar unidad organizativa")
+    public Response update(@PathParam("id") Long id, @Valid UnidadOrganizativaRequestDTO requestDTO) {
+
+        // Convertir DTO a Command
+        ActualizarUnidadOrganizativaCommand command = new ActualizarUnidadOrganizativaCommand(
+                id,
+                requestDTO.getTipoUnidadId(),
+                requestDTO.getCodigo(),
+                requestDTO.getNombre(),
+                requestDTO.getSigla(), // DTO usa 'sigla'
+                requestDTO.getDescripcion(),
+                requestDTO.getUnidadPadreId(),
+                requestDTO.getLocalizacionId());
+
+        // Ejecutar Use Case
+        UnidadOrganizativa unidad = actualizarUnidadUseCase.execute(command);
+
+        // Convertir a DTO de respuesta
+        UnidadOrganizativaResponseDTO response = unidadMapper.toResponseDTO(unidad);
+
+        return Response.ok(ApiResponse.success("Unidad organizativa actualizada exitosamente", response)).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public ApiResponse<Void> delete(@PathParam("id") Long id) {
-        unidadService.delete(id);
-        return ApiResponse.success("Unidad organizativa eliminada exitosamente", null);
+    @Operation(summary = "Eliminar unidad organizativa")
+    public Response delete(@PathParam("id") Long id) {
+
+        // Ejecutar Use Case
+        eliminarUnidadUseCase.execute(id);
+
+        return Response.ok(ApiResponse.success("Unidad organizativa eliminada exitosamente", null)).build();
     }
 }

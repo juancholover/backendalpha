@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.DecimalMax;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class EvaluacionNotaRequestDTO {
 
@@ -13,6 +14,7 @@ public class EvaluacionNotaRequestDTO {
     @NotNull(message = "El ID del criterio es obligatorio")
     private Long criterioId;
 
+    @NotNull(message = "La nota es obligatoria")
     @DecimalMin(value = "0.00", message = "La nota debe ser mayor o igual a 0")
     @DecimalMax(value = "20.00", message = "La nota debe ser menor o igual a 20")
     private BigDecimal nota;
@@ -21,16 +23,15 @@ public class EvaluacionNotaRequestDTO {
     @DecimalMax(value = "20.00", message = "La nota de recuperación debe ser menor o igual a 20")
     private BigDecimal notaRecuperacion;
 
-    @NotNull(message = "El estado es obligatorio")
     private String estado;
 
-    private String observaciones;
+    private String observacion;
 
+    private LocalDateTime fechaEvaluacion;
 
     public EvaluacionNotaRequestDTO() {
     }
 
-    
     public Long getMatriculaId() {
         return matriculaId;
     }
@@ -71,11 +72,19 @@ public class EvaluacionNotaRequestDTO {
         this.estado = estado;
     }
 
-    public String getObservaciones() {
-        return observaciones;
+    public String getObservacion() {
+        return observacion;
     }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public LocalDateTime getFechaEvaluacion() {
+        return fechaEvaluacion;
+    }
+
+    public void setFechaEvaluacion(LocalDateTime fechaEvaluacion) {
+        this.fechaEvaluacion = fechaEvaluacion;
     }
 }

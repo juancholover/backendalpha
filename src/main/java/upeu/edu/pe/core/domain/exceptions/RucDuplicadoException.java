@@ -1,15 +1,19 @@
 package upeu.edu.pe.core.domain.exceptions;
 
+import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 
-public class RucDuplicadoException extends RuntimeException {
-    
+/**
+ * Excepción lanzada cuando ya existe una universidad con el RUC especificado.
+ */
+public class RucDuplicadoException extends DuplicateResourceException {
+
     private final String ruc;
-    
+
     public RucDuplicadoException(String ruc) {
-        super(String.format("Ya existe una universidad con el RUC: %s", ruc));
+        super("Universidad", "RUC", ruc);
         this.ruc = ruc;
     }
-    
+
     public String getRuc() {
         return ruc;
     }

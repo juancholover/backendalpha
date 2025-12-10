@@ -2,19 +2,20 @@ package upeu.edu.pe.curriculum.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.curriculum.application.dto.ProgramaAcademicoRequestDTO;
 import upeu.edu.pe.curriculum.application.dto.ProgramaAcademicoResponseDTO;
 import upeu.edu.pe.curriculum.application.mapper.ProgramaAcademicoMapper;
 import upeu.edu.pe.curriculum.domain.entities.ProgramaAcademico;
-import upeu.edu.pe.core.domain.entities.UnidadOrganizativa;
 import upeu.edu.pe.curriculum.domain.repositories.ProgramaAcademicoRepository;
-import upeu.edu.pe.core.domain.repositories.UnidadOrganizativaRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de programas académicos.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class ProgramaAcademicoService {
 
@@ -22,10 +23,11 @@ public class ProgramaAcademicoService {
     ProgramaAcademicoRepository programaRepository;
 
     @Inject
-    UnidadOrganizativaRepository unidadRepository;
-
-    @Inject
     ProgramaAcademicoMapper programaMapper;
+
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
 
     public List<ProgramaAcademicoResponseDTO> findAll() {
         List<ProgramaAcademico> programas = programaRepository.findAllActive();
@@ -64,56 +66,11 @@ public class ProgramaAcademicoService {
         return programaMapper.toResponseDTOList(programas);
     }
 
-    @Transactional
-    public ProgramaAcademicoResponseDTO create(ProgramaAcademicoRequestDTO requestDTO) {
-        // Validar que no exista el código
-        if (programaRepository.existsByCodigo(requestDTO.getCodigo())) {
-            throw new BusinessException("Ya existe un programa académico con el código: " + requestDTO.getCodigo());
-        }
-
-        // Validar que exista la unidad organizativa
-        UnidadOrganizativa unidadOrganizativa = unidadRepository.findByIdOptional(requestDTO.getUnidadOrganizativaId())
-                .orElseThrow(() -> new NotFoundException("Unidad organizativa no encontrada con ID: " + requestDTO.getUnidadOrganizativaId()));
-
-        // Crear el programa
-        ProgramaAcademico programa = programaMapper.toEntity(requestDTO);
-        programa.setUnidadOrganizativa(unidadOrganizativa);
-
-        programaRepository.persist(programa);
-        return programaMapper.toResponseDTO(programa);
-    }
-
-    @Transactional
-    public ProgramaAcademicoResponseDTO update(Long id, ProgramaAcademicoRequestDTO requestDTO) {
-        ProgramaAcademico programa = programaRepository.findByIdOptional(id)
+    /**
+     * Obtener entidad por ID (para uso interno)
+     */
+    public ProgramaAcademico getEntityById(Long id) {
+        return programaRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Programa académico no encontrado con ID: " + id));
-
-        // Validar código único si cambió
-        if (!programa.getCodigo().equals(requestDTO.getCodigo()) && 
-            programaRepository.existsByCodigoAndIdNot(requestDTO.getCodigo(), id)) {
-            throw new BusinessException("Ya existe un programa académico con el código: " + requestDTO.getCodigo());
-        }
-
-        // Validar unidad organizativa si cambió
-        if (!programa.getUnidadOrganizativa().getId().equals(requestDTO.getUnidadOrganizativaId())) {
-            UnidadOrganizativa unidadOrganizativa = unidadRepository.findByIdOptional(requestDTO.getUnidadOrganizativaId())
-                    .orElseThrow(() -> new NotFoundException("Unidad organizativa no encontrada con ID: " + requestDTO.getUnidadOrganizativaId()));
-            programa.setUnidadOrganizativa(unidadOrganizativa);
-        }
-
-        programaMapper.updateEntityFromDTO(requestDTO, programa);
-        programaRepository.persist(programa);
-        return programaMapper.toResponseDTO(programa);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        ProgramaAcademico programa = programaRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Programa académico no encontrado con ID: " + id));
-
-        // Soft delete
-        programa.setActive(false);
-        programaRepository.persist(programa);
     }
 }
-

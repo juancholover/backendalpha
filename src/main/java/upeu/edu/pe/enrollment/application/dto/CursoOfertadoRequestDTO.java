@@ -27,9 +27,8 @@ public class CursoOfertadoRequestDTO {
     @Min(value = 0, message = "Las vacantes disponibles no pueden ser negativas")
     private Integer vacantesDisponibles;
 
-    @NotBlank(message = "La modalidad es requerida")
-    @Size(max = 50, message = "La modalidad no puede exceder 50 caracteres")
-    private String modalidad; // PRESENCIAL, VIRTUAL, HIBRIDA
+    @NotNull(message = "La modalidad es requerida")
+    private Long modalidadId; // ID de la modalidad
 
     private Long localizacionId; // Opcional, puede ser virtual
 

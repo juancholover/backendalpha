@@ -2,19 +2,22 @@ package upeu.edu.pe.finance.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.finance.application.dto.PagoRequestDTO;
 import upeu.edu.pe.finance.application.dto.PagoResponseDTO;
 import upeu.edu.pe.finance.application.mapper.PagoMapper;
 import upeu.edu.pe.finance.domain.entities.Pago;
 import upeu.edu.pe.finance.domain.repositories.PagoRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de pagos.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class PagoService {
 
@@ -23,6 +26,10 @@ public class PagoService {
 
     @Inject
     PagoMapper pagoMapper;
+
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
 
     public List<PagoResponseDTO> findByUniversidad(Long universidadId) {
         List<Pago> pagos = pagoRepository.findAllActivePagos();
@@ -75,109 +82,19 @@ public class PagoService {
         return pagoMapper.toResponseDTO(pago);
     }
 
-    @Transactional
-    public PagoResponseDTO create(PagoRequestDTO requestDTO) {
-        // Validar número de recibo único
-        if (pagoRepository.existsByNumeroRecibo(requestDTO.getNumeroRecibo())) {
-            throw new BusinessException("Ya existe un pago con el número de recibo: " + requestDTO.getNumeroRecibo());
-        }
-
-        // Validar monto
-        if (requestDTO.getMontoPagado().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BusinessException("El monto pagado debe ser mayor a cero");
-        }
-
-        Pago pago = pagoMapper.toEntity(requestDTO);
-        
-        upeu.edu.pe.people.domain.entities.Estudiante estudiante = new upeu.edu.pe.people.domain.entities.Estudiante();
-        estudiante.setId(requestDTO.getEstudianteId());
-        pago.setEstudiante(estudiante);
-
-        // Inicializar montos
-        pago.setMontoAplicado(BigDecimal.ZERO);
-        pago.setMontoPendienteAplicar(requestDTO.getMontoPagado());
-        
-        // Establecer estado inicial
-        pago.setEstado("REGISTRADO");
-
-        pagoRepository.persist(pago);
-        return pagoMapper.toResponseDTO(pago);
-    }
-
-    @Transactional
-    public PagoResponseDTO update(Long id, PagoRequestDTO requestDTO) {
-        Pago pago = pagoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Pago no encontrado con ID: " + id));
-
-        // Validar que si tiene aplicaciones, no se puede cambiar el monto
-        if (pago.getMontoAplicado().compareTo(BigDecimal.ZERO) > 0 && 
-            !pago.getMontoPagado().equals(requestDTO.getMontoPagado())) {
-            throw new BusinessException("No se puede modificar el monto porque ya tiene aplicaciones a deudas");
-        }
-
-        // Validar número de recibo único
-        pagoRepository.findByNumeroRecibo(requestDTO.getNumeroRecibo())
-                .ifPresent(existing -> {
-                    if (!existing.getId().equals(id)) {
-                        throw new BusinessException("Ya existe un pago con el número de recibo: " + requestDTO.getNumeroRecibo());
-                    }
-                });
-
-        pagoMapper.updateEntityFromDTO(requestDTO, pago);
-
-        // Recalcular monto pendiente si cambió el monto total
-        if (!pago.getMontoPagado().equals(requestDTO.getMontoPagado())) {
-            pago.setMontoPendienteAplicar(requestDTO.getMontoPagado().subtract(pago.getMontoAplicado()));
-        }
-
-        pagoRepository.persist(pago);
-        return pagoMapper.toResponseDTO(pago);
-    }
-
-    @Transactional
-    public PagoResponseDTO anular(Long id, String motivo) {
-        Pago pago = pagoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Pago no encontrado con ID: " + id));
-
-        // Validar que no tenga aplicaciones
-        if (pago.getMontoAplicado().compareTo(BigDecimal.ZERO) > 0) {
-            throw new BusinessException("No se puede anular el pago porque tiene " + 
-                    pago.getMontoAplicado() + " aplicado a deudas. Primero revierta las aplicaciones.");
-        }
-
-        pago.setEstado("ANULADO");
-        pago.setObservaciones((pago.getObservaciones() != null ? pago.getObservaciones() + ". " : "") + 
-                              "ANULADO: " + motivo);
-
-        pagoRepository.persist(pago);
-        return pagoMapper.toResponseDTO(pago);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Pago pago = pagoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Pago no encontrado con ID: " + id));
-
-        // Validar que no tenga aplicaciones a deudas
-        if (pago.getMontoAplicado().compareTo(BigDecimal.ZERO) > 0) {
-            throw new BusinessException("No se puede eliminar el pago porque tiene aplicaciones a deudas");
-        }
-
-        // Soft delete
-        pago.setActive(false);
-        pagoRepository.persist(pago);
-    }
-
-    public BigDecimal calcularTotalPagosByFecha(LocalDate fecha) {
-        // Nota: Este método requiere universidadId para funcionar correctamente
-        throw new UnsupportedOperationException("Use calcularTotalPagosByFecha(LocalDate fecha, Long universidadId) en su lugar");
-    }
-
     public BigDecimal calcularTotalPagosByMetodo(String metodoPago, LocalDate fecha) {
         return pagoRepository.calcularTotalPagosByMetodo(metodoPago, fecha);
     }
 
     public long countByEstadoAndUniversidad(String estado, Long universidadId) {
         return pagoRepository.countByEstadoActive(estado);
+    }
+
+    /**
+     * Obtener entidad por ID (para uso interno)
+     */
+    public Pago getEntityById(Long id) {
+        return pagoRepository.findByIdOptional(id)
+                .orElseThrow(() -> new NotFoundException("Pago no encontrado con ID: " + id));
     }
 }
