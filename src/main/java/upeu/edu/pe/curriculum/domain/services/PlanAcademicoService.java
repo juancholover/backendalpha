@@ -2,19 +2,20 @@ package upeu.edu.pe.curriculum.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.curriculum.application.dto.PlanAcademicoRequestDTO;
 import upeu.edu.pe.curriculum.application.dto.PlanAcademicoResponseDTO;
 import upeu.edu.pe.curriculum.application.mapper.PlanAcademicoMapper;
 import upeu.edu.pe.curriculum.domain.entities.PlanAcademico;
-import upeu.edu.pe.curriculum.domain.entities.ProgramaAcademico;
 import upeu.edu.pe.curriculum.domain.repositories.PlanAcademicoRepository;
-import upeu.edu.pe.curriculum.domain.repositories.ProgramaAcademicoRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de planes académicos.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class PlanAcademicoService {
 
@@ -22,10 +23,11 @@ public class PlanAcademicoService {
     PlanAcademicoRepository planRepository;
 
     @Inject
-    ProgramaAcademicoRepository programaRepository;
-
-    @Inject
     PlanAcademicoMapper planMapper;
+
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
 
     public List<PlanAcademicoResponseDTO> findAll() {
         List<PlanAcademico> planes = planRepository.findAllActive();
@@ -56,72 +58,13 @@ public class PlanAcademicoService {
 
     public PlanAcademicoResponseDTO findPlanVigenteActual(Long programaAcademicoId) {
         PlanAcademico plan = planRepository.findPlanVigenteActual(programaAcademicoId)
-                .orElseThrow(() -> new NotFoundException("No hay plan vigente actual para el programa con ID: " + programaAcademicoId));
+                .orElseThrow(() -> new NotFoundException(
+                        "No hay plan vigente actual para el programa con ID: " + programaAcademicoId));
         return planMapper.toResponseDTO(plan);
     }
 
-    @Transactional
-    public PlanAcademicoResponseDTO create(PlanAcademicoRequestDTO requestDTO) {
-        // Validar que no exista el código
-        if (planRepository.existsByCodigo(requestDTO.getCodigo())) {
-            throw new BusinessException("Ya existe un plan académico con el código: " + requestDTO.getCodigo());
-        }
-
-        // Validar que exista el programa académico
-        ProgramaAcademico programaAcademico = programaRepository.findByIdOptional(requestDTO.getProgramaAcademicoId())
-                .orElseThrow(() -> new NotFoundException("Programa académico no encontrado con ID: " + requestDTO.getProgramaAcademicoId()));
-
-        // Validar fechas
-        if (requestDTO.getFechaVigenciaFin() != null && 
-            requestDTO.getFechaVigenciaFin().isBefore(requestDTO.getFechaVigenciaInicio())) {
-            throw new BusinessException("La fecha de fin de vigencia debe ser posterior a la fecha de inicio");
-        }
-
-        // Crear el plan
-        PlanAcademico plan = planMapper.toEntity(requestDTO);
-        plan.setProgramaAcademico(programaAcademico);
-
-        planRepository.persist(plan);
-        return planMapper.toResponseDTO(plan);
-    }
-
-    @Transactional
-    public PlanAcademicoResponseDTO update(Long id, PlanAcademicoRequestDTO requestDTO) {
-        PlanAcademico plan = planRepository.findByIdOptional(id)
+    public PlanAcademico getEntityById(Long id) {
+        return planRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Plan académico no encontrado con ID: " + id));
-
-        // Validar código único si cambió
-        if (!plan.getCodigo().equals(requestDTO.getCodigo()) && 
-            planRepository.existsByCodigoAndIdNot(requestDTO.getCodigo(), id)) {
-            throw new BusinessException("Ya existe un plan académico con el código: " + requestDTO.getCodigo());
-        }
-
-        // Validar programa académico si cambió
-        if (!plan.getProgramaAcademico().getId().equals(requestDTO.getProgramaAcademicoId())) {
-            ProgramaAcademico programaAcademico = programaRepository.findByIdOptional(requestDTO.getProgramaAcademicoId())
-                    .orElseThrow(() -> new NotFoundException("Programa académico no encontrado con ID: " + requestDTO.getProgramaAcademicoId()));
-            plan.setProgramaAcademico(programaAcademico);
-        }
-
-        // Validar fechas
-        if (requestDTO.getFechaVigenciaFin() != null && 
-            requestDTO.getFechaVigenciaFin().isBefore(requestDTO.getFechaVigenciaInicio())) {
-            throw new BusinessException("La fecha de fin de vigencia debe ser posterior a la fecha de inicio");
-        }
-
-        planMapper.updateEntityFromDTO(requestDTO, plan);
-        planRepository.persist(plan);
-        return planMapper.toResponseDTO(plan);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        PlanAcademico plan = planRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Plan académico no encontrado con ID: " + id));
-
-        // Soft delete
-        plan.setActive(false);
-        planRepository.persist(plan);
     }
 }
-

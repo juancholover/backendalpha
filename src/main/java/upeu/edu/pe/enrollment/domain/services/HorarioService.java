@@ -2,22 +2,20 @@ package upeu.edu.pe.enrollment.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import upeu.edu.pe.enrollment.application.dto.HorarioRequestDTO;
 import upeu.edu.pe.enrollment.application.dto.HorarioResponseDTO;
 import upeu.edu.pe.enrollment.application.mapper.HorarioMapper;
 import upeu.edu.pe.enrollment.domain.entities.Horario;
-import upeu.edu.pe.enrollment.domain.entities.CursoOfertado;
-import upeu.edu.pe.enrollment.domain.entities.Localizacion;
 import upeu.edu.pe.enrollment.domain.repositories.HorarioRepository;
-import upeu.edu.pe.enrollment.domain.repositories.CursoOfertadoRepository;
-import upeu.edu.pe.enrollment.domain.repositories.LocalizacionRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
-import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
+import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de horarios.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class HorarioService {
 
@@ -25,17 +23,12 @@ public class HorarioService {
     HorarioRepository horarioRepository;
 
     @Inject
-    CursoOfertadoRepository cursoOfertadoRepository;
-
-    @Inject
-    LocalizacionRepository localizacionRepository;
-
-    @Inject
     HorarioMapper horarioMapper;
 
-    /**
-     * Busca todos los horarios de una universidad
-     */
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
+
     public List<HorarioResponseDTO> findByUniversidad(Long universidadId) {
         return horarioRepository.findAllActive()
                 .stream()
@@ -43,18 +36,12 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Busca horarios por ID
-     */
     public HorarioResponseDTO findById(Long id) {
         Horario horario = horarioRepository.findByIdWithRelations(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Horario no encontrado con ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Horario no encontrado con ID: " + id));
         return horarioMapper.toResponseDTO(horario);
     }
 
-    /**
-     * Busca horarios de un curso ofertado
-     */
     public List<HorarioResponseDTO> findByCursoOfertado(Long cursoOfertadoId) {
         return horarioRepository.findByCursoOfertado(cursoOfertadoId)
                 .stream()
@@ -62,9 +49,6 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Busca horarios de un estudiante (todos los cursos matriculados)
-     */
     public List<HorarioResponseDTO> findByEstudiante(Long estudianteId) {
         return horarioRepository.findByEstudiante(estudianteId)
                 .stream()
@@ -72,9 +56,6 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Busca horarios de un profesor
-     */
     public List<HorarioResponseDTO> findByProfesor(Long profesorId) {
         return horarioRepository.findByProfesor(profesorId)
                 .stream()
@@ -82,9 +63,6 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Busca horarios por día de la semana
-     */
     public List<HorarioResponseDTO> findByDiaSemana(Integer diaSemana, Long universidadId) {
         return horarioRepository.findByDiaSemana(diaSemana)
                 .stream()
@@ -92,9 +70,6 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Busca horarios en una localización
-     */
     public List<HorarioResponseDTO> findByLocalizacion(Long localizacionId) {
         return horarioRepository.findByLocalizacion(localizacionId)
                 .stream()
@@ -102,195 +77,26 @@ public class HorarioService {
                 .toList();
     }
 
-    /**
-     * Crea un nuevo horario con validaciones completas
-     */
-    @Transactional
-    public HorarioResponseDTO create(@Valid HorarioRequestDTO dto) {
-        // Validar curso ofertado
-        CursoOfertado cursoOfertado = cursoOfertadoRepository.findByIdOptional(dto.getCursoOfertadoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Curso ofertado no encontrado"));
-
-        // Validar horas
-        if (!dto.getHoraInicio().isBefore(dto.getHoraFin())) {
-            throw new BusinessException("La hora de inicio debe ser anterior a la hora de fin");
-        }
-
-        // Validar cruce de horarios para el profesor
-        List<Horario> crucesProfesor = horarioRepository.findCrucesProfesor(
-                cursoOfertado.getProfesor().getId(),
-                dto.getDiaSemana(),
-                dto.getHoraInicio(),
-                dto.getHoraFin()
-        );
-
-        if (!crucesProfesor.isEmpty()) {
-            throw new BusinessException(
-                    "El profesor ya tiene clase el " + getNombreDia(dto.getDiaSemana()) +
-                    " de " + dto.getHoraInicio() + " a " + dto.getHoraFin()
-            );
-        }
-
-        // Validar cruce de horarios en la localización (si se especifica)
-        if (dto.getLocalizacionId() != null) {
-            Localizacion localizacion = localizacionRepository.findByIdOptional(dto.getLocalizacionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Localización no encontrada"));
-
-            List<Horario> crucesAula = horarioRepository.findCrucesLocalizacion(
-                    dto.getLocalizacionId(),
-                    dto.getDiaSemana(),
-                    dto.getHoraInicio(),
-                    dto.getHoraFin(),
-                    null
-            );
-
-            if (!crucesAula.isEmpty()) {
-                throw new BusinessException(
-                        "El aula " + localizacion.getNombre() + " ya está ocupada el " +
-                        getNombreDia(dto.getDiaSemana()) + " de " + dto.getHoraInicio() + " a " + dto.getHoraFin()
-                );
-            }
-        }
-
-        // Validar que no exista el mismo horario
-        if (horarioRepository.existeHorario(dto.getCursoOfertadoId(), dto.getDiaSemana(), dto.getHoraInicio())) {
-            throw new BusinessException("Ya existe un horario para este curso en el mismo día y hora");
-        }
-
-        // Crear entidad
-        Horario horario = horarioMapper.toEntity(dto);
-        horario.setCursoOfertado(cursoOfertado);
-
-        if (dto.getLocalizacionId() != null) {
-            Localizacion localizacion = localizacionRepository.findByIdOptional(dto.getLocalizacionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Localización no encontrada"));
-            horario.setLocalizacion(localizacion);
-        }
-
-        horarioRepository.persist(horario);
-
-        return horarioMapper.toResponseDTO(horario);
-    }
-
-    /**
-     * Actualiza un horario existente
-     */
-    @Transactional
-    public HorarioResponseDTO update(Long id, @Valid HorarioRequestDTO dto) {
-        Horario horario = horarioRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Horario no encontrado"));
-
-        // Validar horas
-        if (!dto.getHoraInicio().isBefore(dto.getHoraFin())) {
-            throw new BusinessException("La hora de inicio debe ser anterior a la hora de fin");
-        }
-
-        // Validar cruce con profesor (excluyendo el horario actual)
-        CursoOfertado cursoOfertado = horario.getCursoOfertado();
-        List<Horario> crucesProfesor = horarioRepository.findCrucesProfesor(
-                cursoOfertado.getProfesor().getId(),
-                dto.getDiaSemana(),
-                dto.getHoraInicio(),
-                dto.getHoraFin()
-        );
-
-        // Excluir el horario actual de los cruces
-        crucesProfesor = crucesProfesor.stream()
-                .filter(h -> !h.getId().equals(id))
-                .toList();
-
-        if (!crucesProfesor.isEmpty()) {
-            throw new BusinessException(
-                    "El profesor ya tiene clase el " + getNombreDia(dto.getDiaSemana()) +
-                    " de " + dto.getHoraInicio() + " a " + dto.getHoraFin()
-            );
-        }
-
-        // Validar cruce con localización (si se especifica)
-        if (dto.getLocalizacionId() != null) {
-            Localizacion localizacion = localizacionRepository.findByIdOptional(dto.getLocalizacionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Localización no encontrada"));
-
-            List<Horario> crucesAula = horarioRepository.findCrucesLocalizacion(
-                    dto.getLocalizacionId(),
-                    dto.getDiaSemana(),
-                    dto.getHoraInicio(),
-                    dto.getHoraFin(),
-                    id // Excluir el horario actual
-            );
-
-            if (!crucesAula.isEmpty()) {
-                throw new BusinessException(
-                        "El aula " + localizacion.getNombre() + " ya está ocupada el " +
-                        getNombreDia(dto.getDiaSemana()) + " de " + dto.getHoraInicio() + " a " + dto.getHoraFin()
-                );
-            }
-
-            horario.setLocalizacion(localizacion);
-        } else {
-            horario.setLocalizacion(null);
-        }
-
-        // Actualizar campos
-        horarioMapper.updateEntityFromDto(dto, horario);
-        horario.setDiaSemana(dto.getDiaSemana());
-        horario.setHoraInicio(dto.getHoraInicio());
-        horario.setHoraFin(dto.getHoraFin());
-        horario.setTipoSesion(dto.getTipoSesion());
-        horario.setObservaciones(dto.getObservaciones());
-
-        horarioRepository.persist(horario);
-
-        return horarioMapper.toResponseDTO(horario);
-    }
-
-    /**
-     * Elimina (lógicamente) un horario
-     */
-    @Transactional
-    public void delete(Long id) {
-        Horario horario = horarioRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Horario no encontrado"));
-
-        horario.setActive(false);
-        horarioRepository.persist(horario);
-    }
-
-    /**
-     * Valida si un estudiante tiene cruce de horarios al matricularse
-     */
     public boolean tieneCreceHorario(Long estudianteId, Long cursoOfertadoId) {
         List<Horario> horariosNuevoCurso = horarioRepository.findByCursoOfertado(cursoOfertadoId);
-        
+
         for (Horario nuevoHorario : horariosNuevoCurso) {
             List<Horario> cruces = horarioRepository.findCrucesEstudiante(
                     estudianteId,
                     nuevoHorario.getDiaSemana(),
                     nuevoHorario.getHoraInicio(),
-                    nuevoHorario.getHoraFin()
-            );
-            
+                    nuevoHorario.getHoraFin());
+
             if (!cruces.isEmpty()) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
-    /**
-     * Obtiene el nombre del día de la semana
-     */
-    private String getNombreDia(Integer diaSemana) {
-        return switch (diaSemana) {
-            case 1 -> "Lunes";
-            case 2 -> "Martes";
-            case 3 -> "Miércoles";
-            case 4 -> "Jueves";
-            case 5 -> "Viernes";
-            case 6 -> "Sábado";
-            case 7 -> "Domingo";
-            default -> "Desconocido";
-        };
+    public Horario getEntityById(Long id) {
+        return horarioRepository.findByIdWithRelations(id)
+                .orElseThrow(() -> new NotFoundException("Horario no encontrado con ID: " + id));
     }
 }

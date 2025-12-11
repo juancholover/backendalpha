@@ -13,27 +13,23 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.curriculum.application.dto.SilaboActividadRequestDTO;
 import upeu.edu.pe.curriculum.application.dto.SilaboActividadResponseDTO;
+import upeu.edu.pe.curriculum.application.mapper.SilaboActividadMapper;
+import upeu.edu.pe.curriculum.domain.commands.AgregarActividadUnidadCommand;
+import upeu.edu.pe.curriculum.domain.entities.SilaboActividad;
 import upeu.edu.pe.curriculum.domain.services.SilaboActividadService;
+import upeu.edu.pe.curriculum.domain.usecases.AgregarActividadUnidadUseCase;
+import upeu.edu.pe.curriculum.domain.usecases.EliminarActividadSilaboUseCase;
 import upeu.edu.pe.shared.response.ApiResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Controlador REST para gestión de Actividades de Sílabo
+ * Controlador REST para gestión de Actividades de Sílabo.
  * 
- * Endpoints:
- * - POST   /api/v1/silabos/actividades                              - Agregar actividad a unidad
- * - GET    /api/v1/silabos/actividades/{id}                         - Buscar actividad por ID
- * - PUT    /api/v1/silabos/actividades/{id}                         - Actualizar actividad
- * - DELETE /api/v1/silabos/actividades/{id}                         - Eliminar actividad
- * - GET    /api/v1/silabos/unidades/{unidadId}/actividades          - Listar actividades de una unidad
- * - GET    /api/v1/silabos/unidades/{unidadId}/actividades/tipo/{tipo} - Filtrar por tipo
- * - GET    /api/v1/silabos/unidades/{unidadId}/actividades/sumativas - Solo sumativas
- * - GET    /api/v1/silabos-actividades/unidad/{unidadId}/formativas - Solo formativas
- * - GET    /api/v1/silabos-actividades/silabo/{silaboId}/semana/{semana}   - Actividades por semana
- * - GET    /api/v1/silabos-actividades/unidad/{unidadId}/ponderacion-total    - Suma de ponderaciones
- * - GET    /api/v1/silabos-actividades/silabo/{silaboId}/ponderacion-total             - Ponderación total del sílabo
+ * Arquitectura:
+ * - Operaciones de ESCRITURA delegadas a Use Cases
+ * - Operaciones de LECTURA delegadas al Service
  */
 @Path("/api/v1/silabos-actividades")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,8 +37,19 @@ import java.util.List;
 @Tag(name = "Actividades de Sílabo", description = "Gestión de actividades de aprendizaje y evaluación")
 public class SilaboActividadController {
 
+    // Use Cases para operaciones de escritura
+    @Inject
+    AgregarActividadUnidadUseCase agregarActividadUseCase;
+
+    @Inject
+    EliminarActividadSilaboUseCase eliminarActividadUseCase;
+
+    // Service para operaciones de lectura
     @Inject
     SilaboActividadService silaboActividadService;
+
+    @Inject
+    SilaboActividadMapper silaboActividadMapper;
 
     @Context
     SecurityContext securityContext;
@@ -54,84 +61,31 @@ public class SilaboActividadController {
         return "SYSTEM";
     }
 
-    @POST
-    @Path("/actividades")
-    @Operation(summary = "Agregar actividad a unidad", 
-               description = "Crea una nueva actividad en una unidad. Valida ponderación para actividades sumativas.")
-    @APIResponse(responseCode = "201", description = "Actividad agregada exitosamente")
-    @APIResponse(responseCode = "400", description = "Datos inválidos o sílabo no modificable")
-    @APIResponse(responseCode = "409", description = "Ponderación excede el 100%")
-    public Response agregar(@Valid SilaboActividadRequestDTO dto) {
-        String usuario = obtenerUsuarioActual();
-        SilaboActividadResponseDTO actividad = silaboActividadService.agregar(dto, usuario);
-        return Response.status(Response.Status.CREATED)
-                .entity(ApiResponse.success("Actividad agregada a la unidad exitosamente", actividad))
-                .build();
-    }
+    // =====================================================
+    // OPERACIONES DE LECTURA (Service)
+    // =====================================================
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Buscar actividad por ID", description = "Obtiene una actividad por su ID")
-    @APIResponse(responseCode = "200", description = "Actividad encontrada")
-    @APIResponse(responseCode = "404", description = "Actividad no encontrada")
-    public Response buscarPorId(
-            @Parameter(description = "ID de la actividad") 
-            @PathParam("id") Long id) {
+    @Operation(summary = "Buscar actividad por ID")
+    public Response buscarPorId(@PathParam("id") Long id) {
         SilaboActividadResponseDTO actividad = silaboActividadService.buscarPorId(id);
         return Response.ok(ApiResponse.success("Actividad encontrada", actividad)).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    @Operation(summary = "Actualizar actividad", 
-               description = "Actualiza una actividad existente. El sílabo debe estar en estado modificable.")
-    @APIResponse(responseCode = "200", description = "Actividad actualizada exitosamente")
-    @APIResponse(responseCode = "404", description = "Actividad no encontrada")
-    @APIResponse(responseCode = "409", description = "Sílabo no modificable")
-    public Response actualizar(
-            @Parameter(description = "ID de la actividad") 
-            @PathParam("id") Long id,
-            @Valid SilaboActividadRequestDTO dto) {
-        String usuario = obtenerUsuarioActual();
-        SilaboActividadResponseDTO actividad = silaboActividadService.actualizar(id, dto, usuario);
-        return Response.ok(ApiResponse.success("Actividad actualizada exitosamente", actividad)).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Operation(summary = "Eliminar actividad", 
-               description = "Elimina (lógicamente) una actividad. El sílabo debe estar en estado modificable.")
-    @APIResponse(responseCode = "200", description = "Actividad eliminada exitosamente")
-    @APIResponse(responseCode = "404", description = "Actividad no encontrada")
-    @APIResponse(responseCode = "409", description = "Sílabo no modificable")
-    public Response eliminar(
-            @Parameter(description = "ID de la actividad") 
-            @PathParam("id") Long id) {
-        silaboActividadService.eliminar(id);
-        return Response.ok(ApiResponse.success("Actividad eliminada exitosamente")).build();
-    }
-
     @GET
     @Path("/unidad/{unidadId}")
-    @Operation(summary = "Listar actividades de una unidad", 
-               description = "Obtiene todas las actividades de una unidad ordenadas por semana")
-    @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
-    public Response listarPorUnidad(
-            @Parameter(description = "ID de la unidad") 
-            @PathParam("unidadId") Long unidadId) {
+    @Operation(summary = "Listar actividades de una unidad")
+    public Response listarPorUnidad(@PathParam("unidadId") Long unidadId) {
         List<SilaboActividadResponseDTO> actividades = silaboActividadService.listarPorUnidad(unidadId);
         return Response.ok(ApiResponse.success("Actividades de la unidad", actividades)).build();
     }
 
     @GET
     @Path("/unidad/{unidadId}/tipo/{tipo}")
-    @Operation(summary = "Listar actividades por tipo", 
-               description = "Filtra actividades por tipo (FORMATIVA o SUMATIVA)")
-    @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
+    @Operation(summary = "Listar actividades por tipo")
     public Response listarPorUnidadYTipo(
-            @Parameter(description = "ID de la unidad") 
             @PathParam("unidadId") Long unidadId,
-            @Parameter(description = "Tipo de actividad (FORMATIVA/SUMATIVA)") 
             @PathParam("tipo") String tipo) {
         List<SilaboActividadResponseDTO> actividades = silaboActividadService.listarPorUnidadYTipo(unidadId, tipo);
         return Response.ok(ApiResponse.success("Actividades de tipo " + tipo, actividades)).build();
@@ -139,37 +93,25 @@ public class SilaboActividadController {
 
     @GET
     @Path("/unidad/{unidadId}/sumativas")
-    @Operation(summary = "Listar actividades sumativas", 
-               description = "Obtiene solo las actividades sumativas (con ponderación) de una unidad")
-    @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
-    public Response listarSumativasPorUnidad(
-            @Parameter(description = "ID de la unidad") 
-            @PathParam("unidadId") Long unidadId) {
+    @Operation(summary = "Listar actividades sumativas")
+    public Response listarSumativasPorUnidad(@PathParam("unidadId") Long unidadId) {
         List<SilaboActividadResponseDTO> actividades = silaboActividadService.listarSumativasPorUnidad(unidadId);
-        return Response.ok(ApiResponse.success("Actividades sumativas de la unidad", actividades)).build();
+        return Response.ok(ApiResponse.success("Actividades sumativas", actividades)).build();
     }
 
     @GET
     @Path("/unidad/{unidadId}/formativas")
-    @Operation(summary = "Listar actividades formativas", 
-               description = "Obtiene solo las actividades formativas (sin ponderación) de una unidad")
-    @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
-    public Response listarFormativasPorUnidad(
-            @Parameter(description = "ID de la unidad") 
-            @PathParam("unidadId") Long unidadId) {
+    @Operation(summary = "Listar actividades formativas")
+    public Response listarFormativasPorUnidad(@PathParam("unidadId") Long unidadId) {
         List<SilaboActividadResponseDTO> actividades = silaboActividadService.listarFormativasPorUnidad(unidadId);
-        return Response.ok(ApiResponse.success("Actividades formativas de la unidad", actividades)).build();
+        return Response.ok(ApiResponse.success("Actividades formativas", actividades)).build();
     }
 
     @GET
     @Path("/silabo/{silaboId}/semana/{semana}")
-    @Operation(summary = "Buscar actividades por semana", 
-               description = "Obtiene actividades programadas para una semana específica")
-    @APIResponse(responseCode = "200", description = "Actividades encontradas")
+    @Operation(summary = "Buscar actividades por semana")
     public Response buscarPorSemana(
-            @Parameter(description = "ID del sílabo") 
             @PathParam("silaboId") Long silaboId,
-            @Parameter(description = "Número de semana (1-20)") 
             @PathParam("semana") Integer semana) {
         List<SilaboActividadResponseDTO> actividades = silaboActividadService.buscarPorSemana(silaboId, semana);
         return Response.ok(ApiResponse.success("Actividades de la semana " + semana, actividades)).build();
@@ -177,32 +119,58 @@ public class SilaboActividadController {
 
     @GET
     @Path("/unidad/{unidadId}/ponderacion-total")
-    @Operation(summary = "Calcular ponderación total de una unidad", 
-               description = "Suma las ponderaciones de todas las actividades sumativas de una unidad")
-    @APIResponse(responseCode = "200", description = "Cálculo exitoso")
-    public Response calcularPonderacionTotalUnidad(
-            @Parameter(description = "ID de la unidad") 
-            @PathParam("unidadId") Long unidadId) {
+    @Operation(summary = "Calcular ponderación total de una unidad")
+    public Response calcularPonderacionTotalUnidad(@PathParam("unidadId") Long unidadId) {
         BigDecimal total = silaboActividadService.calcularPonderacionTotalUnidad(unidadId);
-        return Response.ok(ApiResponse.success(
-            "Ponderación total de la unidad: " + total + "%", 
-            total
-        )).build();
+        return Response.ok(ApiResponse.success("Ponderación: " + total + "%", total)).build();
     }
 
     @GET
     @Path("/silabo/{silaboId}/ponderacion-total")
-    @Operation(summary = "Calcular ponderación total del sílabo", 
-               description = "Suma las ponderaciones de todas las actividades sumativas del sílabo (debe ser 100%)")
-    @APIResponse(responseCode = "200", description = "Cálculo exitoso")
-    public Response calcularPonderacionTotalSilabo(
-            @Parameter(description = "ID del sílabo") 
-            @PathParam("silaboId") Long silaboId) {
+    @Operation(summary = "Calcular ponderación total del sílabo")
+    public Response calcularPonderacionTotalSilabo(@PathParam("silaboId") Long silaboId) {
         BigDecimal total = silaboActividadService.calcularPonderacionTotalSilabo(silaboId);
-        String mensaje = total.compareTo(new BigDecimal("100")) == 0 
-            ? "El sílabo está completo (100%)" 
-            : "Advertencia: El sílabo tiene " + total + "% de ponderación (debe ser 100%)";
-        
-        return Response.ok(ApiResponse.success(mensaje, total)).build();
+        String msg = total.compareTo(new BigDecimal("100")) == 0
+                ? "Sílabo completo (100%)"
+                : "Advertencia: " + total + "% (debe ser 100%)";
+        return Response.ok(ApiResponse.success(msg, total)).build();
+    }
+
+    // =====================================================
+    // OPERACIONES DE ESCRITURA (Use Cases)
+    // =====================================================
+
+    @POST
+    @Path("/actividades")
+    @Operation(summary = "Agregar actividad a unidad")
+    @APIResponse(responseCode = "201", description = "Actividad agregada exitosamente")
+    public Response agregar(@Valid SilaboActividadRequestDTO dto) {
+        String usuario = obtenerUsuarioActual();
+
+        AgregarActividadUnidadCommand command = new AgregarActividadUnidadCommand(
+                dto.getUnidadId(),
+                dto.getTipo(),
+                dto.getNombre(),
+                dto.getDescripcion(),
+                dto.getPonderacion(),
+                dto.getSemanaProgramada(),
+                dto.getInstrumentoEvaluacion(),
+                dto.getIndicadores(),
+                dto.getCriteriosEvaluacion());
+
+        SilaboActividad actividad = agregarActividadUseCase.execute(command, usuario);
+        SilaboActividadResponseDTO response = silaboActividadMapper.toResponseDTO(actividad);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(ApiResponse.success("Actividad agregada", response))
+                .build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "Eliminar actividad")
+    public Response eliminar(@PathParam("id") Long id) {
+        eliminarActividadUseCase.execute(id);
+        return Response.ok(ApiResponse.success("Actividad eliminada", null)).build();
     }
 }

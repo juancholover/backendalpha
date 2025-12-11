@@ -2,21 +2,21 @@ package upeu.edu.pe.people.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import upeu.edu.pe.people.application.dto.AutoridadDTO;
-import upeu.edu.pe.people.application.dto.CreateAutoridadDTO;
-import upeu.edu.pe.people.application.dto.UpdateAutoridadDTO;
 import upeu.edu.pe.people.application.mapper.AutoridadMapper;
 import upeu.edu.pe.people.domain.entities.Autoridad;
 import upeu.edu.pe.people.domain.repositories.AutoridadRepository;
-import upeu.edu.pe.core.domain.repositories.PersonaRepository;
-import upeu.edu.pe.people.domain.repositories.TipoAutoridadRepository;
-import upeu.edu.pe.shared.exceptions.ResourceNotFoundException;
+import upeu.edu.pe.shared.exceptions.NotFoundException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio de dominio para consultas de autoridades.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class AutoridadService {
 
@@ -24,13 +24,11 @@ public class AutoridadService {
     AutoridadRepository autoridadRepository;
 
     @Inject
-    PersonaRepository personaRepository;
-
-    @Inject
-    TipoAutoridadRepository tipoAutoridadRepository;
-
-    @Inject
     AutoridadMapper mapper;
+
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
 
     public List<AutoridadDTO> findActivasByUniversidadId(Long universidadId) {
         return autoridadRepository.findActivas()
@@ -62,98 +60,12 @@ public class AutoridadService {
 
     public AutoridadDTO findById(Long id) {
         Autoridad entity = autoridadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Autoridad no encontrada con ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Autoridad no encontrada con ID: " + id));
         return mapper.toDTO(entity);
     }
 
-    @Transactional
-    public AutoridadDTO create(CreateAutoridadDTO dto) {
-        // Validar que la persona existe
-        var persona = personaRepository.findByIdOptional(dto.getPersonaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada con ID: " + dto.getPersonaId()));
-
-        // Validar que el tipo de autoridad existe
-        var tipoAutoridad = tipoAutoridadRepository.findByIdOptional(dto.getTipoAutoridadId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tipo de autoridad no encontrado con ID: " + dto.getTipoAutoridadId()));
-
-        // Validar que no haya otra autoridad activa del mismo tipo
-        if (autoridadRepository.existsActivaByTipoAutoridadId(dto.getTipoAutoridadId())) {
-            throw new IllegalArgumentException(
-                "Ya existe una autoridad activa para el tipo: " + tipoAutoridad.getNombre() + 
-                ". Debe desactivar la anterior antes de crear una nueva.");
-        }
-
-        Autoridad entity = mapper.toEntity(dto);
-        entity.setPersona(persona);
-        entity.setTipoAutoridad(tipoAutoridad);
-        
-        autoridadRepository.persist(entity);
-        
-        return mapper.toDTO(entity);
-    }
-
-    @Transactional
-    public AutoridadDTO update(Long id, UpdateAutoridadDTO dto) {
-        Autoridad entity = autoridadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Autoridad no encontrada con ID: " + id));
-
-        // Si se está cambiando la persona
-        if (dto.getPersonaId() != null && !dto.getPersonaId().equals(entity.getPersona().getId())) {
-            var persona = personaRepository.findByIdOptional(dto.getPersonaId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada con ID: " + dto.getPersonaId()));
-            entity.setPersona(persona);
-        }
-
-        // Si se está cambiando el tipo de autoridad
-        if (dto.getTipoAutoridadId() != null && !dto.getTipoAutoridadId().equals(entity.getTipoAutoridad().getId())) {
-            var tipoAutoridad = tipoAutoridadRepository.findByIdOptional(dto.getTipoAutoridadId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tipo de autoridad no encontrado con ID: " + dto.getTipoAutoridadId()));
-            
-            // Validar que no haya otra autoridad activa del nuevo tipo
-            if (dto.getEsVigente() != null && dto.getEsVigente()) {
-                var autoridadExistente = autoridadRepository.findActivaByTipoAutoridadId(
-                    dto.getTipoAutoridadId());
-                
-                if (autoridadExistente.isPresent() && !autoridadExistente.get().getId().equals(id)) {
-                    throw new IllegalArgumentException(
-                        "Ya existe otra autoridad activa para el tipo: " + tipoAutoridad.getNombre());
-                }
-            }
-            
-            entity.setTipoAutoridad(tipoAutoridad);
-        }
-
-        mapper.updateEntityFromDTO(dto, entity);
-        
-        return mapper.toDTO(entity);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Autoridad entity = autoridadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Autoridad no encontrada con ID: " + id));
-        
-        autoridadRepository.delete(entity);
-    }
-
-    @Transactional
-    public AutoridadDTO finalizarAutoridad(Long id, LocalDate fechaFin) {
-        Autoridad entity = autoridadRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Autoridad no encontrada con ID: " + id));
-        
-        entity.setFechaFin(fechaFin);
-        entity.setEsVigente(false);
-        
-        return mapper.toDTO(entity);
-    }
-
-    @Transactional
-    public void desactivarAutoridadesAnteriores(Long tipoAutoridadId, Long universidadId) {
-        java.util.Optional<Autoridad> autoridadActual = autoridadRepository.findActivaByTipoAutoridadId(tipoAutoridadId);
-        autoridadActual.ifPresent(autoridad -> {
-            autoridad.setFechaFin(LocalDate.now());
-            autoridad.setEsVigente(false);
-        });
+    public Autoridad getEntityById(Long id) {
+        return autoridadRepository.findByIdOptional(id)
+                .orElseThrow(() -> new NotFoundException("Autoridad no encontrada con ID: " + id));
     }
 }
-

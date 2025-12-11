@@ -2,17 +2,19 @@ package upeu.edu.pe.curriculum.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.curriculum.application.dto.RequisitoCursoRequestDTO;
 import upeu.edu.pe.curriculum.application.dto.RequisitoCursoResponseDTO;
 import upeu.edu.pe.curriculum.application.mapper.RequisitoCursoMapper;
 import upeu.edu.pe.curriculum.domain.entities.RequisitoCurso;
 import upeu.edu.pe.curriculum.domain.repositories.RequisitoCursoRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
-import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de requisitos de curso.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class RequisitoCursoService {
 
@@ -21,6 +23,10 @@ public class RequisitoCursoService {
 
     @Inject
     RequisitoCursoMapper requisitoMapper;
+
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
 
     public List<RequisitoCursoResponseDTO> findByCurso(Long cursoId) {
         List<RequisitoCurso> requisitos = requisitoRepository.findByCurso(cursoId);
@@ -52,64 +58,7 @@ public class RequisitoCursoService {
         return requisitoMapper.toResponseDTOList(requisitos);
     }
 
-    @Transactional
-    public RequisitoCursoResponseDTO create(RequisitoCursoRequestDTO requestDTO) {
-        // Validar que el curso y el requisito no sean el mismo
-        if (requestDTO.getCursoId().equals(requestDTO.getCursoRequisitoId())) {
-            throw new BusinessException("Un curso no puede ser requisito de sí mismo");
-        }
-
-        // Validar que no exista el requisito
-        if (requisitoRepository.existsRequisito(requestDTO.getCursoId(), requestDTO.getCursoRequisitoId())) {
-            throw new BusinessException("El requisito ya existe para este curso");
-        }
-
-        // Validar dependencias circulares
-        if (requisitoRepository.existsRequisito(requestDTO.getCursoRequisitoId(), requestDTO.getCursoId())) {
-            throw new BusinessException("No se puede crear el requisito: existe una dependencia circular");
-        }
-
-        RequisitoCurso requisito = requisitoMapper.toEntity(requestDTO);
-        upeu.edu.pe.curriculum.domain.entities.Curso curso = new upeu.edu.pe.curriculum.domain.entities.Curso();
-        curso.setId(requestDTO.getCursoId());
-        requisito.setCurso(curso);
-        
-        upeu.edu.pe.curriculum.domain.entities.Curso cursoRequisito = new upeu.edu.pe.curriculum.domain.entities.Curso();
-        cursoRequisito.setId(requestDTO.getCursoRequisitoId());
-        requisito.setCursoRequisito(cursoRequisito);
-
-        requisitoRepository.persist(requisito);
-        return requisitoMapper.toResponseDTO(requisito);
-    }
-
-    @Transactional
-    public RequisitoCursoResponseDTO update(Long id, RequisitoCursoRequestDTO requestDTO) {
-        RequisitoCurso requisito = requisitoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Requisito no encontrado con ID: " + id));
-
-        // Validar que el curso y el requisito no sean el mismo
-        if (requestDTO.getCursoId().equals(requestDTO.getCursoRequisitoId())) {
-            throw new BusinessException("Un curso no puede ser requisito de sí mismo");
-        }
-
-        requisitoMapper.updateEntityFromDTO(requestDTO, requisito);
-        requisitoRepository.persist(requisito);
-
-        return requisitoMapper.toResponseDTO(requisito);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        RequisitoCurso requisito = requisitoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Requisito no encontrado con ID: " + id));
-
-        // Soft delete
-        requisito.setActive(false);
-        requisitoRepository.persist(requisito);
-    }
-
     public long countByCurso(Long cursoId) {
         return requisitoRepository.countByCurso(cursoId);
     }
 }
-

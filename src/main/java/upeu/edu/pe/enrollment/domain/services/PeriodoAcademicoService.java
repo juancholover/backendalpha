@@ -2,17 +2,20 @@ package upeu.edu.pe.enrollment.domain.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import upeu.edu.pe.enrollment.application.dto.PeriodoAcademicoRequestDTO;
 import upeu.edu.pe.enrollment.application.dto.PeriodoAcademicoResponseDTO;
 import upeu.edu.pe.enrollment.application.mapper.PeriodoAcademicoMapper;
 import upeu.edu.pe.enrollment.domain.entities.PeriodoAcademico;
 import upeu.edu.pe.enrollment.domain.repositories.PeriodoAcademicoRepository;
-import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 import java.util.List;
 
+/**
+ * Servicio de dominio para consultas de periodos académicos.
+ * 
+ * Este servicio solo contiene operaciones de LECTURA.
+ * Las operaciones de ESCRITURA se manejan en Use Cases.
+ */
 @ApplicationScoped
 public class PeriodoAcademicoService {
 
@@ -22,6 +25,10 @@ public class PeriodoAcademicoService {
     @Inject
     PeriodoAcademicoMapper periodoMapper;
 
+    // =====================================================
+    // OPERACIONES DE CONSULTA (solo lectura)
+    // =====================================================
+
     public List<PeriodoAcademicoResponseDTO> findByUniversidad(Long universidadId) {
         List<PeriodoAcademico> periodos = periodoRepository.findAllActive();
         return periodoMapper.toResponseDTOList(periodos);
@@ -30,10 +37,10 @@ public class PeriodoAcademicoService {
     public PeriodoAcademicoResponseDTO findById(Long id) {
         PeriodoAcademico periodo = periodoRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
-        
+
         PeriodoAcademicoResponseDTO response = periodoMapper.toResponseDTO(periodo);
         response.setCantidadSecciones(periodo.getCursosOfertados() != null ? periodo.getCursosOfertados().size() : 0);
-        
+
         return response;
     }
 
@@ -64,90 +71,8 @@ public class PeriodoAcademicoService {
         return periodoMapper.toResponseDTOList(periodos);
     }
 
-    @Transactional
-    public PeriodoAcademicoResponseDTO create(PeriodoAcademicoRequestDTO requestDTO) {
-        // Validar que no exista un período con el mismo código
-        if (periodoRepository.existsByCodigo(requestDTO.getCodigoPeriodo())) {
-            throw new BusinessException("Ya existe un período con el código: " + requestDTO.getCodigoPeriodo());
-        }
-
-        // Validar fechas
-        if (requestDTO.getFechaFin().isBefore(requestDTO.getFechaInicio())) {
-            throw new BusinessException("La fecha de fin debe ser posterior a la fecha de inicio");
-        }
-
-        if (requestDTO.getFechaFinMatricula() != null && requestDTO.getFechaInicioMatricula() != null) {
-            if (requestDTO.getFechaFinMatricula().isBefore(requestDTO.getFechaInicioMatricula())) {
-                throw new BusinessException("La fecha fin de matrícula debe ser posterior a la fecha inicio");
-            }
-        }
-
-        PeriodoAcademico periodo = periodoMapper.toEntity(requestDTO);
-
-        // Si se marca como actual, desmarcar los demás
-        if (requestDTO.getEsActual()) {
-            periodoRepository.desmarcarTodosComoActual();
-        }
-
-        periodoRepository.persist(periodo);
-        return periodoMapper.toResponseDTO(periodo);
-    }
-
-    @Transactional
-    public PeriodoAcademicoResponseDTO update(Long id, PeriodoAcademicoRequestDTO requestDTO) {
-        PeriodoAcademico periodo = periodoRepository.findByIdOptional(id)
+    public PeriodoAcademico getEntityById(Long id) {
+        return periodoRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
-
-        // Validar código duplicado (excepto el actual)
-        periodoRepository.findByCodigo(requestDTO.getCodigoPeriodo())
-                .ifPresent(existing -> {
-                    if (!existing.getId().equals(id)) {
-                        throw new BusinessException("Ya existe un período con el código: " + requestDTO.getCodigoPeriodo());
-                    }
-                });
-
-        // Validar fechas
-        if (requestDTO.getFechaFin().isBefore(requestDTO.getFechaInicio())) {
-            throw new BusinessException("La fecha de fin debe ser posterior a la fecha de inicio");
-        }
-
-        periodoMapper.updateEntityFromDTO(requestDTO, periodo);
-
-        // Si se marca como actual, desmarcar los demás
-        if (requestDTO.getEsActual() && !periodo.getEsActual()) {
-            periodoRepository.desmarcarTodosComoActual();
-        }
-
-        periodoRepository.persist(periodo);
-        return periodoMapper.toResponseDTO(periodo);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        PeriodoAcademico periodo = periodoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
-
-        // Validar que no tenga cursos ofertados asociados
-        if (periodo.getCursosOfertados() != null && !periodo.getCursosOfertados().isEmpty()) {
-            throw new BusinessException("No se puede eliminar el período porque tiene " + 
-                periodo.getCursosOfertados().size() + " cursos ofertados asociados");
-        }
-
-        // Soft delete
-        periodo.setActive(false);
-        periodoRepository.persist(periodo);
-    }
-
-    @Transactional
-    public PeriodoAcademicoResponseDTO marcarComoActual(Long id) {
-        PeriodoAcademico periodo = periodoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Período académico no encontrado con ID: " + id));
-
-        // Nota: Se requiere universidadId para desmarcar otros periodos
-        // periodo.setEsActual(true);
-        periodoRepository.persist(periodo);
-
-        return periodoMapper.toResponseDTO(periodo);
     }
 }
-
