@@ -25,6 +25,7 @@ quarkus:
     baseline-on-migrate: true
     baseline-version: 0
     baseline-description: Initial baseline
+    out-of-order: true
 
   devservices:
     enabled: false

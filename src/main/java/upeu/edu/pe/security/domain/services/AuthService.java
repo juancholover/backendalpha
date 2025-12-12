@@ -36,35 +36,19 @@ public class AuthService {
 
     @Transactional
     public AuthResponseDto login(LoginRequestDto loginRequest) {
-        System.out.println("🔐 Login attempt for: " + loginRequest.getUsername());
-        
         AuthUsuario authUsuario = authUsuarioRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> {
-                    System.out.println("❌ User not found: " + loginRequest.getUsername());
-                    return new NotAuthorizedException("Credenciales inválidas");
-                });
-
-        System.out.println("✅ User found: " + authUsuario.getUsername());
-        System.out.println("🔑 Stored hash: " + authUsuario.getPasswordHash());
-        System.out.println("🔑 Provided password: " + loginRequest.getPassword());
+                .orElseThrow(() -> new NotAuthorizedException("Credenciales inválidas"));
 
         // Validar contraseña con PasswordEncoder
-        boolean matches = passwordEncoder.matches(loginRequest.getPassword(), authUsuario.getPasswordHash());
-        System.out.println("🔐 Password matches: " + matches);
-        
-        if (!matches) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), authUsuario.getPasswordHash())) {
             authUsuario.registrarAccesoFallido();
             authUsuarioRepository.persist(authUsuario);
-            System.out.println("❌ Password does not match");
             throw new NotAuthorizedException("Credenciales inválidas");
         }
 
         if (!authUsuario.estaActivo()) {
-            System.out.println("❌ User is not active");
             throw new NotAuthorizedException("Usuario inactivo o bloqueado");
         }
-
-        System.out.println("✅ Authentication successful");
 
         // Generar tokens JWT
         String accessToken = jwtTokenGenerator.generateAccessToken(authUsuario);
