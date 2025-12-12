@@ -43,3 +43,6 @@ nb-configuration.xml
 # Markdown documentation (local only)
 *.md
 !README.md
+
+# Playwright MCP directory (local testing only)
+.playwright-mcp/
