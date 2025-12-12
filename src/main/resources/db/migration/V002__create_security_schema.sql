@@ -76,13 +76,14 @@ CREATE TABLE auth_usuario (
 CREATE TABLE refresh_tokens (
     id BIGSERIAL PRIMARY KEY,
     auth_usuario_id BIGINT NOT NULL,
-    token VARCHAR(500) NOT NULL UNIQUE,
-    fecha_expiracion TIMESTAMP NOT NULL,
-    revocado BOOLEAN DEFAULT false,
-    fecha_revocacion TIMESTAMP,
-    ip_origen VARCHAR(45),
-    user_agent VARCHAR(500),
+    token VARCHAR(1000) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    is_revoked BOOLEAN DEFAULT false,
+    active BOOLEAN DEFAULT true,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_by VARCHAR(100),
+    updated_by VARCHAR(100),
     CONSTRAINT fk_refresh_token_auth_usuario FOREIGN KEY (auth_usuario_id) REFERENCES auth_usuario(id) ON DELETE CASCADE
 );
 
@@ -95,7 +96,7 @@ CREATE INDEX idx_auth_usuario_rol ON auth_usuario(rol_id);
 CREATE INDEX idx_rol_permiso_rol ON rol_permiso(rol_id);
 CREATE INDEX idx_rol_permiso_permiso ON rol_permiso(permiso_id);
 CREATE INDEX idx_refresh_token_usuario ON refresh_tokens(auth_usuario_id);
-CREATE INDEX idx_refresh_token_expiracion ON refresh_tokens(fecha_expiracion);
+CREATE INDEX idx_refresh_token_expiracion ON refresh_tokens(expires_at);
 CREATE INDEX idx_permiso_modulo_recurso ON permiso(modulo, recurso, accion);
 
 -- =====================================================

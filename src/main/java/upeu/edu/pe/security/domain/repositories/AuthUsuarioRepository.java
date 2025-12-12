@@ -14,7 +14,7 @@ public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario,
      * Buscar usuario por username (email de persona)
      */
     public Optional<AuthUsuario> findByUsername(String username) {
-        return find("persona.email = ?1 and active = true", username).firstResultOptional();
+        return find("SELECT au FROM AuthUsuario au JOIN FETCH au.persona p JOIN FETCH au.rol WHERE p.email = ?1 and au.active = true", username).firstResultOptional();
     }
 
     /**
