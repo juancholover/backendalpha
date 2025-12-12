@@ -13,7 +13,7 @@ quarkus:
 
   hibernate-orm:
     database:
-      generation: drop-and-create
+      generation: none
     log:
       sql: true
       format-sql: true
@@ -21,6 +21,12 @@ quarkus:
       statement-batch-size: 20
     schema-generation:
       halt-on-error: false
+
+  flyway:
+    migrate-at-start: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    baseline-description: Initial baseline
 
   devservices:
     enabled: false
