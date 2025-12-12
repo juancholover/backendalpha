@@ -28,12 +28,12 @@ END $$;
 -- =============================================================================
 -- Password: SuperAdmin2025!
 -- BCrypt hash generated with at.favre.lib:bcrypt:0.10.2 (cost factor 10)
+-- Force update to ensure correct hash (idempotent - always sets same value)
 UPDATE auth_usuario 
 SET password_hash = '$2a$10$4CXnmWn5Z9bquEI5qW3k8O/mOHIyutLauNACSfiuPv2pBJbHRqWVG',
     updated_at = NOW(),
     updated_by = 'V010_migration'
-WHERE id = 1 
-  AND password_hash != '$2a$10$4CXnmWn5Z9bquEI5qW3k8O/mOHIyutLauNACSfiuPv2pBJbHRqWVG';
+WHERE id = 1;
 
 -- =============================================================================
 -- 3. Recreate refresh_tokens table with correct schema
