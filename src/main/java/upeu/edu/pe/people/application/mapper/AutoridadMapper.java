@@ -18,9 +18,11 @@ public interface AutoridadMapper {
     AutoridadDTO toDTO(Autoridad entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "tipoAutoridad", ignore = true)
-    @Mapping(target = "esVigente", ignore = true)
+    @Mapping(target = "persona", ignore = true) // Se maneja en el servicio
+    @Mapping(target = "tipoAutoridad", ignore = true) // Se maneja en el servicio
+    @Mapping(target = "unidadOrganizativa", ignore = true) // Se asigna en el servicio según tipo de autoridad
+    @Mapping(target = "programaAcademico", ignore = true) // Se asigna en el servicio según tipo de autoridad
+    @Mapping(target = "esVigente", constant = "true") // Por defecto es vigente al crear
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -30,8 +32,10 @@ public interface AutoridadMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "persona", ignore = true)
-    @Mapping(target = "tipoAutoridad", ignore = true)
+    @Mapping(target = "persona", ignore = true) // No se actualiza directamente
+    @Mapping(target = "tipoAutoridad", ignore = true) // No se actualiza directamente
+    @Mapping(target = "unidadOrganizativa", ignore = true) // Se maneja en el servicio
+    @Mapping(target = "programaAcademico", ignore = true) // Se maneja en el servicio
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

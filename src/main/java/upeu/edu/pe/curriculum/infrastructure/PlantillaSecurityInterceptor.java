@@ -9,6 +9,7 @@ import jakarta.ws.rs.ForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import upeu.edu.pe.curriculum.domain.services.CasbinAuthorizationService;
 import upeu.edu.pe.security.domain.entities.AuthUsuario;
+import upeu.edu.pe.security.domain.repositories.AuthUsuarioRepository;
 import upeu.edu.pe.shared.context.AuditContext;
 
 /**
@@ -30,6 +31,9 @@ public class PlantillaSecurityInterceptor {
 
     @Inject
     AuditContext auditContext;
+
+    @Inject
+    AuthUsuarioRepository authUsuarioRepository;
 
     @AroundInvoke
     public Object validatePermission(InvocationContext context) throws Exception {
@@ -74,13 +78,12 @@ public class PlantillaSecurityInterceptor {
             return null;
         }
 
-        // TODO: En producción, cargar el usuario completo desde la base de datos
-        // Por ahora retornamos un mock para desarrollo
-        AuthUsuario usuario = new AuthUsuario();
-        upeu.edu.pe.core.domain.entities.Persona persona = new upeu.edu.pe.core.domain.entities.Persona();
-        persona.setEmail(username);
-        usuario.setPersona(persona);
-        return usuario;
+        // Cargar el usuario completo desde la base de datos
+        return authUsuarioRepository.findByUsername(username)
+            .orElseThrow(() -> {
+                log.error("❌ Usuario autenticado '{}' no encontrado en la base de datos", username);
+                return new ForbiddenException("Usuario no encontrado en el sistema");
+            });
     }
 
     private boolean validarPermiso(AuthUsuario usuario, String permission) {

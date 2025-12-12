@@ -13,14 +13,12 @@ quarkus:
 
   hibernate-orm:
     database:
-      generation: none
+      generation: update
     log:
       sql: true
       format-sql: true
     jdbc:
       statement-batch-size: 20
-    schema-generation:
-      halt-on-error: false
 
   flyway:
     migrate-at-start: true
@@ -34,17 +32,13 @@ quarkus:
   http:
     port: 8080
     cors:
-      ~: true
       origins: "*"
       headers: "*"
       methods: "*"
 
   log:
     level: INFO
-    category:
-      "upeu.edu.pe": DEBUG
-      "org.hibernate.SQL": DEBUG
-      "org.hibernate.type.descriptor.sql.BasicBinder": TRACE
+    min-level: TRACE
 
   security:
     jaxrs:
@@ -59,7 +53,6 @@ quarkus:
   smallrye-health:
     root-path: "/q/health"
     ui:
-      enable: true
       always-include: true
     liveness-path: "/q/health/live"
     readiness-path: "/q/health/ready"
@@ -75,7 +68,6 @@ quarkus:
     binder:
       jvm: true
       system: true
-      http-server: true
     export:
       prometheus:
         enabled: true

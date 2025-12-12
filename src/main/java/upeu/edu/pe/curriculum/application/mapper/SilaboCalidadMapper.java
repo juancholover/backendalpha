@@ -14,7 +14,9 @@ public interface SilaboCalidadMapper {
     @Mapping(source = "silabo.id", target = "silaboId")
     SilaboCalidadDTO toDTO(SilaboCalidad entity);
 
-    @Mapping(target = "silabo", ignore = true)
+    @Mapping(target = "silabo", ignore = true) // Se maneja en el servicio
+    @Mapping(target = "active", constant = "true") // Por defecto activo
+    @Mapping(target = "detallesEvaluacion", ignore = true) // Campo JSON, no incluido en DTO simple
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

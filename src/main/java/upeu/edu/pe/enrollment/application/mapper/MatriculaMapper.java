@@ -8,6 +8,7 @@ import upeu.edu.pe.enrollment.application.dto.MatriculaRequestDTO;
 import upeu.edu.pe.enrollment.application.dto.MatriculaResponseDTO;
 import upeu.edu.pe.enrollment.domain.entities.Matricula;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(
@@ -42,6 +43,9 @@ public interface MatriculaMapper {
     @Mapping(target = "profesorId", source = "cursoOfertado.profesor.id")
     @Mapping(target = "profesorNombre", source = "cursoOfertado.profesor.empleado.persona.nombres")
     @Mapping(target = "profesorApellido", source = "cursoOfertado.profesor.empleado.persona.apellidoPaterno")
+    @Mapping(target = "notaFinal", expression = "java(calculateNotaFinal(entity))")
+    @Mapping(target = "estadoAprobacion", expression = "java(calculateEstadoAprobacion(entity))")
+    @Mapping(target = "inasistencias", expression = "java(calculateInasistencias(entity))")
     MatriculaResponseDTO toResponseDTO(Matricula entity);
 
     List<MatriculaResponseDTO> toResponseDTOList(List<Matricula> entities);
@@ -56,5 +60,55 @@ public interface MatriculaMapper {
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "active", ignore = true)
     void updateEntityFromDTO(MatriculaRequestDTO dto, @MappingTarget Matricula entity);
+
+    /**
+     * Calcula la nota final promediando las notas de evaluación
+     */
+    default BigDecimal calculateNotaFinal(Matricula matricula) {
+        if (matricula == null || matricula.getEvaluacionNotas() == null || matricula.getEvaluacionNotas().isEmpty()) {
+            return null;
+        }
+        
+        double promedio = matricula.getEvaluacionNotas().stream()
+            .filter(nota -> nota.getNotaFinal() != null)
+            .mapToDouble(nota -> nota.getNotaFinal().doubleValue())
+            .average()
+            .orElse(0.0);
+            
+        return BigDecimal.valueOf(promedio);
+    }
+
+    /**
+     * Calcula el estado de aprobación basado en la nota final
+     */
+    default String calculateEstadoAprobacion(Matricula matricula) {
+        BigDecimal notaFinal = calculateNotaFinal(matricula);
+        if (notaFinal == null) {
+            return "PENDIENTE";
+        }
+        return notaFinal.compareTo(BigDecimal.valueOf(10.5)) >= 0 ? "APROBADO" : "DESAPROBADO";
+    }
+
+    /**
+     * Calcula el total de inasistencias del estudiante en el curso matriculado
+     * Cuenta las asistencias registradas como "AUSENTE" o "FALTA"
+     */
+    default Integer calculateInasistencias(Matricula matricula) {
+        if (matricula == null || matricula.getCursoOfertado() == null || 
+            matricula.getCursoOfertado().getHorarios() == null || 
+            matricula.getEstudiante() == null) {
+            return 0;
+        }
+        
+        // Contar asistencias marcadas como ausentes en todos los horarios del curso
+        return (int) matricula.getCursoOfertado().getHorarios().stream()
+            .flatMap(horario -> horario.getAsistencias() != null ? 
+                horario.getAsistencias().stream() : java.util.stream.Stream.empty())
+            .filter(asistencia -> asistencia.getEstudiante() != null && 
+                asistencia.getEstudiante().getId().equals(matricula.getEstudiante().getId()))
+            .filter(asistencia -> "AUSENTE".equalsIgnoreCase(asistencia.getEstado()) || 
+                "FALTA".equalsIgnoreCase(asistencia.getEstado()))
+            .count();
+    }
 }
 

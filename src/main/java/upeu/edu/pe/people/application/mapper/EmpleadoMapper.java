@@ -10,7 +10,11 @@ import upeu.edu.pe.core.domain.entities.UnidadOrganizativa;
 import java.time.LocalDate;
 import java.time.Period;
 
-@Mapper(componentModel = "cdi", imports = {java.math.BigDecimal.class})
+@Mapper(
+    componentModel = "cdi", 
+    imports = {java.math.BigDecimal.class},
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
 public interface EmpleadoMapper {
 
     @Mapping(target = "id", ignore = true)

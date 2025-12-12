@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
+import upeu.edu.pe.assessment.domain.entities.AsistenciaAlumno;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -51,6 +54,9 @@ public class Horario extends AuditableEntity {
     @Column(name = "observaciones", length = 500)
     @Normalize(Normalize.NormalizeType.SPACES_ONLY)
     private String observaciones;
+
+    @OneToMany(mappedBy = "horario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AsistenciaAlumno> asistencias = new HashSet<>();
 
     /**
      * Valida que la hora de inicio sea anterior a la hora de fin

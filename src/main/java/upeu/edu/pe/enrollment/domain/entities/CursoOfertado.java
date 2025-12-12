@@ -91,6 +91,9 @@ public class CursoOfertado extends AuditableEntity {
     @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EvaluacionCriterio> evaluacionCriterios = new HashSet<>();
 
+    @OneToMany(mappedBy = "cursoOfertado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Horario> horarios = new HashSet<>();
+
 
     public CursoOfertado(PlanCurso planCurso, 
                   PeriodoAcademico periodoAcademico, 
