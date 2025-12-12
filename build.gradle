@@ -67,6 +67,9 @@ dependencies {
 
     // Security
     implementation 'io.quarkus:quarkus-security'
+    
+    // BCrypt para password hashing
+    implementation 'at.favre.lib:bcrypt:0.10.2'
 
     // Cache
     implementation 'io.quarkus:quarkus-cache'
