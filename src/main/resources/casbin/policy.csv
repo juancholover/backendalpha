@@ -1,0 +1,102 @@
+# Políticas de Casbin para Sílabos
+# Formato: p, rol, objeto, acción, efecto
+
+# ============================================================
+# SEDE CENTRAL - Control Total
+# ============================================================
+p, role:sede_central, silabo, read, allow
+p, role:sede_central, silabo, create, allow
+p, role:sede_central, silabo, update, allow
+p, role:sede_central, silabo, update_contenido, allow
+p, role:sede_central, silabo, update_evaluacion, allow
+p, role:sede_central, silabo, update_fecha, allow
+p, role:sede_central, silabo, delete, allow
+p, role:sede_central, silabo, congelar, allow
+p, role:sede_central, silabo, aprobar, allow
+p, role:sede_central, silabo, publicar, allow
+
+# PLANTILLAS MULTI-CAMPUS - Sede Central
+p, role:sede_central, plantilla, read, allow
+p, role:sede_central, plantilla, create, allow
+p, role:sede_central, plantilla, update, allow
+p, role:sede_central, plantilla, delete, allow
+p, role:sede_central, plantilla, publicar_campus, allow
+p, role:sede_central, publicacion, read, allow
+p, role:sede_central, publicacion, create, allow
+p, role:sede_central, publicacion, update, allow
+p, role:sede_central, publicacion, delete, allow
+
+# ============================================================
+# CAMPUS - Solo Evaluaciones y Fechas
+# ============================================================
+p, role:campus_admin, silabo, read, allow
+p, role:campus_admin, silabo, update_evaluacion, allow
+p, role:campus_admin, silabo, update_fecha, allow
+p, role:campus_admin, silabo, update_contenido, deny
+p, role:campus_admin, silabo, update, deny
+p, role:campus_admin, silabo, delete, deny
+p, role:campus_admin, silabo, congelar, deny
+p, role:campus_admin, silabo, aprobar, deny
+
+# PLANTILLAS MULTI-CAMPUS - Campus Admin
+p, role:campus_admin, plantilla, read, allow
+p, role:campus_admin, plantilla, create, deny
+p, role:campus_admin, plantilla, publicar_campus, deny
+p, role:campus_admin, publicacion, read, allow
+p, role:campus_admin, publicacion, adaptar, allow
+p, role:campus_admin, publicacion, update, deny
+p, role:campus_admin, publicacion, delete, deny
+
+# ============================================================
+# DOCENTE - Solo Lectura y Propuesta
+# ============================================================
+p, role:docente, silabo, read, allow
+p, role:docente, silabo, create_propuesta, allow
+p, role:docente, silabo, update, deny
+p, role:docente, silabo, delete, deny
+
+# PLANTILLAS MULTI-CAMPUS - Docente
+p, role:docente, plantilla, read, allow
+p, role:docente, plantilla, create, deny
+p, role:docente, publicacion, read, allow
+p, role:docente, publicacion, adaptar, deny
+
+# ============================================================
+# COORDINADOR ACADÉMICO - Revisión y Aprobación
+# ============================================================
+p, role:coordinador, silabo, read, allow
+p, role:coordinador, silabo, revisar, allow
+p, role:coordinador, silabo, update, allow
+p, role:coordinador, silabo, update_evaluacion, allow
+p, role:coordinador, silabo, aprobar, deny
+p, role:coordinador, silabo, congelar, deny
+
+# PLANTILLAS MULTI-CAMPUS - Coordinador
+p, role:coordinador, plantilla, read, allow
+p, role:coordinador, plantilla, create, deny
+p, role:coordinador, publicacion, read, allow
+p, role:coordinador, publicacion, adaptar, allow
+
+# ============================================================
+# DIRECTOR DE ESCUELA - Aprobación
+# ============================================================
+p, role:director, silabo, read, allow
+p, role:director, silabo, update, allow
+p, role:director, silabo, aprobar, allow
+p, role:director, silabo, congelar, deny
+p, role:director, silabo, publicar, deny
+
+# PLANTILLAS MULTI-CAMPUS - Director
+p, role:director, plantilla, read, allow
+p, role:director, plantilla, create, deny
+p, role:director, publicacion, read, allow
+p, role:director, publicacion, adaptar, deny
+
+# ============================================================
+# ASIGNACIÓN DE ROLES (Ejemplo)
+# ============================================================
+# g, usuario:juan@upeu.edu.pe, role:sede_central
+# g, usuario:maria@campus-lima.upeu.edu.pe, role:campus_admin
+# g, usuario:pedro@upeu.edu.pe, role:docente
+# g, usuario:ana@upeu.edu.pe, role:coordinador
+# g, usuario:luis@upeu.edu.pe, role:director

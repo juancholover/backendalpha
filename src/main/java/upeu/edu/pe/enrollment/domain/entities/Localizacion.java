@@ -56,4 +56,23 @@ public class Localizacion extends AuditableEntity {
 
     @Column(name = "es_principal", nullable = false)
     private Boolean esPrincipal = false; // TRUE si es la sede principal de la universidad
+
+    @Column(name = "capacidad")
+    private Integer capacidad; // Capacidad máxima de personas (aplicable a aulas, auditorios, laboratorios)
+
+    @Column(name = "estado", length = 20)
+    @Normalize(Normalize.NormalizeType.UPPERCASE)
+    private String estado = "DISPONIBLE"; // DISPONIBLE, EN_MANTENIMIENTO, OCUPADO, INACTIVO
+
+    @Column(name = "departamento", length = 100)
+    @Normalize(Normalize.NormalizeType.TITLE_CASE)
+    private String departamento; // Departamento geográfico (Lima, Arequipa, etc.)
+
+    @Column(name = "provincia", length = 100)
+    @Normalize(Normalize.NormalizeType.TITLE_CASE)
+    private String provincia;
+
+    @Column(name = "distrito", length = 100)
+    @Normalize(Normalize.NormalizeType.TITLE_CASE)
+    private String distrito;
 }

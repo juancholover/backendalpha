@@ -51,9 +51,12 @@ quarkus:
     path: /swagger-ui
 
   smallrye-health:
-    root-path: "/health"
+    root-path: "/q/health"
     ui:
-      always-include: false
+      enable: true
+      always-include: true
+    liveness-path: "/q/health/live"
+    readiness-path: "/q/health/ready"
 
   jackson:
     write-dates-as-timestamps: false
@@ -63,10 +66,14 @@ quarkus:
       allow-overriding-parameter-constraints: true
 
   micrometer:
+    binder:
+      jvm: true
+      system: true
+      http-server: true
     export:
       prometheus:
         enabled: true
-        path: "/metrics"
+        path: "/q/metrics"
 
   cache:
     caffeine:

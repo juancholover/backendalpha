@@ -43,6 +43,11 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    
+    // Test annotation processors (necesario para que MapStruct funcione en tests)
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     // Validation
     implementation 'io.quarkus:quarkus-hibernate-validator'
@@ -71,8 +76,18 @@ dependencies {
     // Scheduler
     implementation 'io.quarkus:quarkus-scheduler'
 
+    // Casbin - Control de Permisos
+    implementation 'org.casbin:jcasbin:1.55.0'
+    
+    // PDF Generation (Apache PDFBox directamente)
+    implementation 'org.apache.pdfbox:pdfbox:3.0.0'
+    
+    // DOCX Generation
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
     // Testing
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'io.quarkus:quarkus-test-h2'
     testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
