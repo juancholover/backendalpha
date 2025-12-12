@@ -419,6 +419,14 @@ CREATE INDEX idx_cuenta_estudiante ON cuenta_corriente_alumno(estudiante_id);
 CREATE INDEX idx_pago_estudiante ON pago(estudiante_id);
 
 -- =====================================================
+-- FOREIGN KEYS ADICIONALES
+-- =====================================================
+
+-- Agregar FK de autoridad a programa_academico (la tabla autoridad se creó en V001, programa_academico en V003)
+ALTER TABLE autoridad 
+    ADD CONSTRAINT fk_autoridad_programa FOREIGN KEY (programa_academico_id) REFERENCES programa_academico(id);
+
+-- =====================================================
 -- COMENTARIOS DE TABLAS
 -- =====================================================
 

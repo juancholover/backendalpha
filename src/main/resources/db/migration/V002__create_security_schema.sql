@@ -61,6 +61,8 @@ CREATE TABLE auth_usuario (
     fecha_bloqueo TIMESTAMP,
     requiere_cambio_password BOOLEAN DEFAULT false,
     fecha_ultimo_cambio_password TIMESTAMP,
+    token_recuperacion VARCHAR(255),
+    fecha_expiracion_token TIMESTAMP,
     active BOOLEAN DEFAULT true,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
