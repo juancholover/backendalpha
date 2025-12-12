@@ -175,7 +175,7 @@ WHERE NOT EXISTS (
 -- 4. CREAR PERSONA PARA SUPER ADMIN
 -- =====================================================
 INSERT INTO persona (
-    nombre, apellido_paterno, apellido_materno, 
+    nombres, apellido_paterno, apellido_materno, 
     tipo_documento, numero_documento, 
     email, telefono, fecha_nacimiento, genero,
     active, created_at, updated_at, created_by, updated_by
@@ -183,7 +183,7 @@ INSERT INTO persona (
 VALUES (
     'Super', 'Admin', 'Sistema',
     'DNI', '00000000',
-    'superadmin@upeu.edu.pe', '999999999', '1990-01-01', 'M',
+    'superadmin@upeu.edu.pe', '999999999', '1990-01-01', 'MASCULINO',
     true, NOW(), NOW(), 'system', 'system'
 )
 ON CONFLICT (numero_documento) DO NOTHING;
