@@ -79,5 +79,14 @@ public class UniversidadRepository implements PanacheRepositoryBase<Universidad,
     public boolean existsByRucAndIdNot(String ruc, Long id) {
         return count("ruc = ?1 and id != ?2 and active = true", ruc, id) > 0;
     }
+
+    /**
+     * Obtener la primera universidad con estado ACTIVA
+     * Útil para sistemas mono-universidad
+     */
+    public Optional<Universidad> findFirstByEstado(String estado) {
+        return find("estado = ?1 and active = true", estado)
+                .firstResultOptional();
+    }
 }
 

@@ -23,7 +23,8 @@ import org.eclipse.microprofile.openapi.annotations.servers.Server;
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Development server")
-        }
+        },
+        security = @org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(
         securitySchemeName = "bearerAuth",

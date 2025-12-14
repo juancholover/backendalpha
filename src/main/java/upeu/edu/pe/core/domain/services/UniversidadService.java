@@ -74,4 +74,26 @@ public class UniversidadService {
     public Universidad getEntityById(Long id) {
         return buscarUseCase.ejecutarPorId(id);
     }
+
+    /**
+     * Obtener la universidad actual/principal del sistema.
+     * En sistemas mono-universidad, retorna la primera universidad activa.
+     * 
+     * @return Universidad activa del sistema
+     * @throws NotFoundException si no existe universidad activa configurada
+     */
+    public Universidad getUniversidadActual() {
+        return universidadRepository.findFirstByEstado("ACTIVA")
+                .orElseThrow(() -> new NotFoundException(
+                    "No hay universidad activa configurada en el sistema. "
+                    + "Configure una universidad con estado ACTIVA en la base de datos."));
+    }
+
+    /**
+     * Obtener DTO de la universidad actual
+     */
+    public UniversidadResponseDTO getUniversidadActualDTO() {
+        Universidad universidad = getUniversidadActual();
+        return universidadMapper.toResponseDTO(universidad);
+    }
 }

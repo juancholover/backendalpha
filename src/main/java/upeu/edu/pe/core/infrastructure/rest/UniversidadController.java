@@ -1,5 +1,7 @@
 package upeu.edu.pe.core.infrastructure.rest;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -57,7 +59,8 @@ public class UniversidadController {
     // =====================================================
 
     @GET
-    @Operation(summary = "Listar universidades")
+    @PermitAll
+    @Operation(summary = "Listar universidades (público)")
     @APIResponse(responseCode = "200", description = "Lista obtenida exitosamente")
     public Response findAll() {
         List<UniversidadResponseDTO> universidades = universidadService.findAll();
@@ -65,8 +68,19 @@ public class UniversidadController {
     }
 
     @GET
+    @Path("/actual")
+    @PermitAll
+    @Operation(summary = "Obtener universidad actual del sistema (público)")
+    @APIResponse(responseCode = "200", description = "Universidad activa obtenida")
+    public Response getActual() {
+        UniversidadResponseDTO universidad = universidadService.getUniversidadActualDTO();
+        return Response.ok(ApiResponse.success("Universidad actual obtenida", universidad)).build();
+    }
+
+    @GET
     @Path("/activas")
-    @Operation(summary = "Listar universidades activas")
+    @PermitAll
+    @Operation(summary = "Listar universidades activas (público)")
     public Response findAllActive() {
         List<UniversidadResponseDTO> universidades = universidadService.findAllActive();
         return Response.ok(ApiResponse.success("Universidades activas obtenidas", universidades)).build();
@@ -74,7 +88,8 @@ public class UniversidadController {
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Buscar universidad por ID")
+    @PermitAll
+    @Operation(summary = "Buscar universidad por ID (público)")
     public Response findById(@PathParam("id") Long id) {
         UniversidadResponseDTO universidad = universidadService.findById(id);
         return Response.ok(ApiResponse.success("Universidad encontrada", universidad)).build();
@@ -82,7 +97,8 @@ public class UniversidadController {
 
     @GET
     @Path("/codigo/{codigo}")
-    @Operation(summary = "Buscar universidad por código")
+    @PermitAll
+    @Operation(summary = "Buscar universidad por código (público)")
     public Response findByCodigo(@PathParam("codigo") String codigo) {
         UniversidadResponseDTO universidad = universidadService.findByCodigo(codigo);
         return Response.ok(ApiResponse.success("Universidad encontrada", universidad)).build();
@@ -90,19 +106,22 @@ public class UniversidadController {
 
     @GET
     @Path("/search")
-    @Operation(summary = "Buscar universidades")
+    @PermitAll
+    @Operation(summary = "Buscar universidades (público)")
     public Response search(@QueryParam("q") String query) {
         List<UniversidadResponseDTO> universidades = universidadService.search(query);
         return Response.ok(ApiResponse.success("Resultados de búsqueda", universidades)).build();
     }
 
     // =====================================================
-    // OPERACIONES DE ESCRITURA (Use Cases)
+    // OPERACIONES DE ESCRITURA (Use Cases) - Solo SUPER_ADMIN
     // =====================================================
 
     @POST
-    @Operation(summary = "Crear universidad")
+    @RolesAllowed("SUPER_ADMIN")
+    @Operation(summary = "Crear universidad (requiere SUPER_ADMIN)")
     @APIResponse(responseCode = "201", description = "Universidad creada exitosamente")
+    @APIResponse(responseCode = "403", description = "Acceso denegado")
     public Response create(@Valid UniversidadRequestDTO dto) {
         CrearUniversidadCommand command = new CrearUniversidadCommand(
                 dto.getCodigo(),
@@ -125,7 +144,9 @@ public class UniversidadController {
 
     @PUT
     @Path("/{id}")
-    @Operation(summary = "Actualizar universidad")
+    @RolesAllowed("SUPER_ADMIN")
+    @Operation(summary = "Actualizar universidad (requiere SUPER_ADMIN)")
+    @APIResponse(responseCode = "403", description = "Acceso denegado")
     public Response update(@PathParam("id") Long id, @Valid UniversidadRequestDTO dto) {
         ActualizarUniversidadCommand command = new ActualizarUniversidadCommand(
                 id,
@@ -146,7 +167,9 @@ public class UniversidadController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary = "Eliminar universidad")
+    @RolesAllowed("SUPER_ADMIN")
+    @Operation(summary = "Eliminar universidad (requiere SUPER_ADMIN)")
+    @APIResponse(responseCode = "403", description = "Acceso denegado")
     public Response delete(@PathParam("id") Long id) {
         eliminarUseCase.execute(id);
         return Response.ok(ApiResponse.success("Universidad eliminada", null)).build();
