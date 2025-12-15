@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @Entity
 @Table(name = "auth_usuario", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"persona_id"}),
-    @UniqueConstraint(columnNames = {"username"})
+        @UniqueConstraint(columnNames = { "persona_id" }),
+        @UniqueConstraint(columnNames = { "username" })
 })
 @EntityListeners(AuditListener.class)
 public class AuthUsuario extends AuditableEntity {
@@ -31,9 +31,10 @@ public class AuthUsuario extends AuditableEntity {
     @JoinColumn(name = "persona_id", nullable = false, unique = true)
     private Persona persona;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rol;
+    // Rol ahora se gestiona via Casbin (tabla casbin_rule)
+    // Este campo es solo para referencia rápida / compatibilidad
+    @Column(name = "rol_nombre", length = 50)
+    private String rolNombre;
 
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
@@ -94,4 +95,3 @@ public class AuthUsuario extends AuditableEntity {
         this.intentosFallidos = 0;
     }
 }
-

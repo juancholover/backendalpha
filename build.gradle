@@ -82,6 +82,7 @@ dependencies {
 
     // Casbin - Control de Permisos
     implementation 'org.casbin:jcasbin:1.55.0'
+    implementation 'org.casbin:jdbc-adapter:2.6.0'
     
     // PDF Generation (Apache PDFBox directamente)
     implementation 'org.apache.pdfbox:pdfbox:3.0.0'

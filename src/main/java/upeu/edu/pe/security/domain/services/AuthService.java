@@ -68,15 +68,14 @@ public class AuthService {
 
         // Construir respuesta
         AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto(
-            authUsuario.getId(),
-            authUsuario.getUsername(),
-            authUsuario.getEmail(),
-            authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
-            authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
-            authUsuario.getRol() != null ? authUsuario.getRol().getNombre() : "USER",
-            authUsuario.estaActivo() ? "ACTIVE" : "INACTIVE",
-            authUsuario.getUltimoAcceso()
-        );
+                authUsuario.getId(),
+                authUsuario.getUsername(),
+                authUsuario.getEmail(),
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
+                authUsuario.getRolNombre() != null ? authUsuario.getRolNombre() : "USER",
+                authUsuario.estaActivo() ? "ACTIVE" : "INACTIVE",
+                authUsuario.getUltimoAcceso());
 
         AuthResponseDto response = new AuthResponseDto();
         response.setAccessToken(accessToken);
@@ -146,7 +145,7 @@ public class AuthService {
         // Invalidar el refresh token específico
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
                 .orElse(null);
-        
+
         if (token != null) {
             token.setIsRevoked(true);
             refreshTokenRepository.saveRefreshToken(token);

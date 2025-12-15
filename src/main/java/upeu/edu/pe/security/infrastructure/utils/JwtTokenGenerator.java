@@ -39,11 +39,11 @@ public class JwtTokenGenerator {
                     authUsuario.getUsername(),
                     authUsuario.getId(),
                     authUsuario.getEmail(),
-                    authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() + " " + authUsuario.getPersona().getApellidoPaterno() : "",
-                    authUsuario.getRol() != null ? authUsuario.getRol().getNombre() : "",
+                    authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() + " "
+                            + authUsuario.getPersona().getApellidoPaterno() : "",
+                    authUsuario.getRolNombre() != null ? authUsuario.getRolNombre() : "",
                     expirationTime,
-                    Instant.now().getEpochSecond()
-            );
+                    Instant.now().getEpochSecond());
 
             String encodedHeader = Base64.getUrlEncoder().withoutPadding()
                     .encodeToString(header.getBytes(StandardCharsets.UTF_8));
@@ -77,8 +77,7 @@ public class JwtTokenGenerator {
                     authUsuario.getUsername(),
                     authUsuario.getId(),
                     expirationTime,
-                    Instant.now().getEpochSecond()
-            );
+                    Instant.now().getEpochSecond());
 
             String encodedHeader = Base64.getUrlEncoder().withoutPadding()
                     .encodeToString(header.getBytes(StandardCharsets.UTF_8));
