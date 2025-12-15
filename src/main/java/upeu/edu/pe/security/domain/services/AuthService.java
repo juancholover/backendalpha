@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import upeu.edu.pe.security.application.dto.*;
+import upeu.edu.pe.security.casbin.CasbinPolicyService;
 import upeu.edu.pe.security.domain.entities.RefreshToken;
 import upeu.edu.pe.security.domain.entities.AuthUsuario;
 import upeu.edu.pe.security.domain.repositories.RefreshTokenRepository;
@@ -33,6 +34,9 @@ public class AuthService {
 
     @Inject
     RefreshTokenRepository refreshTokenRepository;
+
+    @Inject
+    CasbinPolicyService casbinPolicyService;
 
     @Transactional
     public AuthResponseDto login(LoginRequestDto loginRequest) {
@@ -66,6 +70,9 @@ public class AuthService {
         authUsuario.registrarAccesoExitoso();
         authUsuarioRepository.persist(authUsuario);
 
+        // Obtener roles de Casbin
+        java.util.List<String> roles = casbinPolicyService.getUserRoles(authUsuario.getEmail());
+
         // Construir respuesta
         AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto(
                 authUsuario.getId(),
@@ -73,7 +80,7 @@ public class AuthService {
                 authUsuario.getEmail(),
                 authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
                 authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
-                authUsuario.getRolNombre() != null ? authUsuario.getRolNombre() : "USER",
+                roles, // Lista de roles de Casbin
                 authUsuario.estaActivo() ? "ACTIVE" : "INACTIVE",
                 authUsuario.getUltimoAcceso());
 

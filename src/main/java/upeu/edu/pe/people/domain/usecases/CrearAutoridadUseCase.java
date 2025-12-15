@@ -14,6 +14,7 @@ import upeu.edu.pe.people.domain.entities.Autoridad;
 import upeu.edu.pe.people.domain.entities.TipoAutoridad;
 import upeu.edu.pe.people.domain.repositories.AutoridadRepository;
 import upeu.edu.pe.people.domain.repositories.TipoAutoridadRepository;
+import upeu.edu.pe.security.domain.services.RoleSyncService;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
 
 /**
@@ -24,6 +25,9 @@ public class CrearAutoridadUseCase {
 
     @Inject
     AutoridadRepository autoridadRepository;
+
+    @Inject
+    RoleSyncService roleSyncService;
 
     @Inject
     PersonaRepository personaRepository;
@@ -78,6 +82,10 @@ public class CrearAutoridadUseCase {
         }
 
         autoridadRepository.persist(autoridad);
+
+        // Sincronizar roles
+        roleSyncService.syncAllRolesForPersona(persona);
+
         return autoridad;
     }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +26,7 @@ public class AuthResponseDto {
         private String email;
         private String firstName;
         private String lastName;
-        private String role; // Nombre del rol desde AuthUsuario.rol.nombre
+        private List<String> roles; // Roles de Casbin
         private String status; // Estado: "ACTIVE" o "INACTIVE" desde AuthUsuario.active
         private LocalDateTime lastLogin;
     }

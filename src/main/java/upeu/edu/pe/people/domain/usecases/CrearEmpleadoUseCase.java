@@ -10,6 +10,7 @@ import upeu.edu.pe.core.domain.repositories.UnidadOrganizativaRepository;
 import upeu.edu.pe.people.domain.commands.CrearEmpleadoCommand;
 import upeu.edu.pe.people.domain.entities.Empleado;
 import upeu.edu.pe.people.domain.repositories.EmpleadoRepository;
+import upeu.edu.pe.security.domain.services.RoleSyncService;
 import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
@@ -31,6 +32,9 @@ public class CrearEmpleadoUseCase {
 
     @Inject
     EmpleadoRepository empleadoRepository;
+
+    @Inject
+    RoleSyncService roleSyncService;
 
     @Inject
     PersonaRepository personaRepository;
@@ -83,6 +87,9 @@ public class CrearEmpleadoUseCase {
 
         // 7. Persistir
         empleadoRepository.persist(empleado);
+
+        // Sincronizar roles (crea usuario si no existe)
+        roleSyncService.syncAllRolesForPersona(persona);
 
         return empleado;
     }

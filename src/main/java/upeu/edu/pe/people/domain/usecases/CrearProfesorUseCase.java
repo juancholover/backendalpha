@@ -8,6 +8,7 @@ import upeu.edu.pe.people.domain.entities.Empleado;
 import upeu.edu.pe.people.domain.entities.Profesor;
 import upeu.edu.pe.people.domain.repositories.EmpleadoRepository;
 import upeu.edu.pe.people.domain.repositories.ProfesorRepository;
+import upeu.edu.pe.security.domain.services.RoleSyncService;
 import upeu.edu.pe.shared.exceptions.BusinessException;
 import upeu.edu.pe.shared.exceptions.DuplicateResourceException;
 import upeu.edu.pe.shared.exceptions.NotFoundException;
@@ -25,6 +26,9 @@ public class CrearProfesorUseCase {
 
     @Inject
     ProfesorRepository profesorRepository;
+
+    @Inject
+    RoleSyncService roleSyncService;
 
     @Inject
     EmpleadoRepository empleadoRepository;
@@ -59,6 +63,9 @@ public class CrearProfesorUseCase {
         profesor.setEspecialidad(command.especialidad());
 
         profesorRepository.persist(profesor);
+
+        // Sincronizar roles
+        roleSyncService.syncAllRolesForPersona(empleado.getPersona());
 
         return profesor;
     }

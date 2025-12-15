@@ -7,6 +7,9 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import upeu.edu.pe.shared.response.ApiResponse;
+import upeu.edu.pe.security.domain.services.RoleSyncService;
+import upeu.edu.pe.security.domain.repositories.AuthUsuarioRepository;
+import upeu.edu.pe.security.domain.entities.AuthUsuario;
 
 import java.util.List;
 
@@ -22,6 +25,12 @@ public class CasbinPolicyController {
 
     @Inject
     CasbinPolicyService policyService;
+
+    @Inject
+    RoleSyncService roleSyncService;
+
+    @Inject
+    AuthUsuarioRepository authUsuarioRepository;
 
     // ==============================
     // POLICY MANAGEMENT
@@ -121,6 +130,29 @@ public class CasbinPolicyController {
             @QueryParam("action") String action) {
         boolean allowed = policyService.hasPermission(user, path, action);
         return Response.ok(ApiResponse.success("Verificación de permiso", allowed)).build();
+    }
+
+    // ==============================
+    // SYNC OPERATIONS
+    // ==============================
+
+    @POST
+    @Path("/sync-all-users")
+    @Operation(summary = "Sincronizar usuarios masivamente", description = "Sincroniza roles de Casbin para TODOS los usuarios existentes")
+    public Response syncAllUsers() {
+        List<AuthUsuario> usuarios = authUsuarioRepository.listAll();
+        int count = 0;
+        for (AuthUsuario u : usuarios) {
+            if (u.getPersona() != null) {
+                try {
+                    roleSyncService.syncAllRolesForPersona(u.getPersona());
+                    count++;
+                } catch (Exception e) {
+                    System.err.println("Error syncing user " + u.getId() + ": " + e.getMessage());
+                }
+            }
+        }
+        return Response.ok(ApiResponse.success("Roles sincronizados para " + count + " usuarios")).build();
     }
 
     // ==============================
