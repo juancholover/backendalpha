@@ -64,7 +64,11 @@ public class TipoLocalizacionController {
     @Operation(summary = "Crear tipo de localización")
     public Response create(@Valid TipoLocalizacionRequestDTO dto) {
         CrearTipoLocalizacionCommand command = new CrearTipoLocalizacionCommand(
-                dto.getNombre());
+                dto.getCodigo(),
+                dto.getNombre(),
+                dto.getPadreId(),
+                dto.getNivelJerarquia(),
+                dto.getPermiteAsignacion());
 
         TipoLocalizacion tipoLocalizacion = crearUseCase.execute(command);
         TipoLocalizacionResponseDTO response = tipoLocalizacionMapper.toResponseDTO(tipoLocalizacion);
