@@ -125,24 +125,34 @@ public class PermissionAdminService {
         return new RolPermisosDetalleDTO(rolNombre, totalPermisos, modulosDTO);
     }
 
-    /**
-     * Actualiza los permisos de un rol.
-     */
     @Transactional
     public void updateRolPermisos(String rolNombre, List<Long> menuItemIdsActivos) {
         // Eliminar permisos actuales
         rolMenuRepository.deleteByRolNombre(rolNombre);
 
-        // Crear nuevos permisos
+        // Usar un Set para evitar duplicados (ej. varios targets del mismo modulo
+        // agregan el mismo padre)
+        java.util.Set<MenuItem> itemsToSave = new java.util.HashSet<>();
+
         for (Long menuItemId : menuItemIdsActivos) {
             MenuItem menuItem = menuItemRepository.findById(menuItemId);
-            if (menuItem != null) {
-                RolMenu rolMenu = new RolMenu();
-                rolMenu.setRolNombre(rolNombre);
-                rolMenu.setMenuItem(menuItem);
-                rolMenu.setActive(true);
-                rolMenuRepository.persist(rolMenu);
+            // Solo procesamos si el item existe y es un Target (tiene padre)
+            // Esto implícitamente filtra "Islas huérfanas" (Items sin hijos en la
+            // selección)
+            // cumpliendo la política: "si todos los targets son false, el modulo es false"
+            if (menuItem != null && menuItem.esSidebarTarget()) {
+                itemsToSave.add(menuItem); // Agregamos el target
+                itemsToSave.add(menuItem.getPadre()); // Agregamos automáticamente al padre (Isla)
             }
+        }
+
+        // Persistir todos los items identificados
+        for (MenuItem item : itemsToSave) {
+            RolMenu rolMenu = new RolMenu();
+            rolMenu.setRolNombre(rolNombre);
+            rolMenu.setMenuItem(item);
+            rolMenu.setActive(true);
+            rolMenuRepository.persist(rolMenu);
         }
     }
 
@@ -196,6 +206,18 @@ public class PermissionAdminService {
                 rolMenuRepository.persist(rolMenu);
             }
         }
+
+        // Y asegurar que la Isla protegida esté asignada
+        if (!rolMenuRepository.existsByRolAndMenuItem(rolNombre, moduloId)) {
+            MenuItem isla = menuItemRepository.findById(moduloId);
+            if (isla != null) {
+                RolMenu rolMenu = new RolMenu();
+                rolMenu.setRolNombre(rolNombre);
+                rolMenu.setMenuItem(isla);
+                rolMenu.setActive(true);
+                rolMenuRepository.persist(rolMenu);
+            }
+        }
     }
 
     /**
@@ -208,5 +230,8 @@ public class PermissionAdminService {
         for (MenuItem target : targets) {
             rolMenuRepository.deleteByRolAndMenuItem(rolNombre, target.getId());
         }
+
+        // También eliminar la Isla (Padre)
+        rolMenuRepository.deleteByRolAndMenuItem(rolNombre, moduloId);
     }
 }
