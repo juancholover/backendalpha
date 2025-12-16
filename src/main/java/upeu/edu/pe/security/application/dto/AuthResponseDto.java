@@ -3,6 +3,7 @@ package upeu.edu.pe.security.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import upeu.edu.pe.permissions.application.dto.PermissionsResponseDTO;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -15,19 +16,25 @@ public class AuthResponseDto {
     private String refreshToken;
     private String tokenType = "Bearer";
     private Long expiresIn;
+    private String issuedAt;
     private UserInfoDto user;
+    private PermissionsResponseDTO permissions;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserInfoDto {
-        private Long id;
-        private String username;
+        private Long idPersona;
+        private String documentoIdentidad;
+        private String nombre;
+        private String apellidos;
+        private String nombreCompleto;
         private String email;
-        private String firstName;
-        private String lastName;
-        private List<String> roles; // Roles de Casbin
-        private String status; // Estado: "ACTIVE" o "INACTIVE" desde AuthUsuario.active
-        private LocalDateTime lastLogin;
+        private String telefono;
+        private String fotoUrl;
+        private List<String> rolesBase;
+        private String estadoCuenta;
+        private Boolean requiereCambioPassword;
+        private LocalDateTime ultimaSesion;
     }
 }

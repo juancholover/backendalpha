@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
+import upeu.edu.pe.permissions.application.dto.PermissionsResponseDTO;
+import upeu.edu.pe.permissions.domain.services.PermissionsService;
 import upeu.edu.pe.security.application.dto.*;
 import upeu.edu.pe.security.casbin.CasbinPolicyService;
 import upeu.edu.pe.security.domain.entities.RefreshToken;
@@ -16,6 +18,7 @@ import upeu.edu.pe.security.infrastructure.utils.JwtTokenValidator;
 import upeu.edu.pe.security.infrastructure.utils.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @ApplicationScoped
 public class AuthService {
@@ -37,6 +40,9 @@ public class AuthService {
 
     @Inject
     CasbinPolicyService casbinPolicyService;
+
+    @Inject
+    PermissionsService permissionsService;
 
     @Transactional
     public AuthResponseDto login(LoginRequestDto loginRequest) {
@@ -73,29 +79,52 @@ public class AuthService {
         // Obtener roles de Casbin
         java.util.List<String> roles = casbinPolicyService.getUserRoles(authUsuario.getEmail());
 
-        // Construir respuesta
-        AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto(
-                authUsuario.getId(),
-                authUsuario.getUsername(),
+        // Construir permisos completos
+        PermissionsResponseDTO permissions = permissionsService.buildPermissionsForUser(
                 authUsuario.getEmail(),
-                authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : "",
-                authUsuario.getPersona() != null ? authUsuario.getPersona().getApellidoPaterno() : "",
-                roles, // Lista de roles de Casbin
-                authUsuario.estaActivo() ? "ACTIVE" : "INACTIVE",
-                authUsuario.getUltimoAcceso());
+                roles);
 
+        // Construir información de usuario
+        AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto();
+        userInfo.setIdPersona(authUsuario.getPersona() != null ? authUsuario.getPersona().getId() : null);
+        userInfo.setDocumentoIdentidad(
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getNumeroDocumento() : null);
+        userInfo.setNombre(
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : authUsuario.getUsername());
+        userInfo.setApellidos(authUsuario.getPersona() != null ? (authUsuario.getPersona().getApellidoPaterno() + " " +
+                (authUsuario.getPersona().getApellidoMaterno() != null ? authUsuario.getPersona().getApellidoMaterno()
+                        : ""))
+                .trim()
+                : "");
+        userInfo.setNombreCompleto(authUsuario.getPersona() != null ? (authUsuario.getPersona().getNombres() + " " +
+                authUsuario.getPersona().getApellidoPaterno() + " " +
+                (authUsuario.getPersona().getApellidoMaterno() != null ? authUsuario.getPersona().getApellidoMaterno()
+                        : ""))
+                .trim()
+                : authUsuario.getUsername());
+        userInfo.setEmail(authUsuario.getEmail());
+        userInfo.setTelefono(authUsuario.getPersona() != null ? authUsuario.getPersona().getTelefono() : null);
+        userInfo.setFotoUrl(null); // TODO: implementar cuando haya campo foto
+        userInfo.setRolesBase(roles);
+        userInfo.setEstadoCuenta(authUsuario.estaActivo() ? "activa" : "inactiva");
+        userInfo.setRequiereCambioPassword(authUsuario.getRequiereCambioPassword());
+        userInfo.setUltimaSesion(authUsuario.getUltimoAcceso());
+
+        // Construir respuesta completa
         AuthResponseDto response = new AuthResponseDto();
         response.setAccessToken(accessToken);
         response.setRefreshToken(refreshTokenStr);
         response.setTokenType("Bearer");
         response.setExpiresIn(jwtTokenGenerator.getDuration());
+        response.setIssuedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         response.setUser(userInfo);
+        response.setPermissions(permissions);
 
         return response;
     }
 
     @Transactional
-    public TokenResponseDto refreshToken(RefreshTokenRequestDto refreshRequest) {
+    public AuthResponseDto refreshToken(RefreshTokenRequestDto refreshRequest) {
         String refreshTokenStr = refreshRequest.getRefreshToken();
 
         // Validar refresh token con JwtTokenValidator
@@ -137,12 +166,49 @@ public class AuthService {
         newRefreshToken.setIsRevoked(false);
         refreshTokenRepository.saveRefreshToken(newRefreshToken);
 
-        // Construir respuesta
-        TokenResponseDto response = new TokenResponseDto();
+        // Obtener roles de Casbin
+        java.util.List<String> roles = casbinPolicyService.getUserRoles(authUsuario.getEmail());
+
+        // Construir permisos completos (igual que en login)
+        PermissionsResponseDTO permissions = permissionsService.buildPermissionsForUser(
+                authUsuario.getEmail(),
+                roles);
+
+        // Construir información de usuario (igual que en login)
+        AuthResponseDto.UserInfoDto userInfo = new AuthResponseDto.UserInfoDto();
+        userInfo.setIdPersona(authUsuario.getPersona() != null ? authUsuario.getPersona().getId() : null);
+        userInfo.setDocumentoIdentidad(
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getNumeroDocumento() : null);
+        userInfo.setNombre(
+                authUsuario.getPersona() != null ? authUsuario.getPersona().getNombres() : authUsuario.getUsername());
+        userInfo.setApellidos(authUsuario.getPersona() != null ? (authUsuario.getPersona().getApellidoPaterno() + " " +
+                (authUsuario.getPersona().getApellidoMaterno() != null ? authUsuario.getPersona().getApellidoMaterno()
+                        : ""))
+                .trim()
+                : "");
+        userInfo.setNombreCompleto(authUsuario.getPersona() != null ? (authUsuario.getPersona().getNombres() + " " +
+                authUsuario.getPersona().getApellidoPaterno() + " " +
+                (authUsuario.getPersona().getApellidoMaterno() != null ? authUsuario.getPersona().getApellidoMaterno()
+                        : ""))
+                .trim()
+                : authUsuario.getUsername());
+        userInfo.setEmail(authUsuario.getEmail());
+        userInfo.setTelefono(authUsuario.getPersona() != null ? authUsuario.getPersona().getTelefono() : null);
+        userInfo.setFotoUrl(authUsuario.getPersona() != null ? authUsuario.getPersona().getFotoUrl() : null);
+        userInfo.setRolesBase(roles);
+        userInfo.setEstadoCuenta(authUsuario.estaActivo() ? "activa" : "inactiva");
+        userInfo.setRequiereCambioPassword(authUsuario.getRequiereCambioPassword());
+        userInfo.setUltimaSesion(authUsuario.getUltimoAcceso());
+
+        // Construir respuesta COMPLETA (igual que login)
+        AuthResponseDto response = new AuthResponseDto();
         response.setAccessToken(newAccessToken);
         response.setRefreshToken(newRefreshTokenStr);
         response.setTokenType("Bearer");
         response.setExpiresIn(jwtTokenGenerator.getDuration());
+        response.setIssuedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        response.setUser(userInfo);
+        response.setPermissions(permissions);
 
         return response;
     }

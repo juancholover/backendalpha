@@ -7,9 +7,9 @@ quarkus:
   datasource:
     db-kind: postgresql
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:1234567}
+    password: ${DB_PASSWORD:123456}
     jdbc:
-      url: jdbc:postgresql://localhost:5432/${DB_NAME:quarkus_db}
+      url: jdbc:postgresql://localhost:5432/${DB_NAME:labacademico}
 
   hibernate-orm:
     database:

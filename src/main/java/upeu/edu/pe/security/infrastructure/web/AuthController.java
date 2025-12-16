@@ -41,39 +41,48 @@ public class AuthController {
     }
 
     // NOTA: El registro ahora requiere crear primero Persona y Universidad
-    // Este endpoint fue deshabilitado porque AuthUsuario necesita referencias completas
+    // Este endpoint fue deshabilitado porque AuthUsuario necesita referencias
+    // completas
     // Ver docs/MIGRACION-AUTHUSUARIO.md para implementar el nuevo flujo de registro
     /*
-    @POST
-    @Path("/register")
-    @Operation(summary = "User registration", description = "Create new user account and return JWT tokens")
-    @APIResponse(responseCode = "201", description = "User registered successfully")
-    @APIResponse(responseCode = "409", description = "Username or email already exists")
-    @APIResponse(responseCode = "400", description = "Invalid request data")
-    public Response register(@Valid RegisterRequestDto registerRequest) {
-        System.out.println("=====> "+registerRequest.toString());
-        try {
-            AuthResponseDto authResponse = authService.register(registerRequest);
-            return Response.status(Response.Status.CREATED)
-                    .entity(ApiResponse.success("User registered successfully", authResponse))
-                    .build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(ApiResponse.error("Registration failed", e.getMessage()))
-                    .build();
-        }
-    }
-    */
+     * @POST
+     * 
+     * @Path("/register")
+     * 
+     * @Operation(summary = "User registration", description =
+     * "Create new user account and return JWT tokens")
+     * 
+     * @APIResponse(responseCode = "201", description =
+     * "User registered successfully")
+     * 
+     * @APIResponse(responseCode = "409", description =
+     * "Username or email already exists")
+     * 
+     * @APIResponse(responseCode = "400", description = "Invalid request data")
+     * public Response register(@Valid RegisterRequestDto registerRequest) {
+     * System.out.println("=====> "+registerRequest.toString());
+     * try {
+     * AuthResponseDto authResponse = authService.register(registerRequest);
+     * return Response.status(Response.Status.CREATED)
+     * .entity(ApiResponse.success("User registered successfully", authResponse))
+     * .build();
+     * } catch (Exception e) {
+     * return Response.status(Response.Status.CONFLICT)
+     * .entity(ApiResponse.error("Registration failed", e.getMessage()))
+     * .build();
+     * }
+     * }
+     */
 
     @POST
     @Path("/refresh")
-    @Operation(summary = "Refresh access token", description = "Get new access token using refresh token")
+    @Operation(summary = "Refresh access token", description = "Get new access token, user info and permissions using refresh token")
     @APIResponse(responseCode = "200", description = "Token refreshed successfully")
     @APIResponse(responseCode = "401", description = "Invalid or expired refresh token")
     public Response refreshToken(@Valid RefreshTokenRequestDto refreshRequest) {
         try {
-            TokenResponseDto tokenResponse = authService.refreshToken(refreshRequest);
-            return Response.ok(ApiResponse.success("Token refreshed successfully", tokenResponse)).build();
+            AuthResponseDto authResponse = authService.refreshToken(refreshRequest);
+            return Response.ok(ApiResponse.success("Token refreshed successfully", authResponse)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(ApiResponse.error("Token refresh failed", e.getMessage()))
@@ -104,8 +113,7 @@ public class AuthController {
     @APIResponse(responseCode = "404", description = "User not found")
     @APIResponse(responseCode = "400", description = "Username header is required")
     public Response logoutAllDevices(
-            @Parameter(description = "Username from JWT token")
-            @HeaderParam("X-Username") String username) {
+            @Parameter(description = "Username from JWT token") @HeaderParam("X-Username") String username) {
 
         if (username == null || username.trim().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -135,7 +143,8 @@ public class AuthController {
                     .build();
         }
 
-        // Token format validated - in a complete implementation, validate signature here
+        // Token format validated - in a complete implementation, validate signature
+        // here
 
         return Response.ok(ApiResponse.success("Token format is valid")).build();
     }

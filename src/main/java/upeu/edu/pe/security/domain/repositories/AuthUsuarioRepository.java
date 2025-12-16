@@ -12,9 +12,10 @@ public class AuthUsuarioRepository implements PanacheRepositoryBase<AuthUsuario,
 
     /**
      * Buscar usuario por username (email de persona)
+     * Nota: Rol se gestiona via Casbin (tabla casbin_rule), no aquí
      */
     public Optional<AuthUsuario> findByUsername(String username) {
-        return find("SELECT au FROM AuthUsuario au JOIN FETCH au.persona p JOIN FETCH au.rol WHERE p.email = ?1 and au.active = true", username).firstResultOptional();
+        return find("SELECT au FROM AuthUsuario au JOIN FETCH au.persona p WHERE p.email = ?1 and au.active = true", username).firstResultOptional();
     }
 
     /**
