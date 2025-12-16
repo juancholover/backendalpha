@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import upeu.edu.pe.core.domain.entities.Persona;
 import upeu.edu.pe.core.domain.repositories.PersonaRepository;
@@ -14,10 +15,12 @@ import upeu.edu.pe.security.domain.entities.AuthUsuario;
 import upeu.edu.pe.security.domain.repositories.AuthUsuarioRepository;
 import upeu.edu.pe.security.infrastructure.utils.PasswordEncoder;
 
+import java.util.Optional;
+
 /**
  * Inicializa el usuario SuperAdmin al arrancar la aplicación.
  * Solo crea el usuario si no existe.
- * Credenciales por defecto: superadmin@upeu.edu.pe / SuperAdmin2025!
+ * Las credenciales se configuran via variables de entorno.
  * Priority 3 = ejecuta después de MenuItems y RolMenus
  */
 @ApplicationScoped
@@ -25,9 +28,14 @@ public class SuperAdminUserInitializer {
 
     private static final Logger LOG = Logger.getLogger(SuperAdminUserInitializer.class);
 
-    private static final String SUPERADMIN_EMAIL = "superadmin@upeu.edu.pe";
-    private static final String SUPERADMIN_PASSWORD = "SuperAdmin2025!";
-    private static final String SUPERADMIN_DOC = "00000001";
+    @ConfigProperty(name = "app.superadmin.email", defaultValue = "admin@localhost")
+    String superadminEmail;
+
+    @ConfigProperty(name = "app.superadmin.password", defaultValue = "ChangeMe123!")
+    String superadminPassword;
+
+    @ConfigProperty(name = "app.superadmin.enabled", defaultValue = "true")
+    boolean superadminEnabled;
 
     @Inject
     PersonaRepository personaRepository;
@@ -45,8 +53,13 @@ public class SuperAdminUserInitializer {
      * Método principal sin @Transactional para poder manejar Casbin separadamente
      */
     void onStart(@Observes @Priority(3) StartupEvent ev) {
+        if (!superadminEnabled) {
+            LOG.info("SuperAdmin creation disabled via config.");
+            return;
+        }
+
         // Verificar si ya existe el usuario por email
-        if (personaRepository.findByEmail(SUPERADMIN_EMAIL).isPresent()) {
+        if (personaRepository.findByEmail(superadminEmail).isPresent()) {
             LOG.info("SuperAdmin user already exists, skipping creation.");
             return;
         }
@@ -58,9 +71,9 @@ public class SuperAdminUserInitializer {
 
         // 2. Asignar rol en Casbin (fuera de transacción JPA)
         try {
-            casbinPolicyService.assignRole(SUPERADMIN_EMAIL, "SUPERADMIN");
-            LOG.infof("✅ SuperAdmin user created: %s", SUPERADMIN_EMAIL);
-            LOG.info("   Password: SuperAdmin2025! (CHANGE IN PRODUCTION!)");
+            casbinPolicyService.assignRole(superadminEmail, "SUPERADMIN");
+            LOG.infof("✅ SuperAdmin user created: %s", superadminEmail);
+            LOG.info("   ⚠️ CHANGE PASSWORD IN PRODUCTION!");
         } catch (Exception e) {
             LOG.warnf("⚠️ SuperAdmin user created but Casbin role assignment failed: %s", e.getMessage());
             LOG.info("   You may need to manually add the role via Casbin API.");
@@ -75,8 +88,8 @@ public class SuperAdminUserInitializer {
         persona.setApellidoPaterno("Administrador");
         persona.setApellidoMaterno("Sistema");
         persona.setTipoDocumento("DNI");
-        persona.setNumeroDocumento(SUPERADMIN_DOC);
-        persona.setEmail(SUPERADMIN_EMAIL);
+        persona.setNumeroDocumento("00000001");
+        persona.setEmail(superadminEmail);
         persona.setTelefono("+51999999999");
         persona.setActive(true);
         personaRepository.persist(persona);
@@ -84,9 +97,9 @@ public class SuperAdminUserInitializer {
         // 2. Crear AuthUsuario
         AuthUsuario authUsuario = new AuthUsuario();
         authUsuario.setPersona(persona);
-        authUsuario.setPasswordHash(passwordEncoder.encode(SUPERADMIN_PASSWORD));
+        authUsuario.setPasswordHash(passwordEncoder.encode(superadminPassword));
         authUsuario.setRolNombre("SUPERADMIN");
-        authUsuario.setRequiereCambioPassword(false);
+        authUsuario.setRequiereCambioPassword(true); // Forzar cambio en primer login
         authUsuario.setActive(true);
         authUsuarioRepository.persist(authUsuario);
     }
