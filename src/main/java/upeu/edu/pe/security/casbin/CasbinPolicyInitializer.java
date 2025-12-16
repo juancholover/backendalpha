@@ -15,7 +15,6 @@ public class CasbinPolicyInitializer {
     @Inject
     CasbinPolicyService casbinPolicyService;
 
-    @Transactional
     void onStart(@Observes StartupEvent ev) {
         LOG.info("Initializing Casbin Policies via Java Code...");
 
