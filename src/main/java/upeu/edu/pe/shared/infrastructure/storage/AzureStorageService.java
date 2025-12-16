@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class AzureStorageService {
 
     @ConfigProperty(name = "azure.storage.connection-string")
-    String connectionString;
+    Optional<String> connectionString;
 
     @ConfigProperty(name = "azure.storage.container-name", defaultValue = "uploads")
     String containerName;
@@ -34,11 +35,21 @@ public class AzureStorageService {
     public void init() {
         System.out.println("\n=== INITIALIZING AZURE STORAGE ===");
         System.out.println("Container name: " + containerName);
-        System.out.println("Connection string length: " + (connectionString != null ? connectionString.length() : 0));
+
+        String connStr = connectionString.orElse(null);
+        boolean hasConfig = connStr != null && !connStr.isBlank();
+        System.out.println("Connection string configured: " + hasConfig);
+
+        if (!hasConfig) {
+            System.out.println("⚠️ Azure Storage NOT configured - uploads will be disabled");
+            System.out.println("   Set AZURE_STORAGE_CONNECTION_STRING environment variable to enable");
+            System.out.println("=================================\n");
+            return;
+        }
 
         try {
             this.blobServiceClient = new BlobServiceClientBuilder()
-                    .connectionString(connectionString)
+                    .connectionString(connStr)
                     .buildClient();
 
             this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
