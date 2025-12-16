@@ -89,4 +89,18 @@ public class MenuItemRepository implements PanacheRepository<MenuItem> {
                 .setParameter("email", email)
                 .getResultList();
     }
+
+    /**
+     * Obtener todos los módulos (alias de findAllIslas)
+     */
+    public List<MenuItem> findModulos() {
+        return findAllIslas();
+    }
+
+    /**
+     * Obtener hijos (targets) de un módulo padre
+     */
+    public List<MenuItem> findHijosByPadreId(Long padreId) {
+        return findSidebarTargetsByIslaId(padreId);
+    }
 }

@@ -19,4 +19,16 @@ public class RolMenuRepository implements PanacheRepository<RolMenu> {
     public boolean existsByRolAndMenu(String rolNombre, Long menuItemId) {
         return count("rolNombre = ?1 AND menuItem.id = ?2 AND active = true", rolNombre, menuItemId) > 0;
     }
+
+    public boolean existsByRolAndMenuItem(String rolNombre, Long menuItemId) {
+        return existsByRolAndMenu(rolNombre, menuItemId);
+    }
+
+    public void deleteByRolNombre(String rolNombre) {
+        delete("rolNombre = ?1", rolNombre);
+    }
+
+    public void deleteByRolAndMenuItem(String rolNombre, Long menuItemId) {
+        delete("rolNombre = ?1 AND menuItem.id = ?2", rolNombre, menuItemId);
+    }
 }
