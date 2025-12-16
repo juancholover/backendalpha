@@ -74,4 +74,15 @@ public class UniversidadService {
     public Universidad getEntityById(Long id) {
         return buscarUseCase.ejecutarPorId(id);
     }
+
+    /**
+     * Actualizar logo_url de universidad
+     */
+    @jakarta.transaction.Transactional
+    public void updateLogoUrl(Long id, String logoUrl) {
+        Universidad universidad = universidadRepository.findByIdOptional(id)
+                .orElseThrow(() -> new NotFoundException("Universidad no encontrada: " + id));
+        universidad.setLogoUrl(logoUrl);
+        universidadRepository.persist(universidad);
+    }
 }

@@ -32,6 +32,13 @@ public class UniversidadRepository implements PanacheRepositoryBase<Universidad,
     }
 
     /**
+     * Obtener la primera universidad activa (para endpoints públicos)
+     */
+    public Optional<Universidad> findFirstActive() {
+        return find("active = true order by id asc").firstResultOptional();
+    }
+
+    /**
      * Verificar si existe código (para validaciones)
      */
     public boolean existsByCodigo(String codigo) {
@@ -80,4 +87,3 @@ public class UniversidadRepository implements PanacheRepositoryBase<Universidad,
         return count("ruc = ?1 and id != ?2 and active = true", ruc, id) > 0;
     }
 }
-

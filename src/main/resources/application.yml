@@ -101,4 +101,10 @@ jwt:
   refresh:
     duration: 604800
 
+# Azure Blob Storage Configuration
+# REQUIRED: Set AZURE_STORAGE_CONNECTION_STRING environment variable
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING:}
+    container-name: ${AZURE_STORAGE_CONTAINER:institution-images}
 

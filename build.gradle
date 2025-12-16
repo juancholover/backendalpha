@@ -90,6 +90,9 @@ dependencies {
     // DOCX Generation
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
 
+    // Azure Blob Storage
+    implementation 'com.azure:azure-storage-blob:12.25.1'
+
     // Testing
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.quarkus:quarkus-junit5-mockito'

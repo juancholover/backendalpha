@@ -15,6 +15,7 @@ import upeu.edu.pe.core.domain.commands.ActualizarUniversidadCommand;
 import upeu.edu.pe.core.domain.commands.CrearUniversidadCommand;
 import upeu.edu.pe.core.domain.entities.Universidad;
 import upeu.edu.pe.core.domain.services.UniversidadService;
+import upeu.edu.pe.core.domain.services.LandingConfigService;
 import upeu.edu.pe.core.domain.usecases.ActualizarUniversidadUseCase;
 import upeu.edu.pe.core.domain.usecases.CrearUniversidadUseCase;
 import upeu.edu.pe.core.domain.usecases.EliminarUniversidadUseCase;
@@ -51,6 +52,9 @@ public class UniversidadController {
 
     @Inject
     UniversidadMapper universidadMapper;
+
+    @Inject
+    LandingConfigService landingConfigService;
 
     // =====================================================
     // OPERACIONES DE LECTURA (Service)
@@ -150,5 +154,112 @@ public class UniversidadController {
     public Response delete(@PathParam("id") Long id) {
         eliminarUseCase.execute(id);
         return Response.ok(ApiResponse.success("Universidad eliminada", null)).build();
+    }
+
+    // =====================================================
+    // OPERACIONES DE MULTIMEDIA
+    // =====================================================
+
+    @Inject
+    upeu.edu.pe.shared.infrastructure.storage.AzureStorageService storageService;
+
+    @PUT
+    @Path("/{id}/logo")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Operation(summary = "Subir logo de universidad")
+    public Response uploadLogo(
+            @PathParam("id") Long id,
+            @org.jboss.resteasy.reactive.RestForm("file") org.jboss.resteasy.reactive.multipart.FileUpload file,
+            @org.jboss.resteasy.reactive.RestForm("fileName") String fileName,
+            @org.jboss.resteasy.reactive.RestForm("contentType") String contentType) {
+        System.out.println("📥 [UniversidadController] Recibiendo logo para universidad: " + id);
+        System.out.println("   File: " + (file != null ? file.fileName() : "null"));
+
+        try {
+            if (!storageService.isAvailable()) {
+                System.err.println("ERROR: Azure Storage no disponible");
+                return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                        .entity(ApiResponse.error("Azure Storage no disponible"))
+                        .build();
+            }
+            if (file == null) {
+                System.err.println("ERROR: No se recibió archivo");
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(ApiResponse.error("Archivo requerido"))
+                        .build();
+            }
+
+            String actualFileName = fileName != null && !fileName.equals("string") ? fileName : file.fileName();
+            String actualContentType = contentType != null && !contentType.equals("string") ? contentType : "image/png";
+
+            String url = storageService.uploadUniversityLogo(
+                    new java.io.FileInputStream(file.uploadedFile().toFile()),
+                    id,
+                    actualFileName,
+                    actualContentType);
+
+            // Actualizar logo_url en la BD
+            universidadService.updateLogoUrl(id, url);
+
+            System.out.println("✅ Logo subido exitosamente: " + url);
+            return Response.ok(ApiResponse.success("Logo subido", java.util.Map.of("logoUrl", url))).build();
+        } catch (Exception e) {
+            System.err.println("❌ Error subiendo logo: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(ApiResponse.error("Error: " + e.getMessage()))
+                    .build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}/configuracion/{elementoId}/imagen")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Operation(summary = "Subir imagen de configuración del sistema")
+    public Response uploadConfigImage(
+            @PathParam("id") Long id,
+            @PathParam("elementoId") String elementoId,
+            @org.jboss.resteasy.reactive.RestForm("file") org.jboss.resteasy.reactive.multipart.FileUpload file,
+            @org.jboss.resteasy.reactive.RestForm("fileName") String fileName,
+            @org.jboss.resteasy.reactive.RestForm("contentType") String contentType) {
+        System.out.println(
+                "📥 [UniversidadController] Recibiendo imagen config " + elementoId + " para universidad: " + id);
+
+        try {
+            if (!storageService.isAvailable()) {
+                return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                        .entity(ApiResponse.error("Azure Storage no disponible"))
+                        .build();
+            }
+            if (file == null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(ApiResponse.error("Archivo requerido"))
+                        .build();
+            }
+
+            String actualFileName = fileName != null && !fileName.equals("string") ? fileName : file.fileName();
+            String actualContentType = contentType != null && !contentType.equals("string") ? contentType
+                    : "image/jpeg";
+
+            String url = storageService.uploadConfigImage(
+                    new java.io.FileInputStream(file.uploadedFile().toFile()),
+                    id,
+                    elementoId,
+                    actualFileName,
+                    actualContentType);
+
+            // Actualizar URL en la configuración de la BD
+            landingConfigService.updateSistemaElementUrl(id, elementoId, url);
+
+            System.out.println("✅ Imagen config subida y guardada en BD: " + url);
+            return Response.ok(ApiResponse.success("Imagen de configuración subida", java.util.Map.of("url", url)))
+                    .build();
+        } catch (Exception e) {
+            System.err.println("❌ Error subiendo imagen config: " + e.getMessage());
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(ApiResponse.error("Error: " + e.getMessage()))
+                    .build();
+        }
     }
 }

@@ -21,7 +21,8 @@ public class CrearTipoUnidadUseCase {
         TipoUnidad tipoUnidad = new TipoUnidad();
         tipoUnidad.setNombre(command.nombre());
         tipoUnidad.setDescripcion(command.descripcion());
-        tipoUnidad.setNivel(command.nivel());
+        // Si nivel es null, asignar 0 como valor por defecto (la columna es NOT NULL)
+        tipoUnidad.setNivel(command.nivel() != null ? command.nivel() : 0);
 
         tipoUnidadRepository.persist(tipoUnidad);
         return tipoUnidad;

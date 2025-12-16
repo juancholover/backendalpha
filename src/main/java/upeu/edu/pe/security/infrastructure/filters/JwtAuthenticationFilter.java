@@ -136,6 +136,8 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                 normalizedPath.startsWith("health") ||
                 normalizedPath.startsWith("metrics") ||
                 normalizedPath.startsWith("api/v1/auth/") ||
+                normalizedPath.startsWith("api/v1/public/") ||
+                normalizedPath.contains("/public/") ||
                 normalizedPath.contains("/auth/") ||
                 normalizedPath.endsWith("/auth") ||
                 // Additional patterns for auth endpoints
@@ -154,8 +156,7 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                 Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"error\": \"" + message + "\"}")
                         .type("application/json")
-                        .build()
-        );
+                        .build());
         System.out.println("=== JWT FILTER END (UNAUTHORIZED) ===\n");
     }
 }

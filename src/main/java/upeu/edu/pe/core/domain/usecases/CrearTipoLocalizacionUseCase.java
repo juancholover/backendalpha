@@ -21,12 +21,13 @@ public class CrearTipoLocalizacionUseCase {
         TipoLocalizacion tipoLocalizacion = new TipoLocalizacion();
         tipoLocalizacion.setCodigo(command.codigo());
         tipoLocalizacion.setNombre(command.nombre());
-        tipoLocalizacion.setNivelJerarquia(command.nivelJerarquia());
+        // Valor por defecto si es null (la columna es NOT NULL)
+        tipoLocalizacion.setNivelJerarquia(command.nivelJerarquia() != null ? command.nivelJerarquia() : 0);
         tipoLocalizacion.setPermiteAsignacion(
                 command.permiteAsignacion() != null ? command.permiteAsignacion() : false);
 
-        // Manejar el padre si se proporciona
-        if (command.padreId() != null) {
+        // Manejar el padre si se proporciona (null o 0 indica sin padre)
+        if (command.padreId() != null && command.padreId() > 0) {
             TipoLocalizacion padre = tipoLocalizacionRepository.findByIdOptional(command.padreId())
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Tipo de localización padre no encontrado con ID: " + command.padreId()));

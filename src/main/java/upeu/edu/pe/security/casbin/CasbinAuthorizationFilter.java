@@ -27,7 +27,9 @@ public class CasbinAuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        String path = "/" + requestContext.getUriInfo().getPath();
+        // Get path and normalize - ensure single leading slash, no double slashes
+        String rawPath = requestContext.getUriInfo().getPath();
+        String path = "/" + rawPath.replaceAll("^/+", ""); // Ensure single leading slash
         String method = requestContext.getMethod();
 
         System.out.println("\n=== CASBIN AUTHORIZATION FILTER ===");
@@ -65,7 +67,8 @@ public class CasbinAuthorizationFilter implements ContainerRequestFilter {
     }
 
     private boolean isPublicEndpoint(String path) {
-        String normalizedPath = path.toLowerCase();
+        // Normalize path - remove extra slashes
+        String normalizedPath = path.replaceAll("^/+", "/").toLowerCase();
 
         return normalizedPath.isEmpty() ||
                 normalizedPath.equals("/") ||
@@ -75,7 +78,9 @@ public class CasbinAuthorizationFilter implements ContainerRequestFilter {
                 normalizedPath.startsWith("/health") ||
                 normalizedPath.startsWith("/metrics") ||
                 normalizedPath.startsWith("/api/v1/auth/") ||
-                normalizedPath.startsWith("/api/v1/public/");
+                normalizedPath.startsWith("/api/v1/public/") ||
+                normalizedPath.contains("/public/") ||
+                normalizedPath.contains("/auth/");
     }
 
     private void abortWithForbidden(ContainerRequestContext requestContext, String message) {

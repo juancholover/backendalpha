@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import upeu.edu.pe.shared.entities.AuditableEntity;
 import upeu.edu.pe.shared.listeners.AuditListener;
 import upeu.edu.pe.shared.annotations.Normalize;
@@ -52,12 +54,12 @@ public class Universidad extends AuditableEntity {
     private String zonaHoraria;
 
     @Column(name = "locale", length = 20)
-    private String locale; 
+    private String locale;
 
-    @Column(name = "configuracion", columnDefinition = "jsonb") 
+    @Column(name = "configuracion", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String configuracion;
 
-    
     @Column(name = "plan", length = 20)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String plan; // FREE, BASIC, PREMIUM, ENTERPRISE
@@ -80,8 +82,6 @@ public class Universidad extends AuditableEntity {
 
     @Column(name = "total_docentes")
     private Integer totalDocentes = 0; // Contador actual
-
-    
 
     /**
      * Valida si la universidad está activa y su suscripción vigente.
@@ -115,7 +115,7 @@ public class Universidad extends AuditableEntity {
     public boolean haExcedidoLimiteDocentes() {
         return maxDocentes != null && totalDocentes != null && totalDocentes >= maxDocentes;
     }
-    
+
     /**
      * Suspende la universidad (cambia estado a SUSPENDIDA).
      * Puede usarse por falta de pago o violación de términos.
@@ -123,7 +123,7 @@ public class Universidad extends AuditableEntity {
     public void suspender() {
         this.estado = "SUSPENDIDA";
     }
-    
+
     /**
      * Reactiva la universidad (cambia estado a ACTIVA).
      * Solo si la suscripción no ha vencido.
@@ -134,7 +134,7 @@ public class Universidad extends AuditableEntity {
         }
         this.estado = "ACTIVA";
     }
-    
+
     /**
      * Valida el código de universidad según reglas de negocio.
      * 
@@ -152,7 +152,7 @@ public class Universidad extends AuditableEntity {
             throw new IllegalArgumentException("Código solo puede contener letras mayúsculas, números y guiones");
         }
     }
-    
+
     /**
      * Valida el RUC según formato peruano (11 dígitos).
      * 
