@@ -9,7 +9,7 @@ quarkus:
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:123456}
     jdbc:
-      url: jdbc:postgresql://localhost:5432/${DB_NAME:labacademico}
+      url: jdbc:postgresql://localhost:5432/${DB_NAME:labacademico1}
 
   hibernate-orm:
     database:
@@ -21,11 +21,11 @@ quarkus:
       statement-batch-size: 20
 
   flyway:
-    migrate-at-start: true
-    baseline-on-migrate: true
-    baseline-version: 0
-    baseline-description: Initial baseline
-    out-of-order: true
+    migrate-at-start: false  # Deshabilitado - Hibernate maneja DDL, Java maneja datos
+    # baseline-on-migrate: true
+    # baseline-version: 0
+    # baseline-description: Initial baseline
+    # out-of-order: true
 
   devservices:
     enabled: false
