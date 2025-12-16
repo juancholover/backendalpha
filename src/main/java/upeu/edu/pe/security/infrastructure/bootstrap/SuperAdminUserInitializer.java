@@ -15,8 +15,6 @@ import upeu.edu.pe.security.domain.entities.AuthUsuario;
 import upeu.edu.pe.security.domain.repositories.AuthUsuarioRepository;
 import upeu.edu.pe.security.infrastructure.utils.PasswordEncoder;
 
-import java.util.Optional;
-
 /**
  * Inicializa el usuario SuperAdmin al arrancar la aplicación.
  * Solo crea el usuario si no existe.
@@ -49,6 +47,8 @@ public class SuperAdminUserInitializer {
     @Inject
     PasswordEncoder passwordEncoder;
 
+    private static final String SUPERADMIN_DOC = "00000001";
+
     /**
      * Método principal sin @Transactional para poder manejar Casbin separadamente
      */
@@ -60,7 +60,13 @@ public class SuperAdminUserInitializer {
 
         // Verificar si ya existe el usuario por email
         if (personaRepository.findByEmail(superadminEmail).isPresent()) {
-            LOG.info("SuperAdmin user already exists, skipping creation.");
+            LOG.info("SuperAdmin user already exists (by email), skipping creation.");
+            return;
+        }
+
+        // Verificar si ya existe persona con el documento reservado
+        if (personaRepository.find("numeroDocumento", SUPERADMIN_DOC).firstResultOptional().isPresent()) {
+            LOG.info("SuperAdmin persona already exists (by document), skipping creation.");
             return;
         }
 
