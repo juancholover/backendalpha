@@ -11,7 +11,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 
 @Entity
 @Table(name = "tipo_autoridad", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"nombre"})
+        @UniqueConstraint(columnNames = { "nombre" })
 })
 @Data
 @NoArgsConstructor
@@ -19,7 +19,7 @@ import upeu.edu.pe.shared.annotations.Normalize;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @EntityListeners(AuditListener.class)
 public class TipoAutoridad extends AuditableEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class TipoAutoridad extends AuditableEntity {
     @Normalize(Normalize.NormalizeType.TITLE_CASE)
     private String nombre; // Ej: "Rector", "Decano", "Director General"
 
-    @Column(name = "codigo", length = 20)
+    @Column(name = "codigo", length = 50)
     @Normalize(Normalize.NormalizeType.UPPERCASE)
     private String codigo; // Ej: "RECTOR", "DECANO", "DIRECTOR" (para consultas)
 
