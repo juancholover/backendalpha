@@ -22,14 +22,30 @@ public class TipoAutoridadDataInitializer {
         if (tipoAutoridadRepository.count() == 0) {
             LOG.info("Seeding TipoAutoridad data...");
 
-            createTipo("DEC", "Decano", 1);
-            createTipo("SG", "Secretario General", 2);
-            createTipo("DE", "Director de Escuela", 3);
-            createTipo("DP", "Director de Postgrado", 3);
-            createTipo("DI", "Director de Investigación", 3);
-            createTipo("DA", "Director Administrativo", 3);
-            createTipo("CA", "Coordinador Académico", 4);
-            createTipo("JD", "Jefe de Departamento", 4);
+            // === NIVEL 0: Administradores del Sistema ===
+            createTipo("SUPERADMIN", "Super Administrador", 0);
+            createTipo("ADMIN", "Administrador", 0);
+
+            // === NIVEL 1: Máximas Autoridades Universitarias ===
+            createTipo("RECTOR", "Rector", 1);
+
+            // === NIVEL 2: Vicerrectores ===
+            createTipo("VICERRECTOR_ACADEMICO", "Vicerrector Académico", 2);
+            createTipo("VICERRECTOR_INVESTIGACION", "Vicerrector de Investigación", 2);
+
+            // === NIVEL 3: Decanos y Secretarios ===
+            createTipo("DECANO", "Decano", 3);
+            createTipo("SECRETARIO_GENERAL", "Secretario General", 3);
+
+            // === NIVEL 4: Directores ===
+            createTipo("DIRECTOR_ESCUELA", "Director de Escuela", 4);
+            createTipo("DIRECTOR_POSTGRADO", "Director de Postgrado", 4);
+            createTipo("DIRECTOR_INVESTIGACION", "Director de Investigación", 4);
+            createTipo("DIRECTOR_ADMINISTRATIVO", "Director Administrativo", 4);
+
+            // === NIVEL 5: Coordinadores y Jefes ===
+            createTipo("COORDINADOR_ACADEMICO", "Coordinador Académico", 5);
+            createTipo("JEFE_DEPARTAMENTO", "Jefe de Departamento", 5);
 
             LOG.info("TipoAutoridad seeded successfully.");
         }
