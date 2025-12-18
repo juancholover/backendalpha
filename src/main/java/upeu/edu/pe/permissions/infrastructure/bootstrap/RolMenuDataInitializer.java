@@ -37,22 +37,12 @@ public class RolMenuDataInitializer {
             return;
         }
 
-        LOG.info("Seeding RolMenu data (Rol -> Menu assignments)...");
+        LOG.info("Seeding RolMenu data (Solo SUPERADMIN)...");
 
         // ==========================================
         // SUPERADMIN: Todos los targets de SUPERADMIN
         // ==========================================
         assignAllTargetsToRol("SUPERADMIN", "SUPERADMIN");
-
-        // ==========================================
-        // ADMIN: Todos los targets de ADMIN
-        // ==========================================
-        assignAllTargetsToRol("ADMIN", "ADMIN");
-
-        // ==========================================
-        // PROFESOR: Todos los targets de PROFESOR
-        // ==========================================
-        assignAllTargetsToRol("PROFESOR", "PROFESOR");
 
         LOG.info("RolMenu data seeded successfully.");
     }
