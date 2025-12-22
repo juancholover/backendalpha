@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * DTOs para la administración de roles y permisos.
+ * DTOs para la administración de roles y permisos. listo
  */
 public class PermissionDTOs {
 
